@@ -1,0 +1,10 @@
+node_modules
+dist
+.DS_Store
+*.log
+
+# arquivos de entrega, não fazem parte do código
+*.pdf
+
+# o arquivo do backup entra pelo site do GitHub (o token nao tem permissao de workflow)
+*.guardado
