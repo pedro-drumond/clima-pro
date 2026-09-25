@@ -1,43 +1,82 @@
-# Clima Pro — protótipo navegável
+# Clima Pro
 
-Orçamento e acompanhamento para instalador de ar-condicionado. Esta versão guarda tudo no
-navegador de quem usa: nada sai do aparelho e nada é compartilhado entre pessoas.
-Serve para os sócios navegarem e criticarem antes de a gente ligar o banco de dados.
+Sistema para instaladores de ar-condicionado: orçamento, proposta que o cliente
+aprova pelo celular e acompanhamento de quem chamar.
 
-## Rodar na sua máquina
+Não é mais protótipo. Os dados ficam no Supabase, cada empresa só enxerga os
+dados dela, e a proposta que o cliente abre não precisa de login.
+
+## Onde está cada coisa
+
+| Parte | Onde |
+|---|---|
+| Banco, login e regras de acesso | Supabase, projeto `wmkalrkerjmqzkjiowto` |
+| Site | pasta `dist/` — é ela que sobe no Cloudflare |
+| Código | pasta `src/` |
+
+Endereço do Supabase e chave pública ficam em `src/dados/supabase.js`. A chave
+pode ficar no código: ela só abre o que as regras do banco permitem.
+
+## Publicar uma versão nova
+
+`git push`. O Cloudflare está ligado neste repositório: ele compila e publica
+sozinho a cada envio para o `main`. Ninguém arrasta pasta.
+
+O arquivo `wrangler.jsonc` é o que diz ao Cloudflare que o site é a pasta
+`dist`. O `dist` não vai para o repositório — quem o gera é o Cloudflare.
+
+Para ver na sua máquina antes de enviar:
 
 ```
 npm install
 npm run dev
 ```
 
-## Gerar a versão publicável
+## Banco
+
+Migrations versionadas em `supabase/migracoes`, e o backup diário em
+`.github/workflows`. Ver `supabase/README.md`.
+
+## Quem entra no sistema
+
+Há dois papéis:
+
+- **master** — é o Pedro. Vê a tela de Contas, cria a conta de cada empresa
+  cliente, troca senha e define os parâmetros padrão. Não mexe em orçamento.
+- **dono** — o instalador. Só enxerga a própria empresa.
+
+O master cria a conta do cliente pela tela **Contas**: nome da empresa,
+responsável, e-mail e senha inicial. O cliente entra com esse e-mail e senha e
+troca a senha depois em Configurações.
+
+## Estrutura do código
 
 ```
-npm run build
+src/
+  dados/
+    supabase.js      endereço e chave do projeto
+    armazenamento.js  única parte que conversa com o banco; as telas leem daqui
+    acoes.js          tudo que grava
+    agenda.js         quem chamar hoje, próxima cobrança, próxima limpeza
+    parametros.js     prazos e textos padrão
+  telas/              uma tela por arquivo
+  componentes/base.jsx  moldura, menu e campos de formulário
 ```
 
-Os arquivos ficam em `dist/`. É essa pasta que sobe para a Cloudflare Pages.
+Quem for mexer: a regra é que nenhuma tela fala com o banco direto. Lê de
+`banco()` e chama uma função de `acoes.js`.
 
-## Contas de teste
+## Detalhes que não são óbvios
 
-- Instalador: `marco@exemplo.com` / `123456`
-- Master (cria contas de cliente): `master@climapro.app` / `master`
-
-O botão "Recomeçar do zero" na tela de entrada apaga tudo e volta aos dados de demonstração.
-
-## Onde fica cada coisa
-
-- `src/dados/armazenamento.js` — o único arquivo que conhece onde os dados moram. Quando o app
-  passar a usar Supabase, só ele muda.
-- `src/dados/parametros.js` — prazos de cobrança, periodicidade de limpeza e textos do WhatsApp.
-  Um lugar só, como combinado.
-- `src/dados/agenda.js` — a regra do "quem chamar hoje".
-- `src/dados/acoes.js` — tudo que altera dado.
-- `src/telas/` — uma tela por arquivo.
-- `src/estilo.css` — cores e espaçamento.
-
-## O que ainda não existe aqui
-
-PDF do orçamento, recuperação de senha, equipe e parceiros, ordem de serviço com fotos,
-importação por planilha e qualquer coisa com inteligência artificial.
+- **Preço**: a margem é líquida sobre a venda, não markup. A conta é
+  `preço = custo ÷ (1 − margem − imposto)`.
+- **Três modelos de orçamento**: por margem (entra custo, o sistema calcula o
+  preço), por preço de venda (entra o preço final) e itens avulsos (escreve na
+  hora, com opção de salvar na biblioteca). Nos modelos 2 e 3 não existe custo,
+  então eles ficam de fora das contas de custo e sobra na tela Números.
+- **Numeração**: cada empresa começa no 1001, contado pelo banco.
+- **Proposta pública**: o link leva um código sorteado (`token`), não o id.
+  Quem tem o link vê aquela proposta e nada mais — nem a lista da empresa.
+  Aprovar ou recusar só funciona uma vez.
+- **Digitação**: as telas salvam a cada tecla, mas a gravação no banco espera
+  meio segundo de silêncio. É o que evita uma chamada de rede por letra.

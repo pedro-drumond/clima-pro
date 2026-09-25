@@ -1,0 +1,11 @@
+{
+  // Diz ao Cloudflare que este projeto é um site pronto na pasta dist.
+  // "single-page-application" faz qualquer endereço cair no index.html,
+  // que é como o Clima Pro funciona.
+  "name": "frizo",
+  "compatibility_date": "2026-09-25",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
