@@ -13,6 +13,7 @@ import Pessoa from './telas/Pessoa.jsx'
 import Biblioteca from './telas/Biblioteca.jsx'
 import Numeros from './telas/Numeros.jsx'
 import Empresa from './telas/Empresa.jsx'
+import Ajuda from './telas/Ajuda.jsx'
 import Master from './telas/Master.jsx'
 import MasterParametros from './telas/MasterParametros.jsx'
 import Proposta from './telas/Proposta.jsx'
@@ -57,6 +58,7 @@ function Interno() {
             <Route path="/biblioteca" element={<Biblioteca />} />
             <Route path="/numeros" element={<Numeros />} />
             <Route path="/empresa" element={<Empresa />} />
+            <Route path="/ajuda" element={<Ajuda />} />
             <Route path="/configuracoes" element={<Navigate to="/empresa" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </>

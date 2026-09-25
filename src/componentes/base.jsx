@@ -51,6 +51,7 @@ export function Moldura({ children }) {
             <Item para="/biblioteca" texto="Biblioteca" />
             <Item para="/numeros" texto="Financeiro" />
             <Item para="/empresa" texto="Minha empresa" />
+            <Item para="/ajuda" texto="Ajuda" />
           </>
         )}
       </nav>
