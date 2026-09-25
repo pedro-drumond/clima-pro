@@ -525,13 +525,152 @@ th.n {
   padding: 26px;
 }
 
-.proposta-topo {
+/* ----- cabeçalho da proposta: três modelos ----- */
+
+.cabecalho-proposta {
+  border-bottom: 1px solid var(--linha);
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+}
+
+.cabecalho-proposta .nome-empresa {
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.cabecalho-proposta .logo {
+  max-height: 46px;
+  margin-bottom: 6px;
+}
+
+.numeros-proposta {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.desenho-aparelho {
+  display: inline-block;
+  color: var(--marca);
+  flex: none;
+}
+
+/* simples: identidade à esquerda, números à direita */
+.cabecalho-proposta.simples {
   display: flex;
   justify-content: space-between;
   gap: 16px;
+}
+
+.cabecalho-esquerda {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+/* faixa: barra na cor da marca */
+.cabecalho-proposta.faixa {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.faixa-marca {
+  background: var(--marca);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: var(--raio);
+}
+
+.faixa-esquerda {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.faixa-marca .desenho-aparelho {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.faixa-marca .logo {
+  max-height: 40px;
+  margin: 0;
+  background: #fff;
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+
+.faixa-contato {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.faixa-abaixo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 12px 2px 16px;
   border-bottom: 1px solid var(--linha);
-  padding-bottom: 16px;
-  margin-bottom: 16px;
+}
+
+/* centralizado */
+.cabecalho-proposta.centralizado {
+  text-align: center;
+}
+
+.cabecalho-proposta.centralizado .numeros-proposta {
+  text-align: center;
+}
+
+.cabecalho-proposta.centralizado .desenho-aparelho {
+  margin-bottom: 4px;
+}
+
+.linha-divisoria {
+  height: 1px;
+  background: var(--linha);
+  margin: 14px auto;
+  width: 60%;
+}
+
+.para-quem {
+  margin-top: 0;
+}
+
+.condicoes {
+  margin-top: 22px;
+}
+
+.valor-calculado {
+  display: inline-block;
+  padding: 9px 0;
+  font-weight: 600;
+}
+
+.seguro {
+  border-top: 1px solid var(--linha-suave);
+  padding-top: var(--esp-2);
+  margin-bottom: var(--esp-2);
+}
+
+.amostra-aparelho {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  color: var(--marca);
+}
+
+.barra-pdf {
+  margin-top: var(--esp-3);
+  text-align: right;
+}
+
+/* a linha de assinatura só existe no papel */
+.assinatura-papel {
+  display: none;
 }
 
 .assinatura-caixa {
@@ -767,4 +906,90 @@ th.n {
   padding-top: var(--esp-2);
   margin-top: var(--esp-2);
   font-weight: 600;
+}
+
+/* ----- papel -----
+   O "Gerar PDF" é a impressão do navegador. Aqui a página vira documento:
+   some tudo que é de tela, a proposta ocupa a folha e o texto continua
+   texto de verdade, selecionável e nítido em qualquer tamanho. */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .topo,
+  .menu,
+  .sem-impressao,
+  .barra-pdf,
+  .escolha-estilo,
+  .acoes {
+    display: none !important;
+  }
+
+  .conteudo {
+    padding: 0;
+  }
+
+  .proposta {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    font-size: 11pt;
+  }
+
+  /* a faixa colorida precisa sair impressa, não em branco */
+  .faixa-marca {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  .total-linha,
+  .condicoes,
+  .assinatura-caixa {
+    page-break-inside: avoid;
+  }
+
+  /* espaço para assinar à mão, quando o cliente imprime */
+  .assinatura-papel {
+    display: block;
+    margin-top: 42px;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+
+  .linha-assinatura {
+    border-top: 1px solid #333;
+    width: 62%;
+    margin: 0 auto 6px;
+  }
+
+  .rodape-proposta {
+    margin-top: 18px;
+    font-size: 9pt;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 }

@@ -8,6 +8,11 @@ export const PARAMETROS_PADRAO = {
   limpezaResidencialMeses: 6,
   limpezaComercialMeses: 3,
   clienteParadoMeses: 12,
+  // seguro do equipamento (ideia do Mauro, reunião de 22/09):
+  // até o limite é um valor fixo por ano; acima, uma porcentagem do aparelho
+  seguroLimite: 8500,
+  seguroFixoAno: 96,
+  seguroPct: 1.25,
   textos: {
     enviarOrcamento:
       'Olá {pessoa}, aqui é da {empresa}. Segue o orçamento nº {numero}, no valor de {total}. É só abrir e aprovar por aqui: {link}',

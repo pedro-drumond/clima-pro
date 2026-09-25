@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDados, Texto, Numero, Area, Escolha, Campo, Linha } from '../componentes/base.jsx'
+import { APARELHOS, Aparelho } from '../componentes/aparelhos.jsx'
 import { parametros, moeda } from '../dados/armazenamento.js'
 import { salvarConta, salvarParametrosDaConta } from '../dados/acoes.js'
 
@@ -147,6 +148,38 @@ export default function Empresa() {
             aoMudar={(v) => mudar({ observacoesPadrao: v })}
           />
         </div>
+      </div>
+
+      <div className="bloco">
+        <h2>Aparência da proposta</h2>
+        <Linha>
+          <Escolha
+            rotulo="Modelo de cabeçalho"
+            tamanho="medio"
+            valor={conta.modeloCabecalho || 'simples'}
+            aoMudar={(v) => mudar({ modeloCabecalho: v })}
+            opcoes={[
+              { valor: 'simples', texto: 'Simples' },
+              { valor: 'faixa', texto: 'Faixa colorida' },
+              { valor: 'centralizado', texto: 'Centralizado' },
+            ]}
+          />
+          <Escolha
+            rotulo="Desenho do aparelho"
+            tamanho="medio"
+            valor={conta.icone || ''}
+            aoMudar={(v) => mudar({ icone: v })}
+            opcoes={APARELHOS.map((a) => ({ valor: a.valor, texto: a.texto }))}
+          />
+          <Campo rotulo="Como fica">
+            <span className="amostra-aparelho">
+              <Aparelho tipo={conta.icone} tamanho={56} />
+            </span>
+          </Campo>
+        </Linha>
+        <p className="fraco">
+          O cabeçalho e o desenho aparecem na proposta que o cliente abre e no PDF.
+        </p>
       </div>
 
       <div className="bloco">

@@ -7,7 +7,9 @@ import {
   parametros,
   precoDoCusto,
   custoDoOrcamento,
+  totalDosItens,
   totalDoOrcamento,
+  premioDoSeguro,
   precoDoItem,
   ehPorMargem,
   linkWhatsapp,
@@ -35,6 +37,7 @@ export default function Orcamento() {
   const [novoNome, setNovoNome] = useState('')
   const [novoZap, setNovoZap] = useState('')
   const [cadastrando, setCadastrando] = useState(false)
+  const [linkCopiado, setLinkCopiado] = useState(false)
   const [avulso, setAvulso] = useState({ nome: '', qtd: 1, preco: '', unidade: 'unidade', salvar: true })
   // os itens ficam numa cópia enquanto ele digita; só vão para o banco quando
   // ele sai do campo, para não regravar a lista inteira a cada tecla
@@ -63,7 +66,9 @@ export default function Orcamento() {
   const porMargem = ehPorMargem(orcamento)
   const comItens = { ...orcamento, itens: itensNaTela }
   const custo = custoDoOrcamento(comItens)
-  const total = totalDoOrcamento(comItens)
+  const totalItens = totalDosItens(comItens)
+  const premio = orcamento.seguro ? premioDoSeguro(orcamento.seguroValorEquip, params) : 0
+  const total = totalItens + premio
   const editavel = orcamento.situacao === 'contato' || orcamento.situacao === 'enviado'
   const modelo = MODELOS.find((m) => m.valor === (orcamento.modelo || 'margem'))
 
@@ -377,16 +382,65 @@ export default function Orcamento() {
                 </tr>
                 <tr>
                   <td>Imposto sobre a venda ({orcamento.impostoPct}%)</td>
-                  <td className="n">{moeda(total * (orcamento.impostoPct / 100))}</td>
+                  <td className="n">{moeda(totalItens * (orcamento.impostoPct / 100))}</td>
                 </tr>
                 <tr>
                   <td>Margem ({orcamento.margemPct}%)</td>
-                  <td className="n">{moeda(total * (orcamento.margemPct / 100))}</td>
+                  <td className="n">{moeda(totalItens * (orcamento.margemPct / 100))}</td>
                 </tr>
               </tbody>
             </table>
           </>
         ) : null}
+        <div className="seguro">
+          <label className="marcacao">
+            <input
+              type="checkbox"
+              checked={!!orcamento.seguro}
+              disabled={!editavel}
+              onChange={(e) =>
+                mudar({
+                  seguro: e.target.checked,
+                  seguroPremio: e.target.checked ? premioDoSeguro(orcamento.seguroValorEquip, params) : 0,
+                })
+              }
+            />
+            Incluir seguro do equipamento
+          </label>
+          {orcamento.seguro ? (
+            <Linha>
+              <Texto
+                rotulo="Valor do aparelho (R$)"
+                tamanho="curto"
+                type="number"
+                valor={orcamento.seguroValorEquip}
+                disabled={!editavel}
+                aoMudar={(v) =>
+                  mudar({ seguroValorEquip: Number(v) || 0, seguroPremio: premioDoSeguro(v, params) })
+                }
+              />
+              <Campo rotulo="Seguro por ano">
+                <span className="valor-calculado">{moeda(premio)}</span>
+              </Campo>
+            </Linha>
+          ) : null}
+        </div>
+
+        <table>
+          <tbody>
+            <tr>
+              <td>Serviços e materiais</td>
+              <td className="n">{moeda(totalItens)}</td>
+            </tr>
+            {orcamento.seguro ? (
+              <tr>
+                <td>Seguro do equipamento (1 ano)</td>
+                <td className="n">{moeda(premio)}</td>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
+
         <div className="total-linha">
           <span>Preço ao cliente</span>
           <span className="numero-grande">{moeda(total)}</span>
@@ -432,6 +486,27 @@ export default function Orcamento() {
           <Link className="botao" to={'/proposta/' + (orcamento.token || orcamento.id)} target="_blank">
             Abrir como o cliente vê
           </Link>
+          <button
+            className="botao"
+            onClick={() => {
+              const alvo = window.open('#/proposta/' + (orcamento.token || orcamento.id), '_blank')
+              // dá tempo de a proposta carregar antes de abrir a impressão
+              if (alvo) setTimeout(() => alvo.print(), 2500)
+            }}
+          >
+            Gerar PDF
+          </button>
+          <button
+            className="botao"
+            onClick={() => {
+              const endereco = window.location.origin + window.location.pathname + '#/proposta/' + (orcamento.token || orcamento.id)
+              navigator.clipboard?.writeText(endereco)
+              setLinkCopiado(true)
+              setTimeout(() => setLinkCopiado(false), 2500)
+            }}
+          >
+            {linkCopiado ? 'Link copiado' : 'Copiar link'}
+          </button>
           {orcamento.situacao === 'contato' ? (
             <button className="botao principal" onClick={() => marcarEnviado(orcamento.id, params)}>
               Marcar como enviado

@@ -53,16 +53,20 @@ export default function Orcamentos() {
               ))}
             </select>
           </span>
-          <button className="botao" onClick={() => setVerPerdidos(!verPerdidos)}>
-            {verPerdidos ? 'Esconder perdidos' : 'Ver perdidos'}
-          </button>
+          <span className="ordenar">
+            Ver
+            <select value={verPerdidos ? 'perdidos' : 'quadro'} onChange={(e) => setVerPerdidos(e.target.value === 'perdidos')}>
+              <option value="quadro">Quadro de etapas</option>
+              <option value="perdidos">Perdidos ({todos.filter((o) => o.situacao === 'perdido').length})</option>
+            </select>
+          </span>
           <button className="botao principal" onClick={() => navegar('/orcamentos/novo')}>
             Novo orçamento
           </button>
         </div>
       </div>
 
-      <div className="quadro">
+      <div className="quadro" style={{ display: verPerdidos ? 'none' : undefined }}>
         {ETAPAS.map(([chave, titulo]) => {
           const lista = ordenar(todos.filter((o) => o.situacao === chave))
           const soma = lista.reduce((s, o) => s + totalDoOrcamento(o), 0)

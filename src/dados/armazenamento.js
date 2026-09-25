@@ -65,10 +65,14 @@ const daConta = (r) => ({
   condicoesPadrao: r.condicoes_padrao,
   observacoesPadrao: r.observacoes_padrao,
   parametros: r.parametros,
+  modeloCabecalho: r.modelo_cabecalho || 'simples',
+  icone: r.icone || '',
   criadaEm: r.criada_em,
 })
 
 export const paraConta = (c) => ({
+  modelo_cabecalho: c.modeloCabecalho || 'simples',
+  icone: c.icone || '',
   razao_social: c.razaoSocial,
   nome_fantasia: c.nomeFantasia,
   tipo_pessoa: c.tipoPessoa,
@@ -182,6 +186,9 @@ const doOrcamento = (r) => ({
   mostrarUnitario: r.mostrar_unitario,
   motivoPerda: r.motivo_perda,
   cobrancas: r.cobrancas,
+  seguro: !!r.seguro,
+  seguroValorEquip: Number(r.seguro_valor_equip || 0),
+  seguroPremio: Number(r.seguro_premio || 0),
   aceite: r.aceite,
   token: r.token,
   proximoContato: r.proximo_contato,
@@ -218,6 +225,9 @@ export const paraOrcamento = (o) => ({
   mostrar_unitario: !!o.mostrarUnitario,
   motivo_perda: o.motivoPerda || '',
   cobrancas: o.cobrancas || 0,
+  seguro: !!o.seguro,
+  seguro_valor_equip: Number(o.seguroValorEquip) || 0,
+  seguro_premio: Number(o.seguroPremio) || 0,
   aceite: o.aceite ?? null,
   proximo_contato: o.proximoContato || null,
   enviado_em: o.enviadoEm || null,
@@ -400,11 +410,29 @@ export function precoDoItem(orcamento, item) {
   return Number(item.precoUnit || 0)
 }
 
-export function totalDoOrcamento(orcamento) {
+// só os serviços e materiais, sem o seguro
+export function totalDosItens(orcamento) {
   if (ehPorMargem(orcamento)) {
     return precoDoCusto(custoDoOrcamento(orcamento), orcamento.margemPct, orcamento.impostoPct)
   }
   return (orcamento.itens || []).reduce((s, i) => s + Number(i.qtd) * Number(i.precoUnit || 0), 0)
+}
+
+// Seguro do equipamento: até o limite, um valor fixo por ano; acima disso,
+// uma porcentagem do valor do aparelho. Os três números ficam nos parâmetros.
+export function premioDoSeguro(valorEquipamento, params) {
+  const valor = Number(valorEquipamento) || 0
+  if (valor <= 0) return 0
+  const limite = Number(params?.seguroLimite ?? 8500)
+  const fixo = Number(params?.seguroFixoAno ?? 96)
+  const pct = Number(params?.seguroPct ?? 1.25)
+  return valor <= limite ? fixo : (valor * pct) / 100
+}
+
+export function totalDoOrcamento(orcamento) {
+  const itens = totalDosItens(orcamento)
+  if (!orcamento.seguro) return itens
+  return itens + (Number(orcamento.seguroPremio) || 0)
 }
 
 /* ----- formatos ----- */
