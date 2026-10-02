@@ -1,8 +1,17 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useDados } from '../componentes/base.jsx'
-import { moeda, totalDoOrcamento, dataCurta, parametros } from '../dados/armazenamento.js'
-import { reabrirOrcamento, moverOrcamento, apagarOrcamento, registrarCobranca, registrarLimpeza, adiarPessoa } from '../dados/acoes.js'
+import { useDados, Linha, Campo, Texto } from '../componentes/base.jsx'
+import { moeda, totalDoOrcamento, dataCurta, parametros, somarDias, hojeISO } from '../dados/armazenamento.js'
+import {
+  reabrirOrcamento,
+  moverOrcamento,
+  apagarOrcamento,
+  marcarPerdido,
+  renovarValidade,
+  registrarContato,
+  diasSugeridos,
+  RESULTADOS,
+} from '../dados/acoes.js'
 import { marcaDoCartao, tarefasDoDia, primeiroNome } from '../dados/agenda.js'
 import { linkWhatsapp } from '../dados/armazenamento.js'
 
@@ -27,6 +36,7 @@ export default function Orcamentos() {
   const [vista, setVista] = useState('quadro')
   const [menuAberto, setMenuAberto] = useState('')
   const [apagando, setApagando] = useState('')
+  const [registrando, setRegistrando] = useState(null)
   const [arrastando, setArrastando] = useState('')
   const [colunaAlvo, setColunaAlvo] = useState('')
   const [ordens, setOrdens] = useState({})
@@ -72,7 +82,7 @@ export default function Orcamentos() {
             className={'botao pequeno' + (vista === 'acompanhamento' ? ' principal' : '')}
             onClick={() => setVista(vista === 'acompanhamento' ? 'quadro' : 'acompanhamento')}
           >
-            Chamar hoje {tarefas.length > 0 ? '(' + tarefas.length + ')' : ''}
+            Acompanhamento {tarefas.length > 0 ? '(' + tarefas.length + ')' : ''}
           </button>
           <button
             className={'botao pequeno' + (vista === 'perdidos' ? ' principal' : '')}
@@ -100,7 +110,8 @@ export default function Orcamentos() {
                     {titulo} <span className="coluna-contagem">{doGrupo.length}</span>
                   </h2>
                   {doGrupo.map((t) => (
-                    <div className="linha-tarefa" key={t.chave}>
+                    <div className="tarefa" key={t.chave}>
+                    <div className="linha-tarefa">
                       <div className="tarefa-quem">
                         <div className="tarefa-nome">{t.pessoa.nome}</div>
                         <div className="tarefa-sub">{t.titulo}</div>
@@ -116,15 +127,81 @@ export default function Orcamentos() {
                         </a>
                         <button
                           className="botao pequeno"
-                          onClick={() => {
-                            if (t.orcamento) registrarCobranca(t.orcamento.id, params)
-                            else if (t.equipamento) registrarLimpeza(t.equipamento.id)
-                            else adiarPessoa(t.pessoa.id, 30)
-                          }}
+                          onClick={() =>
+                            setRegistrando(
+                              registrando?.chave === t.chave
+                                ? null
+                                : {
+                                    chave: t.chave,
+                                    tarefa: t,
+                                    resultado: 'nao-atendeu',
+                                    anotacao: '',
+                                    proximoEm: somarDias(hojeISO(), diasSugeridos('nao-atendeu')).slice(0, 10),
+                                  }
+                            )
+                          }
                         >
-                          Chamei
+                          Registrar contato
                         </button>
                       </div>
+                    </div>
+                    {registrando?.chave === t.chave ? (
+                      <div className="caixa-contato">
+                        <div className="escolha-resultado">
+                          {RESULTADOS.map((r) => (
+                            <button
+                              key={r.valor}
+                              className={registrando.resultado === r.valor ? 'ativo' : ''}
+                              onClick={() =>
+                                setRegistrando({
+                                  ...registrando,
+                                  resultado: r.valor,
+                                  proximoEm: somarDias(hojeISO(), r.dias).slice(0, 10),
+                                })
+                              }
+                            >
+                              {r.texto}
+                            </button>
+                          ))}
+                        </div>
+                        <Linha>
+                          <Campo rotulo="Falar de novo em" tamanho="medio">
+                            <input
+                              type="date"
+                              value={registrando.proximoEm}
+                              onChange={(e) => setRegistrando({ ...registrando, proximoEm: e.target.value })}
+                            />
+                          </Campo>
+                          <Texto
+                            rotulo="Anotação (opcional)"
+                            valor={registrando.anotacao}
+                            aoMudar={(v) => setRegistrando({ ...registrando, anotacao: v })}
+                          />
+                        </Linha>
+                        <div className="acoes">
+                          <button
+                            className="botao principal pequeno"
+                            onClick={async () => {
+                              await registrarContato({
+                                contaId: conta.id,
+                                pessoaId: t.pessoa.id,
+                                orcamentoId: t.orcamento?.id,
+                                equipamentoId: t.equipamento?.id,
+                                resultado: registrando.resultado,
+                                anotacao: registrando.anotacao,
+                                proximoEm: new Date(registrando.proximoEm + 'T12:00:00').toISOString(),
+                              })
+                              setRegistrando(null)
+                            }}
+                          >
+                            Salvar
+                          </button>
+                          <button className="botao pequeno" onClick={() => setRegistrando(null)}>
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
                     </div>
                   ))}
                 </div>
@@ -301,16 +378,27 @@ export default function Orcamentos() {
                           {marca ? (
                             <div className="cartao-marca">
                               <span>{marca.texto}</span>
-                              {marca.tipo === 'cobrar' ? (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    registrarCobranca(o.id, params)
-                                  }}
-                                  title="Registrar que você chamou, e reagendar"
-                                >
-                                  Chamei
-                                </button>
+                              {marca.tipo === 'vencido' ? (
+                                <span className="cartao-acoes">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      renovarValidade(o, o.validadeDias)
+                                    }}
+                                    title="Empurrar a validade mantendo o preço"
+                                  >
+                                    Renovar
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      marcarPerdido(o.id, 'Validade vencida')
+                                    }}
+                                    title="Dar como perdido"
+                                  >
+                                    Perdido
+                                  </button>
+                                </span>
                               ) : null}
                             </div>
                           ) : null}

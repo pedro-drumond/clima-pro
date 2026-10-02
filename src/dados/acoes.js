@@ -17,6 +17,7 @@ import {
   paraEquipamento,
   paraItem,
   paraOrcamento,
+  paraContato,
 } from './armazenamento.js'
 import { proximoPrazoDeCobranca } from './agenda.js'
 
@@ -235,6 +236,50 @@ export async function moverOrcamento(orcamento, novaSituacao, params) {
 
   await mudarOrcamento(orcamento.id, app, linha)
   if (novaSituacao === 'fechado' && orcamento.pessoaId) await marcarComoCliente(orcamento.pessoaId)
+}
+
+// Registrar contato é o que tira um item do atrasado: fica gravado o que
+// aconteceu e, principalmente, a data do próximo passo.
+export const RESULTADOS = [
+  { valor: 'nao-atendeu', texto: 'Não atendeu', dias: 2 },
+  { valor: 'vai-pensar', texto: 'Falou, vai pensar', dias: 7 },
+  { valor: 'retornar', texto: 'Pediu para retornar', dias: 3 },
+  { valor: 'vai-fechar', texto: 'Vai fechar', dias: 2 },
+]
+
+export function diasSugeridos(resultado) {
+  return RESULTADOS.find((r) => r.valor === resultado)?.dias ?? 7
+}
+
+export async function registrarContato({ contaId, pessoaId, orcamentoId, equipamentoId, resultado, anotacao, proximoEm }) {
+  const linha = paraContato({ contaId, pessoaId, orcamentoId, equipamentoId, resultado, anotacao, proximoEm })
+  const { data, error } = await supabase.from('contatos').insert(linha).select('*').single()
+  if (error) {
+    avisarErro(error, 'registrar contato')
+    return
+  }
+
+  // o próximo passo é o que faz o atraso sumir
+  if (orcamentoId) {
+    await mudarOrcamento(
+      orcamentoId,
+      { proximoContato: proximoEm, cobrancas: (banco().orcamentos.find((o) => o.id === orcamentoId)?.cobrancas || 0) + 1 },
+      { proximo_contato: proximoEm, cobrancas: (banco().orcamentos.find((o) => o.id === orcamentoId)?.cobrancas || 0) + 1 }
+    )
+  } else if (equipamentoId) {
+    await supabase.from('equipamentos').update({ ultima_limpeza: hojeISO() }).eq('id', equipamentoId)
+  } else if (pessoaId) {
+    await supabase.from('pessoas').update({ proximo_contato: proximoEm }).eq('id', pessoaId)
+  }
+
+  await recarregar()
+  return data
+}
+
+// Empurra a validade sem mexer no preço nem na data de envio original.
+export function renovarValidade(orcamento, dias) {
+  const nova = somarDias(hojeISO(), dias || orcamento.validadeDias || 7)
+  return mudarOrcamento(orcamento.id, { validadeAte: nova }, { validade_ate: nova })
 }
 
 export function registrarCobranca(orcamentoId, params) {

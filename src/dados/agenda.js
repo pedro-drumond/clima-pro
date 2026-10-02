@@ -156,6 +156,7 @@ export function marcaDoCartao(orcamento, params) {
 }
 
 export function validadeDoOrcamento(orcamento) {
+  if (orcamento.validadeAte) return orcamento.validadeAte
   const inicio = orcamento.enviadoEm || orcamento.criadoEm
   if (!inicio) return null
   return somarDias(inicio, orcamento.validadeDias || 7)

@@ -12,6 +12,7 @@ function vazio() {
     equipamentos: [],
     itens: [],
     orcamentos: [],
+    contatos: [],
     parametrosGerais: PARAMETROS_PADRAO,
   }
 }
@@ -169,6 +170,28 @@ export const paraItem = (i) => ({
   custo: Number(i.custo) || 0,
 })
 
+const doContato = (r) => ({
+  id: r.id,
+  contaId: r.conta_id,
+  pessoaId: r.pessoa_id,
+  orcamentoId: r.orcamento_id,
+  equipamentoId: r.equipamento_id,
+  resultado: r.resultado,
+  anotacao: r.anotacao || '',
+  proximoEm: r.proximo_em,
+  criadoEm: r.criado_em,
+})
+
+export const paraContato = (c) => ({
+  conta_id: c.contaId,
+  pessoa_id: c.pessoaId || null,
+  orcamento_id: c.orcamentoId || null,
+  equipamento_id: c.equipamentoId || null,
+  resultado: c.resultado,
+  anotacao: c.anotacao || '',
+  proximo_em: c.proximoEm || null,
+})
+
 const doOrcamento = (r) => ({
   id: r.id,
   contaId: r.conta_id,
@@ -196,6 +219,7 @@ const doOrcamento = (r) => ({
   enviadoEm: r.enviado_em,
   decididoEm: r.decidido_em,
   instaladoEm: r.instalado_em,
+  validadeAte: r.validade_ate,
   itens: (r.orcamento_itens || [])
     .slice()
     .sort((a, b) => a.ordem - b.ordem)
@@ -233,6 +257,7 @@ export const paraOrcamento = (o) => ({
   enviado_em: o.enviadoEm || null,
   decidido_em: o.decididoEm || null,
   instalado_em: o.instaladoEm || null,
+  validade_ate: o.validadeAte || null,
 })
 
 /* ----- sessão ----- */
@@ -341,18 +366,20 @@ export async function carregarTudo() {
       itens: [],
     }))
   } else {
-    const [conta, pessoas, equipamentos, itens, orcamentos] = await Promise.all([
+    const [conta, pessoas, equipamentos, itens, orcamentos, contatos] = await Promise.all([
       supabase.from('contas').select('*').eq('id', perfil.contaId).maybeSingle(),
       supabase.from('pessoas').select('*').order('nome'),
       supabase.from('equipamentos').select('*'),
       supabase.from('itens').select('*').order('nome'),
       supabase.from('orcamentos').select('*, orcamento_itens(*)').order('criado_em', { ascending: false }),
+      supabase.from('contatos').select('*').order('criado_em', { ascending: false }),
     ])
     if (conta.data) novo.contas = [daConta(conta.data)]
     novo.pessoas = (pessoas.data || []).map(daPessoa)
     novo.equipamentos = (equipamentos.data || []).map(doEquipamento)
     novo.itens = (itens.data || []).map(doItem)
     novo.orcamentos = (orcamentos.data || []).map(doOrcamento)
+    novo.contatos = (contatos.data || []).map(doContato)
     novo.usuarios = perfil ? [perfil] : []
   }
 

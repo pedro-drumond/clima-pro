@@ -22,6 +22,7 @@ import {
   apagarOrcamento,
   marcarEnviadoSePreciso,
   reabrirOrcamento,
+  RESULTADOS,
   marcarFechado,
   marcarPerdido,
   marcarInstalado,
@@ -548,6 +549,24 @@ export default function Orcamento() {
             Apagar
           </button>
         </div>
+
+        {(b.contatos || []).filter((c) => c.orcamentoId === orcamento.id).length > 0 ? (
+          <div className="historico">
+            <h3>Histórico de contato</h3>
+            {(b.contatos || [])
+              .filter((c) => c.orcamentoId === orcamento.id)
+              .map((c) => (
+                <div className="linha-historico" key={c.id}>
+                  <span className="historico-data">{dataCurta(c.criadoEm)}</span>
+                  <span>
+                    {RESULTADOS.find((r) => r.valor === c.resultado)?.texto || c.resultado}
+                    {c.anotacao ? ' · ' + c.anotacao : ''}
+                  </span>
+                  {c.proximoEm ? <span className="fraco">próximo {dataCurta(c.proximoEm)}</span> : null}
+                </div>
+              ))}
+          </div>
+        ) : null}
 
         {orcamento.proximoContato ? (
           <p className="fraco" style={{ marginTop: 12 }}>

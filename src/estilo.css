@@ -1402,3 +1402,83 @@ th.n {
   color: var(--texto-fraco);
   margin-top: 1px;
 }
+
+/* ----- registrar contato ----- */
+
+.tarefa {
+  border-top: 1px solid var(--linha-suave);
+}
+
+.tarefa:first-of-type {
+  border-top: none;
+}
+
+.tarefa .linha-tarefa {
+  border-top: none;
+}
+
+.caixa-contato {
+  background: var(--fundo);
+  border-radius: var(--raio);
+  padding: var(--esp-2) var(--esp-3) var(--esp-3);
+  margin: 0 0 12px;
+}
+
+.escolha-resultado {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: var(--esp-2);
+}
+
+.escolha-resultado button {
+  border: 1px solid var(--linha);
+  background: var(--branco);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--texto);
+  cursor: pointer;
+}
+
+.escolha-resultado button:hover {
+  border-color: var(--marca);
+}
+
+.escolha-resultado button.ativo {
+  background: var(--marca);
+  border-color: var(--marca);
+  color: #fff;
+}
+
+.cartao-acoes {
+  display: flex;
+  gap: 4px;
+}
+
+.historico {
+  border-top: 1px solid var(--linha-suave);
+  margin-top: var(--esp-3);
+  padding-top: var(--esp-2);
+}
+
+.historico h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texto-fraco);
+  margin: 0 0 10px;
+}
+
+.linha-historico {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 13.5px;
+}
+
+.historico-data {
+  color: var(--texto-fraco);
+}
