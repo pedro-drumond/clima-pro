@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clima Pro — orçamento para instalador de ar-condicionado</title>
+    <meta
+      name="description"
+      content="Sistema de orçamento e acompanhamento para quem instala ar-condicionado. O preço sai calculado, a proposta vai pelo WhatsApp e o cliente aprova pelo celular."
+    />
+    <meta name="theme-color" content="#0f2b46" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='1.5 2.8 21 12'%3E%3Cg fill='none' stroke='%230f2b46' stroke-width='1.7' stroke-linecap='round'%3E%3Crect x='2.5' y='3.8' width='19' height='10' rx='2.6'/%3E%3Cpath d='M8.2 7.5h1.9M13.9 7.5h1.9'/%3E%3Cpath d='M8.7 10.1q3.3 2.2 6.6 0'/%3E%3C/g%3E%3C/svg%3E" />
+    <style>
+      :root {
+        --marca: #0f2b46;
+        --marca-clara: #1b4b78;
+        --texto: #14202b;
+        --texto-fraco: #5c6b7a;
+        --linha: #b6c8da;
+        --linha-suave: #dce6ef;
+        --fundo: #f2f7fb;
+        --branco: #fff;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: var(--branco);
+        color: var(--texto);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+      .dentro { max-width: 940px; margin: 0 auto; padding: 0 20px; }
+
+      /* topo */
+      .topo { background: var(--marca); color: #fff; }
+      .topo .dentro {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+      .marca { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; }
+      .marca svg { color: #7fc5e8; }
+      .marca i { font-style: italic; }
+      .entrar {
+        color: #fff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 999px;
+        padding: 7px 16px;
+      }
+      .entrar:hover { background: rgba(255, 255, 255, 0.1); }
+
+      /* abertura */
+      .abertura { background: var(--marca); color: #fff; }
+      .abertura .dentro { padding-top: 52px; padding-bottom: 64px; max-width: 820px; }
+      .abertura h1 {
+        font-size: 36px;
+        line-height: 1.22;
+        margin: 0 0 18px;
+        letter-spacing: -0.01em;
+      }
+      .abertura p { font-size: 18px; line-height: 1.6; color: #c5d6e6; margin: 0 0 28px; max-width: 620px; }
+      .botao {
+        display: inline-block;
+        background: #fff;
+        color: var(--marca);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 15px;
+        border-radius: 999px;
+        padding: 13px 26px;
+      }
+      .botao:hover { background: #e8f1f9; }
+      .abertura small { display: block; margin-top: 14px; color: #93a9bf; font-size: 13.5px; }
+
+      /* o que faz */
+      .pontos .dentro { padding-top: 60px; padding-bottom: 20px; }
+      .pontos h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--texto-fraco); margin: 0 0 28px; }
+      .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 40px; }
+      .ponto h3 { font-size: 18px; margin: 0 0 8px; line-height: 1.35; }
+      .ponto p { margin: 0; color: var(--texto-fraco); font-size: 15px; }
+      .ponto .risco { width: 34px; height: 3px; background: var(--marca-clara); border-radius: 2px; margin-bottom: 14px; }
+
+      /* para quem */
+      .quem { background: var(--fundo); margin-top: 60px; border-top: 1px solid var(--linha-suave); }
+      .quem .dentro { padding-top: 48px; padding-bottom: 48px; max-width: 760px; }
+      .quem h2 { font-size: 24px; margin: 0 0 14px; }
+      .quem p { margin: 0 0 12px; color: var(--texto-fraco); font-size: 16px; }
+      .quem p:last-child { margin-bottom: 0; }
+
+      /* contato */
+      .contato .dentro { padding-top: 56px; padding-bottom: 56px; text-align: center; }
+      .contato h2 { font-size: 24px; margin: 0 0 10px; }
+      .contato p { color: var(--texto-fraco); margin: 0 0 22px; }
+      .contato a.email { font-size: 19px; font-weight: 700; color: var(--marca-clara); text-decoration: none; }
+      .contato a.email:hover { text-decoration: underline; }
+
+      /* rodapé */
+      .rodape { border-top: 1px solid var(--linha-suave); }
+      .rodape .dentro {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding-top: 20px;
+        padding-bottom: 28px;
+        color: var(--texto-fraco);
+        font-size: 13.5px;
+      }
+      .rodape a { color: var(--texto-fraco); }
+
+      @media (max-width: 720px) {
+        .abertura h1 { font-size: 28px; }
+        .abertura p { font-size: 16.5px; }
+        .grade { grid-template-columns: 1fr; gap: 26px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topo">
+      <div class="dentro">
+        <span class="marca">
+          <svg width="30" height="17" viewBox="1.5 2.8 21 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2.5" y="3.8" width="19" height="10" rx="2.6" />
+            <path d="M8.2 7.5h1.9M13.9 7.5h1.9" />
+            <path d="M8.7 10.1q3.3 2.2 6.6 0" />
+          </svg>
+          Clima <i>Pro</i>
+        </span>
+        <a class="entrar" href="https://app.climapro.com.br">Entrar</a>
+      </div>
+    </header>
+
+    <section class="abertura">
+      <div class="dentro">
+        <h1>O orçamento sai pronto, e o cliente aprova pelo celular.</h1>
+        <p>
+          Clima Pro é o sistema de orçamento e acompanhamento feito para quem instala ar-condicionado. Você faz a
+          proposta em minutos, manda pelo WhatsApp e acompanha quem respondeu.
+        </p>
+        <a class="botao" href="mailto:contato@climapro.com.br?subject=Quero%20testar%20o%20Clima%20Pro">Quero testar</a>
+        <small>Estamos abrindo para os primeiros instaladores.</small>
+      </div>
+    </section>
+
+    <section class="pontos">
+      <div class="dentro">
+        <h2>O que ele faz</h2>
+        <div class="grade">
+          <div class="ponto">
+            <div class="risco"></div>
+            <h3>O preço sai calculado</h3>
+            <p>
+              Você informa o custo, quanto quer ganhar e quanto paga de imposto. O sistema faz a conta e mostra o preço
+              de venda, já com a sua margem dentro de verdade.
+            </p>
+          </div>
+          <div class="ponto">
+            <div class="risco"></div>
+            <h3>A proposta chega pronta</h3>
+            <p>
+              Com a sua logo e os seus dados, em quatro modelos diferentes. Vai por WhatsApp como link ou como PDF, e o
+              cliente aprova no celular, com data e hora registradas.
+            </p>
+          </div>
+          <div class="ponto">
+            <div class="risco"></div>
+            <h3>Nenhum orçamento esquecido</h3>
+            <p>
+              O sistema diz quem você precisa chamar hoje: quem recebeu e não respondeu, quem está na época da limpeza e
+              quem sumiu faz tempo.
+            </p>
+          </div>
+          <div class="ponto">
+            <div class="risco"></div>
+            <h3>Sua biblioteca de serviços</h3>
+            <p>
+              Cadastre uma vez os serviços, materiais e equipamentos que você usa sempre. No próximo orçamento é só
+              escolher da lista.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="quem">
+      <div class="dentro">
+        <h2>Para quem é</h2>
+        <p>
+          Para o instalador de ar-condicionado que atende sozinho ou com uma equipe pequena, no Brasil inteiro. Quem faz
+          orçamento no caderno, no WhatsApp ou numa planilha, e perde serviço porque esqueceu de retornar.
+        </p>
+        <p>
+          Não é um sistema de gestão cheio de telas. É o orçamento, a proposta e o acompanhamento do cliente — as três
+          coisas que decidem se o serviço fecha.
+        </p>
+      </div>
+    </section>
+
+    <section class="contato">
+      <div class="dentro">
+        <h2>Quer testar?</h2>
+        <p>Escreve para a gente que a gente libera o seu acesso.</p>
+        <a class="email" href="mailto:contato@climapro.com.br">contato@climapro.com.br</a>
+      </div>
+    </section>
+
+    <footer class="rodape">
+      <div class="dentro">
+        <span>Clima Pro</span>
+        <span><a href="mailto:contato@climapro.com.br">contato@climapro.com.br</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

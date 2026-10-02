@@ -1,0 +1,10 @@
+{
+  // O site do Clima Pro: uma página só, sem build. Fica num Worker separado
+  // do sistema, para o endereço climapro.com.br mostrar o site e o
+  // app.climapro.com.br abrir o sistema.
+  "name": "climapro-site",
+  "compatibility_date": "2026-10-02",
+  "assets": {
+    "directory": "./publico"
+  }
+}
