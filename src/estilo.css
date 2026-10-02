@@ -1482,3 +1482,55 @@ th.n {
 .historico-data {
   color: var(--texto-fraco);
 }
+
+/* ----- ficha do orçamento: duas colunas -----
+   Cliente é um campo só e não precisa da largura toda; itens e condições
+   precisam. Assim a ficha cabe em menos rolagem. */
+
+.linha-orcamento {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--esp-3);
+  align-items: start;
+  margin-bottom: var(--esp-3);
+}
+
+.linha-orcamento.inverso {
+  grid-template-columns: 1fr 2fr;
+}
+
+.linha-orcamento .bloco {
+  margin-bottom: 0;
+}
+
+/* o modelo do orçamento vira etiqueta ao lado do número */
+.etiqueta-modelo {
+  display: inline-block;
+  margin-left: 12px;
+  vertical-align: middle;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--marca);
+  background: var(--fundo);
+  border: 1px solid var(--linha-suave);
+  border-radius: 999px;
+  padding: 3px 11px;
+}
+
+/* os botões de envio pediam respiro */
+.bloco .acoes {
+  gap: 14px;
+  row-gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .linha-orcamento,
+  .linha-orcamento.inverso {
+    grid-template-columns: 1fr;
+  }
+  .linha-orcamento .bloco {
+    margin-bottom: var(--esp-3);
+  }
+}

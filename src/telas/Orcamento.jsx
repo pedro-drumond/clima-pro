@@ -38,6 +38,7 @@ export default function Orcamento() {
   const orcamento = b.orcamentos.find((o) => o.id === id)
   const [novoNome, setNovoNome] = useState('')
   const [novoZap, setNovoZap] = useState('')
+  const [novoEmail, setNovoEmail] = useState('')
   const [cadastrando, setCadastrando] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
   const [avulso, setAvulso] = useState({ nome: '', qtd: 1, preco: '', unidade: 'unidade', salvar: true })
@@ -144,12 +145,13 @@ export default function Orcamento() {
   async function criarPessoaRapida() {
     if (!novoNome.trim()) return
     const novoId = await salvarPessoa(
-      { nome: novoNome.trim(), whatsapp: novoZap, tipo: 'pf', documento: '', email: '', endereco: '' },
+      { nome: novoNome.trim(), whatsapp: novoZap, email: novoEmail, tipo: 'pf', documento: '', endereco: '' },
       conta.id
     )
     if (novoId) mudar({ pessoaId: novoId })
     setNovoNome('')
     setNovoZap('')
+    setNovoEmail('')
     setCadastrando(false)
   }
 
@@ -168,18 +170,15 @@ export default function Orcamento() {
           <Link to="/orcamentos" className="botao texto voltar">
             Voltar
           </Link>
-          <h1>Orçamento nº {orcamento.numero}</h1>
+          <h1>
+            Orçamento nº {orcamento.numero}
+            <span className="etiqueta-modelo">{modelo?.titulo}</span>
+          </h1>
         </div>
         <Marcador situacao={orcamento.situacao} />
       </div>
 
-      <div className="bloco">
-        <div className="modelo-atual">
-          <strong>{modelo?.titulo}</strong>
-          <span>{modelo?.linha}</span>
-        </div>
-      </div>
-
+      <div className="linha-orcamento">
       <div className="bloco">
         <h2>Cliente</h2>
         <Linha>
@@ -205,6 +204,7 @@ export default function Orcamento() {
           <Linha>
             <Texto rotulo="Nome" tamanho="medio" valor={novoNome} aoMudar={setNovoNome} />
             <Texto rotulo="WhatsApp" tamanho="medio" valor={novoZap} aoMudar={setNovoZap} />
+            <Texto rotulo="E-mail" tamanho="medio" valor={novoEmail} aoMudar={setNovoEmail} />
             <Campo rotulo={"\u00a0"}>
               <button className="botao principal" onClick={criarPessoaRapida}>
                 Cadastrar
@@ -358,6 +358,9 @@ export default function Orcamento() {
         ) : null}
       </div>
 
+      </div>
+
+      <div className="linha-orcamento inverso">
       <div className="bloco">
         <h2>Preço</h2>
         {porMargem ? (
@@ -467,6 +470,8 @@ export default function Orcamento() {
           />
           Mostrar valor item a item para o cliente
         </label>
+      </div>
+
       </div>
 
       <div className="bloco">
