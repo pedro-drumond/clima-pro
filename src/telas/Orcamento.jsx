@@ -325,7 +325,7 @@ export default function Orcamento() {
           </p>
         ) : null}
 
-        <div className="acoes">
+        <div className="acoes acoes-envio">
           <a
             className="botao zap"
             href={linkWhatsapp(pessoa?.whatsapp, mensagemEnvio)}
@@ -523,8 +523,13 @@ export default function Orcamento() {
         {editavel ? (
           <div className="item-avulso">
             <h3>Ou escrever um item novo</h3>
-            <Texto rotulo="Descrição" valor={avulso.nome} aoMudar={(v) => setAvulso({ ...avulso, nome: v })} />
             <Linha>
+              <Texto
+                rotulo="Descrição"
+                tamanho="cresce"
+                valor={avulso.nome}
+                aoMudar={(v) => setAvulso({ ...avulso, nome: v })}
+              />
               <Escolha
                 rotulo="Unidade"
                 tamanho="medio"
@@ -543,6 +548,11 @@ export default function Orcamento() {
                 valor={avulso.preco}
                 aoMudar={(v) => setAvulso({ ...avulso, preco: v })}
               />
+              <Campo rotulo={" "}>
+                <button className="botao mais" onClick={adicionarAvulso} title="Adicionar item">
+                  +
+                </button>
+              </Campo>
             </Linha>
             <label className="marcacao">
               <input
@@ -552,23 +562,34 @@ export default function Orcamento() {
               />
               Salvar este item na biblioteca
             </label>
-            <button className="botao" onClick={adicionarAvulso}>
-              Adicionar item
-            </button>
           </div>
         ) : null}
 
         <div className="divisor-bloco" />
 
         <h2>Condições</h2>
-        <Numero
-          rotulo="Validade (dias)"
-          valor={orcamento.validadeDias}
-          aoMudar={(v) => mudar({ validadeDias: v })}
-          disabled={!editavel}
-        />
-        <Area rotulo="Pagamento" valor={orcamento.condicoes} aoMudar={(v) => mudar({ condicoes: v })} />
-        <Area rotulo="Observações" valor={orcamento.observacoes} aoMudar={(v) => mudar({ observacoes: v })} />
+        <Linha>
+          <Numero
+            rotulo="Validade (dias)"
+            valor={orcamento.validadeDias}
+            aoMudar={(v) => mudar({ validadeDias: v })}
+            disabled={!editavel}
+          />
+          <Area
+            rotulo="Pagamento"
+            linhas={2}
+            tamanho="cresce"
+            valor={orcamento.condicoes}
+            aoMudar={(v) => mudar({ condicoes: v })}
+          />
+          <Area
+            rotulo="Observações"
+            linhas={2}
+            tamanho="cresce"
+            valor={orcamento.observacoes}
+            aoMudar={(v) => mudar({ observacoes: v })}
+          />
+        </Linha>
         <label className="marcacao">
           <input
             type="checkbox"
