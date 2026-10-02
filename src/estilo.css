@@ -2523,3 +2523,109 @@ th.n {
     grid-template-columns: 1fr;
   }
 }
+
+/* ----- caixas de ajuste: números alinhados e centrados -----
+   Rótulo longo quebrava em duas linhas e empurrava só aquele campo para
+   baixo, deixando a fileira torta. Aqui a unidade é dita uma vez no alto, os
+   rótulos ficam curtos, e a grade inteira fica centrada na caixa em vez de
+   encostada à esquerda. */
+
+.unidade-do-bloco {
+  margin: -14px 0 var(--esp-3);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texto-fraco);
+}
+
+.grade-numeros {
+  display: grid;
+  justify-content: center;
+  gap: 18px 46px;
+}
+
+.grade-numeros.de-dois {
+  grid-template-columns: repeat(2, max-content);
+}
+
+.grade-numeros.de-tres {
+  grid-template-columns: repeat(3, max-content);
+}
+
+.grade-numeros .campo {
+  margin-bottom: 0;
+}
+
+.grade-numeros .campo input {
+  width: 92px;
+  max-width: none;
+}
+
+/* a caixa mais baixa centra o conteúdo em vez de deixar um vão embaixo */
+.bloco.centrado {
+  display: flex;
+  flex-direction: column;
+}
+
+.bloco.centrado .grade-numeros {
+  margin: auto 0;
+}
+
+/* rótulo ocupa sempre a mesma altura, com ou sem quebra, para os campos
+   começarem todos na mesma linha */
+.trio .campo label,
+.par .campo label,
+.grade-numeros .campo label {
+  min-height: 30px;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* logo, escolher arquivo e remover na mesma linha */
+.campo-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.campo-logo img {
+  max-height: 38px;
+  max-width: 120px;
+}
+
+.campo-logo input[type='file'] {
+  width: auto;
+  flex: 1 1 200px;
+}
+
+/* mensagens do WhatsApp: é texto de apoio, não precisa do tamanho da tela */
+.par.mensagens .campo textarea {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* o desenho do aparelho mora junto com os modelos da proposta */
+.barra-aparelho {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--esp-3);
+  margin-bottom: var(--esp-3);
+  padding-bottom: var(--esp-3);
+  border-bottom: 1px solid var(--linha-suave);
+}
+
+.barra-aparelho .campo {
+  margin-bottom: 0;
+}
+
+/* a explicação no título cabe dentro de um h2 */
+h2 .com-dica {
+  font-weight: inherit;
+}
+
+h2 .dica {
+  left: 0;
+  right: auto;
+  font-weight: 400;
+}

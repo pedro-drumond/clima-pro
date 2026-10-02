@@ -1,6 +1,5 @@
 import React from 'react'
-import { useDados, Texto, Numero, Area, Escolha, Campo, Linha } from '../componentes/base.jsx'
-import { APARELHOS, Aparelho } from '../componentes/aparelhos.jsx'
+import { useDados, Texto, Numero, Area, Escolha, Campo } from '../componentes/base.jsx'
 import { parametros } from '../dados/armazenamento.js'
 import { salvarConta, salvarParametrosDaConta } from '../dados/acoes.js'
 
@@ -48,71 +47,73 @@ export default function Empresa() {
         <div className="par">
           <Texto rotulo="Endereço" valor={conta.endereco} aoMudar={(v) => mudar({ endereco: v })} />
           <Campo rotulo="Logo">
-            {conta.logo ? (
-              <div className="logo-atual">
-                <img src={conta.logo} alt="" />
+            <div className="campo-logo">
+              {conta.logo ? <img src={conta.logo} alt="" /> : null}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const f = e.target.files && e.target.files[0]
+                  if (!f) return
+                  const leitor = new FileReader()
+                  leitor.onload = () => mudar({ logo: String(leitor.result) })
+                  leitor.readAsDataURL(f)
+                }}
+              />
+              {conta.logo ? (
                 <button className="botao perigo" onClick={() => mudar({ logo: '' })}>
                   Remover
                 </button>
-              </div>
-            ) : null}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const f = e.target.files && e.target.files[0]
-                if (!f) return
-                const leitor = new FileReader()
-                leitor.onload = () => mudar({ logo: String(leitor.result) })
-                leitor.readAsDataURL(f)
-              }}
-            />
+              ) : null}
+            </div>
           </Campo>
         </div>
       </div>
 
       <div className="blocos-duplos">
-        <div className="bloco">
+        <div className="bloco centrado">
           <h2>Acompanhamento dos orçamentos</h2>
-          <div className="par">
+          <p className="unidade-do-bloco">em dias</p>
+          <div className="grade-numeros de-dois">
             <Numero
-              rotulo="1ª cobrança (dias)"
+              rotulo="1ª cobrança"
               valor={p.cobrancaDias[0]}
               aoMudar={(v) => mudarParam({ cobrancaDias: [v, p.cobrancaDias[1], p.cobrancaDias[2]] })}
             />
             <Numero
-              rotulo="2ª (dias)"
+              rotulo="2ª cobrança"
               valor={p.cobrancaDias[1]}
               aoMudar={(v) => mudarParam({ cobrancaDias: [p.cobrancaDias[0], v, p.cobrancaDias[2]] })}
             />
             <Numero
-              rotulo="3ª (dias)"
+              rotulo="3ª cobrança"
               valor={p.cobrancaDias[2]}
               aoMudar={(v) => mudarParam({ cobrancaDias: [p.cobrancaDias[0], p.cobrancaDias[1], v] })}
             />
             <Numero
-              rotulo="Sugerir perda (dias)"
+              rotulo="Sugerir perda"
               valor={p.sugerirPerdaDias}
               aoMudar={(v) => mudarParam({ sugerirPerdaDias: v })}
             />
           </div>
         </div>
 
-        <div className="bloco">
+        <div className="bloco centrado">
           <h2>Quando chamar para limpeza</h2>
-          <div className="trio">
+          <p className="unidade-do-bloco">em meses</p>
+          <div className="grade-numeros de-tres">
             <Numero
-              rotulo="Residencial (meses)"
+              rotulo="Residencial"
               valor={p.limpezaResidencialMeses}
               aoMudar={(v) => mudarParam({ limpezaResidencialMeses: v })}
             />
             <Numero
-              rotulo="Comercial (meses)"
+              rotulo="Comercial"
               valor={p.limpezaComercialMeses}
               aoMudar={(v) => mudarParam({ limpezaComercialMeses: v })}
             />
             <Numero
-              rotulo="Cliente parado (meses)"
+              rotulo="Cliente parado"
               valor={p.clienteParadoMeses}
               aoMudar={(v) => mudarParam({ clienteParadoMeses: v })}
             />
@@ -120,31 +121,17 @@ export default function Empresa() {
         </div>
       </div>
 
-      <div className="bloco estreito">
-        <h2>Aparência da proposta</h2>
-        <Linha>
-          <Escolha
-            rotulo="Desenho do aparelho"
-            tamanho="medio"
-            valor={conta.icone || ''}
-            aoMudar={(v) => mudar({ icone: v })}
-            opcoes={APARELHOS.map((a) => ({ valor: a.valor, texto: a.texto }))}
-          />
-          <Campo rotulo="Como fica">
-            <span className="amostra-aparelho">
-              <Aparelho tipo={conta.icone} tamanho={42} />
-            </span>
-          </Campo>
-        </Linha>
-        <p className="fraco">
-          O desenho aparece na proposta que o cliente abre e no PDF. O modelo da proposta você escolhe em Orçamentos, no
-          botão Modelos, onde dá para ver como cada um fica.
-        </p>
-      </div>
-
       <div className="bloco">
-        <h2>Mensagens prontas do WhatsApp</h2>
-        <div className="par">
+        <h2>
+          <span className="com-dica">
+            Mensagens prontas do WhatsApp
+            <span className="dica">
+              O que está entre chaves o sistema troca pelo valor de verdade na hora de enviar: {'{pessoa}'},{' '}
+              {'{empresa}'}, {'{numero}'}, {'{total}'} e {'{link}'}.
+            </span>
+          </span>
+        </h2>
+        <div className="par mensagens">
           <Area
             rotulo="Enviar orçamento"
             linhas={3}
@@ -170,9 +157,6 @@ export default function Empresa() {
             aoMudar={(v) => mudarTexto('clienteParado', v)}
           />
         </div>
-        <p className="fraco">
-          Entre chaves o sistema troca pelo valor: {'{pessoa}'}, {'{empresa}'}, {'{numero}'}, {'{total}'}, {'{link}'}.
-        </p>
       </div>
     </>
   )
