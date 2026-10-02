@@ -411,7 +411,7 @@ p {
 .linha-campos {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px var(--esp-3);
+  gap: 4px var(--esp-2);
 }
 
 .linha-campos .campo {
@@ -1633,8 +1633,13 @@ th.n {
 /* campo que ocupa a sobra da linha: deixa descrição e os textos de condições
    dividirem o espaço em vez de cada um pedir uma linha inteira */
 .linha-campos .campo.cresce {
-  flex: 1 1 240px;
-  min-width: 200px;
+  flex: 1 1 220px;
+  min-width: 165px;
+}
+
+/* campo curto não estica nem encolhe: fica do tamanho do que ele guarda */
+.linha-campos .campo.curto {
+  flex: 0 0 auto;
 }
 
 /* botão de somar o item, no fim da linha do preço */

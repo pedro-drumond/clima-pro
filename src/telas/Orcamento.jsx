@@ -543,9 +543,9 @@ export default function Orcamento() {
                   { valor: 'peça', texto: 'Peça' },
                 ]}
               />
-              <Numero rotulo="Quantidade" valor={avulso.qtd} aoMudar={(v) => setAvulso({ ...avulso, qtd: v })} />
+              <Numero rotulo="Qtd." valor={avulso.qtd} aoMudar={(v) => setAvulso({ ...avulso, qtd: v })} />
               <Texto
-                rotulo={porMargem ? 'Custo (R$)' : 'Preço de venda (R$)'}
+                rotulo={porMargem ? 'Custo (R$)' : 'Preço (R$)'}
                 tamanho="curto"
                 type="number"
                 valor={avulso.preco}
