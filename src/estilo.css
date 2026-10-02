@@ -1484,10 +1484,11 @@ th.n {
 }
 
 /* ----- ficha do orçamento: duas colunas -----
-   Cliente é um campo só e não precisa da largura toda; itens e condições
-   precisam. Assim a ficha cabe em menos rolagem. */
+   Esquerda estreita, empilhando cliente, preço e envio; direita larga, com
+   itens e condições na mesma caixa. Assim as duas colunas crescem juntas e
+   não sobra espaço vazio de um lado. */
 
-.linha-orcamento {
+.ficha {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: var(--esp-3);
@@ -1495,12 +1496,20 @@ th.n {
   margin-bottom: var(--esp-3);
 }
 
-.linha-orcamento.inverso {
-  grid-template-columns: 1fr 2fr;
+.coluna-lado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
 }
 
-.linha-orcamento .bloco {
+.ficha .bloco {
   margin-bottom: 0;
+}
+
+/* separa itens de condições dentro da caixa grande */
+.divisor-bloco {
+  border-top: 1px solid var(--linha-suave);
+  margin: 28px 0 24px;
 }
 
 /* o modelo do orçamento vira etiqueta ao lado do número */
@@ -1526,11 +1535,7 @@ th.n {
 }
 
 @media (max-width: 900px) {
-  .linha-orcamento,
-  .linha-orcamento.inverso {
+  .ficha {
     grid-template-columns: 1fr;
-  }
-  .linha-orcamento .bloco {
-    margin-bottom: var(--esp-3);
   }
 }

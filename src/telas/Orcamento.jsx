@@ -178,7 +178,8 @@ export default function Orcamento() {
         <Marcador situacao={orcamento.situacao} />
       </div>
 
-      <div className="linha-orcamento">
+      <div className="ficha">
+      <div className="coluna-lado">
       <div className="bloco">
         <h2>Cliente</h2>
         <Linha>
@@ -219,6 +220,206 @@ export default function Orcamento() {
             <Link to={'/pessoas/' + pessoa?.id}>abrir ficha</Link>
           </p>
         ) : null}
+      </div>
+
+      <div className="bloco">
+        <h2>Preço</h2>
+        {porMargem ? (
+          <>
+            <Linha>
+              <Numero
+                rotulo="Imposto (%)"
+                valor={orcamento.impostoPct}
+                aoMudar={(v) => mudar({ impostoPct: v })}
+                disabled={!editavel}
+              />
+              <Numero
+                rotulo="Margem líquida (%)"
+                valor={orcamento.margemPct}
+                aoMudar={(v) => mudar({ margemPct: v })}
+                disabled={!editavel}
+              />
+            </Linha>
+            <table>
+              <tbody>
+                <tr>
+                  <td>Custo</td>
+                  <td className="n">{moeda(custo)}</td>
+                </tr>
+                <tr>
+                  <td>Imposto sobre a venda ({orcamento.impostoPct}%)</td>
+                  <td className="n">{moeda(totalItens * (orcamento.impostoPct / 100))}</td>
+                </tr>
+                <tr>
+                  <td>Margem ({orcamento.margemPct}%)</td>
+                  <td className="n">{moeda(totalItens * (orcamento.margemPct / 100))}</td>
+                </tr>
+              </tbody>
+            </table>
+          </>
+        ) : null}
+        <div className="seguro">
+          <label className="marcacao">
+            <input
+              type="checkbox"
+              checked={!!orcamento.seguro}
+              disabled={!editavel}
+              onChange={(e) =>
+                mudar({
+                  seguro: e.target.checked,
+                  seguroPremio: e.target.checked ? premioDoSeguro(orcamento.seguroValorEquip, params) : 0,
+                })
+              }
+            />
+            Incluir seguro do equipamento
+          </label>
+          {orcamento.seguro ? (
+            <Linha>
+              <Texto
+                rotulo="Valor do aparelho (R$)"
+                tamanho="curto"
+                type="number"
+                valor={orcamento.seguroValorEquip}
+                disabled={!editavel}
+                aoMudar={(v) =>
+                  mudar({ seguroValorEquip: Number(v) || 0, seguroPremio: premioDoSeguro(v, params) })
+                }
+              />
+              <Campo rotulo="Seguro por ano">
+                <span className="valor-calculado">{moeda(premio)}</span>
+              </Campo>
+            </Linha>
+          ) : null}
+        </div>
+
+        <table>
+          <tbody>
+            <tr>
+              <td>Serviços e materiais</td>
+              <td className="n">{moeda(totalItens)}</td>
+            </tr>
+            {orcamento.seguro ? (
+              <tr>
+                <td>Seguro do equipamento (1 ano)</td>
+                <td className="n">{moeda(premio)}</td>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
+
+        <div className="total-linha">
+          <span>Preço ao cliente</span>
+          <span className="numero-grande">{moeda(total)}</span>
+        </div>
+      </div>
+
+      <div className="bloco">
+        <h2>Envio e situação</h2>
+        {orcamento.aceite ? (
+          <p>
+            Aprovado por <strong>{orcamento.aceite.nome}</strong> em {dataCurta(orcamento.aceite.em)}
+            <br />
+            <span className="fraco">
+              Registro: {orcamento.aceite.ip} · {orcamento.aceite.aparelho}
+            </span>
+          </p>
+        ) : null}
+
+        <div className="acoes">
+          <a
+            className="botao zap"
+            href={linkWhatsapp(pessoa?.whatsapp, mensagemEnvio)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => marcarEnviadoSePreciso(orcamento, params)}
+          >
+            Enviar pelo WhatsApp
+          </a>
+          <button
+            className="botao"
+            onClick={() => {
+              marcarEnviadoSePreciso(orcamento, params)
+              const alvo = window.open('#/proposta/' + (orcamento.token || orcamento.id), '_blank')
+              // dá tempo de a proposta carregar antes de abrir a impressão
+              if (alvo) setTimeout(() => alvo.print(), 2500)
+            }}
+          >
+            Gerar PDF
+          </button>
+          <button
+            className="botao"
+            onClick={() => {
+              const endereco = window.location.origin + window.location.pathname + '#/proposta/' + (orcamento.token || orcamento.id)
+              navigator.clipboard?.writeText(endereco)
+              marcarEnviadoSePreciso(orcamento, params)
+              setLinkCopiado(true)
+              setTimeout(() => setLinkCopiado(false), 2500)
+            }}
+          >
+            {linkCopiado ? 'Link copiado' : 'Copiar link'}
+          </button>
+          {orcamento.situacao === 'enviado' ? (
+            <>
+              <button className="botao" onClick={() => marcarFechado(orcamento.id)}>
+                Fechou
+              </button>
+              <button
+                className="botao"
+                onClick={() => marcarPerdido(orcamento.id, prompt('Por que perdeu?') || '')}
+              >
+                Perdeu
+              </button>
+            </>
+          ) : null}
+          {orcamento.situacao === 'perdido' ? (
+            <button className="botao principal" onClick={() => reabrirOrcamento(orcamento)}>
+              Reabrir orçamento
+            </button>
+          ) : null}
+          {orcamento.situacao === 'fechado' ? (
+            <button className="botao principal" onClick={() => marcarInstalado(orcamento.id)}>
+              Marcar como entregue
+            </button>
+          ) : null}
+          <button
+            className="botao perigo"
+            onClick={() => {
+              if (confirm('Apagar este orçamento?')) {
+                apagarOrcamento(orcamento.id)
+                navegar('/orcamentos')
+              }
+            }}
+          >
+            Apagar
+          </button>
+        </div>
+
+        {(b.contatos || []).filter((c) => c.orcamentoId === orcamento.id).length > 0 ? (
+          <div className="historico">
+            <h3>Histórico de contato</h3>
+            {(b.contatos || [])
+              .filter((c) => c.orcamentoId === orcamento.id)
+              .map((c) => (
+                <div className="linha-historico" key={c.id}>
+                  <span className="historico-data">{dataCurta(c.criadoEm)}</span>
+                  <span>
+                    {RESULTADOS.find((r) => r.valor === c.resultado)?.texto || c.resultado}
+                    {c.anotacao ? ' · ' + c.anotacao : ''}
+                  </span>
+                  {c.proximoEm ? <span className="fraco">próximo {dataCurta(c.proximoEm)}</span> : null}
+                </div>
+              ))}
+          </div>
+        ) : null}
+
+        {orcamento.proximoContato ? (
+          <p className="fraco" style={{ marginTop: 12 }}>
+            Próxima cobrança em {dataCurta(orcamento.proximoContato)}
+            {orcamento.cobrancas ? ' · já cobrado ' + orcamento.cobrancas + 'x' : ''}
+          </p>
+        ) : null}
+      </div>
+
       </div>
 
       <div className="bloco">
@@ -356,103 +557,9 @@ export default function Orcamento() {
             </button>
           </div>
         ) : null}
-      </div>
 
-      </div>
+        <div className="divisor-bloco" />
 
-      <div className="linha-orcamento inverso">
-      <div className="bloco">
-        <h2>Preço</h2>
-        {porMargem ? (
-          <>
-            <Linha>
-              <Numero
-                rotulo="Imposto (%)"
-                valor={orcamento.impostoPct}
-                aoMudar={(v) => mudar({ impostoPct: v })}
-                disabled={!editavel}
-              />
-              <Numero
-                rotulo="Margem líquida (%)"
-                valor={orcamento.margemPct}
-                aoMudar={(v) => mudar({ margemPct: v })}
-                disabled={!editavel}
-              />
-            </Linha>
-            <table>
-              <tbody>
-                <tr>
-                  <td>Custo</td>
-                  <td className="n">{moeda(custo)}</td>
-                </tr>
-                <tr>
-                  <td>Imposto sobre a venda ({orcamento.impostoPct}%)</td>
-                  <td className="n">{moeda(totalItens * (orcamento.impostoPct / 100))}</td>
-                </tr>
-                <tr>
-                  <td>Margem ({orcamento.margemPct}%)</td>
-                  <td className="n">{moeda(totalItens * (orcamento.margemPct / 100))}</td>
-                </tr>
-              </tbody>
-            </table>
-          </>
-        ) : null}
-        <div className="seguro">
-          <label className="marcacao">
-            <input
-              type="checkbox"
-              checked={!!orcamento.seguro}
-              disabled={!editavel}
-              onChange={(e) =>
-                mudar({
-                  seguro: e.target.checked,
-                  seguroPremio: e.target.checked ? premioDoSeguro(orcamento.seguroValorEquip, params) : 0,
-                })
-              }
-            />
-            Incluir seguro do equipamento
-          </label>
-          {orcamento.seguro ? (
-            <Linha>
-              <Texto
-                rotulo="Valor do aparelho (R$)"
-                tamanho="curto"
-                type="number"
-                valor={orcamento.seguroValorEquip}
-                disabled={!editavel}
-                aoMudar={(v) =>
-                  mudar({ seguroValorEquip: Number(v) || 0, seguroPremio: premioDoSeguro(v, params) })
-                }
-              />
-              <Campo rotulo="Seguro por ano">
-                <span className="valor-calculado">{moeda(premio)}</span>
-              </Campo>
-            </Linha>
-          ) : null}
-        </div>
-
-        <table>
-          <tbody>
-            <tr>
-              <td>Serviços e materiais</td>
-              <td className="n">{moeda(totalItens)}</td>
-            </tr>
-            {orcamento.seguro ? (
-              <tr>
-                <td>Seguro do equipamento (1 ano)</td>
-                <td className="n">{moeda(premio)}</td>
-              </tr>
-            ) : null}
-          </tbody>
-        </table>
-
-        <div className="total-linha">
-          <span>Preço ao cliente</span>
-          <span className="numero-grande">{moeda(total)}</span>
-        </div>
-      </div>
-
-      <div className="bloco">
         <h2>Condições</h2>
         <Numero
           rotulo="Validade (dias)"
@@ -472,113 +579,6 @@ export default function Orcamento() {
         </label>
       </div>
 
-      </div>
-
-      <div className="bloco">
-        <h2>Envio e situação</h2>
-        {orcamento.aceite ? (
-          <p>
-            Aprovado por <strong>{orcamento.aceite.nome}</strong> em {dataCurta(orcamento.aceite.em)}
-            <br />
-            <span className="fraco">
-              Registro: {orcamento.aceite.ip} · {orcamento.aceite.aparelho}
-            </span>
-          </p>
-        ) : null}
-
-        <div className="acoes">
-          <a
-            className="botao zap"
-            href={linkWhatsapp(pessoa?.whatsapp, mensagemEnvio)}
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => marcarEnviadoSePreciso(orcamento, params)}
-          >
-            Enviar pelo WhatsApp
-          </a>
-          <button
-            className="botao"
-            onClick={() => {
-              marcarEnviadoSePreciso(orcamento, params)
-              const alvo = window.open('#/proposta/' + (orcamento.token || orcamento.id), '_blank')
-              // dá tempo de a proposta carregar antes de abrir a impressão
-              if (alvo) setTimeout(() => alvo.print(), 2500)
-            }}
-          >
-            Gerar PDF
-          </button>
-          <button
-            className="botao"
-            onClick={() => {
-              const endereco = window.location.origin + window.location.pathname + '#/proposta/' + (orcamento.token || orcamento.id)
-              navigator.clipboard?.writeText(endereco)
-              marcarEnviadoSePreciso(orcamento, params)
-              setLinkCopiado(true)
-              setTimeout(() => setLinkCopiado(false), 2500)
-            }}
-          >
-            {linkCopiado ? 'Link copiado' : 'Copiar link'}
-          </button>
-          {orcamento.situacao === 'enviado' ? (
-            <>
-              <button className="botao" onClick={() => marcarFechado(orcamento.id)}>
-                Fechou
-              </button>
-              <button
-                className="botao"
-                onClick={() => marcarPerdido(orcamento.id, prompt('Por que perdeu?') || '')}
-              >
-                Perdeu
-              </button>
-            </>
-          ) : null}
-          {orcamento.situacao === 'perdido' ? (
-            <button className="botao principal" onClick={() => reabrirOrcamento(orcamento)}>
-              Reabrir orçamento
-            </button>
-          ) : null}
-          {orcamento.situacao === 'fechado' ? (
-            <button className="botao principal" onClick={() => marcarInstalado(orcamento.id)}>
-              Marcar como entregue
-            </button>
-          ) : null}
-          <button
-            className="botao perigo"
-            onClick={() => {
-              if (confirm('Apagar este orçamento?')) {
-                apagarOrcamento(orcamento.id)
-                navegar('/orcamentos')
-              }
-            }}
-          >
-            Apagar
-          </button>
-        </div>
-
-        {(b.contatos || []).filter((c) => c.orcamentoId === orcamento.id).length > 0 ? (
-          <div className="historico">
-            <h3>Histórico de contato</h3>
-            {(b.contatos || [])
-              .filter((c) => c.orcamentoId === orcamento.id)
-              .map((c) => (
-                <div className="linha-historico" key={c.id}>
-                  <span className="historico-data">{dataCurta(c.criadoEm)}</span>
-                  <span>
-                    {RESULTADOS.find((r) => r.valor === c.resultado)?.texto || c.resultado}
-                    {c.anotacao ? ' · ' + c.anotacao : ''}
-                  </span>
-                  {c.proximoEm ? <span className="fraco">próximo {dataCurta(c.proximoEm)}</span> : null}
-                </div>
-              ))}
-          </div>
-        ) : null}
-
-        {orcamento.proximoContato ? (
-          <p className="fraco" style={{ marginTop: 12 }}>
-            Próxima cobrança em {dataCurta(orcamento.proximoContato)}
-            {orcamento.cobrancas ? ' · já cobrado ' + orcamento.cobrancas + 'x' : ''}
-          </p>
-        ) : null}
       </div>
     </>
   )
