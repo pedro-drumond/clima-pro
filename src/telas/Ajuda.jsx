@@ -6,21 +6,6 @@ import { Icone } from '../componentes/icones.jsx'
 // que quer saber.
 const ASSUNTOS = [
   {
-    id: 'inicio',
-    titulo: 'Início',
-    resumo: 'O que aparece quando você entra',
-    icone: Icone.inicio,
-    texto: (
-      <>
-        <p>
-          É a tela que abre quando você entra. Ela responde três coisas de uma vez: quantas pessoas você precisa chamar
-          hoje, quantos orçamentos estão esperando resposta, e quanto dinheiro está parado nesses orçamentos. O botão de
-          novo orçamento fica logo abaixo, porque é o que você mais faz no dia.
-        </p>
-      </>
-    ),
-  },
-  {
     id: 'orcamentos',
     titulo: 'Orçamentos',
     resumo: 'O quadro de etapas e os três modelos',
