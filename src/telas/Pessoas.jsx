@@ -55,30 +55,34 @@ export default function Pessoas() {
         <input placeholder="Buscar por nome, endereço ou telefone" value={busca} onChange={(e) => setBusca(e.target.value)} />
       </div>
 
-      <div className="bloco">
-        {lista.length === 0 ? (
+      {lista.length === 0 ? (
+        <div className="bloco">
           <Vazio texto="Nenhuma pessoa aqui." />
-        ) : (
-          lista.map((p) => {
+        </div>
+      ) : (
+        <div className="cartoes-pessoa">
+          {lista.map((p) => {
             const orcamentos = b.orcamentos.filter((o) => o.pessoaId === p.id)
             return (
-              <div className="linha-item" key={p.id}>
-                <div>
-                  <Link to={'/pessoas/' + p.id}>{p.nome}</Link>
-                  <div className="fraco">
-                    {p.tipo === 'pj' ? 'Pessoa jurídica' : 'Pessoa física'}
-                    {p.endereco ? ' · ' + p.endereco : ''}
-                  </div>
-                </div>
-                <div className="fraco" style={{ textAlign: 'right' }}>
-                  {p.ehCliente ? 'Cliente' : 'Contato'}
-                  <div>{orcamentos.length} orçamento(s)</div>
-                </div>
-              </div>
+              <Link className="cartao-pessoa" to={'/pessoas/' + p.id} key={p.id}>
+                <span className="cartao-pessoa-topo">
+                  <span className="cartao-pessoa-nome">{p.nome}</span>
+                  <span className={'etiqueta-pessoa' + (p.ehCliente ? ' cliente' : '')}>
+                    {p.ehCliente ? 'Cliente' : 'Contato'}
+                  </span>
+                </span>
+                <span className="fraco">
+                  {p.whatsapp || (p.tipo === 'pj' ? 'Pessoa jurídica' : 'Pessoa física')}
+                  {p.endereco ? ' · ' + p.endereco : ''}
+                </span>
+                <span className="fraco">
+                  {orcamentos.length === 1 ? '1 orçamento' : orcamentos.length + ' orçamentos'}
+                </span>
+              </Link>
             )
-          })
-        )}
-      </div>
+          })}
+        </div>
+      )}
     </>
   )
 }

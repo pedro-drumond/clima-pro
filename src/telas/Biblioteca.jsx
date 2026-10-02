@@ -43,6 +43,7 @@ export default function Biblioteca() {
         <h1>Biblioteca</h1>
       </div>
 
+      <div className="tela-dupla">
       <div className="bloco">
         <h2>Novo item</h2>
         <Texto rotulo="Nome" valor={novo.nome} aoMudar={(v) => setNovo({ ...novo, nome: v })} />
@@ -116,6 +117,7 @@ export default function Biblioteca() {
         </p>
       </div>
 
+      <div className="coluna-lista">
       <div className="filtros">
         {[{ valor: 'todos', texto: 'Todos' }].concat(TIPOS).map((t) => (
           <button
@@ -188,9 +190,11 @@ export default function Biblioteca() {
       </div>
 
       <p className="fraco">
-        O preço da coluna da direita usa a margem de {conta.margemPct}% e o imposto de {conta.impostoPct}% da sua
+        O preço da coluna "com sua margem" usa a margem de {conta.margemPct}% e o imposto de {conta.impostoPct}% da sua
         empresa. Em cada orçamento dá para mudar.
       </p>
+      </div>
+      </div>
     </>
   )
 }

@@ -30,7 +30,6 @@ export function Moldura({ children }) {
             </>
           ) : (
             <>
-              <Item para="/" texto="Início" fim />
               <Item para="/orcamentos" texto="Orçamentos" />
               <Item para="/pessoas" texto="Clientes" />
               <Item para="/biblioteca" texto="Biblioteca" />
@@ -52,13 +51,12 @@ export function Moldura({ children }) {
           </button>
         </nav>
 
-        <div className="topo-direita">
-          <span className="topo-conta">{conta ? conta.nomeFantasia : usuario ? usuario.nome : ''}</span>
-          <span className="topo-marca">
-            <Logo />
-            Clima Pro
-          </span>
-        </div>
+        <span className="topo-conta">{conta ? conta.nomeFantasia : usuario ? usuario.nome : ''}</span>
+
+        <span className="topo-marca">
+          <Logo />
+          Clima Pro
+        </span>
       </header>
       <div className="conteudo">{children}</div>
     </div>
