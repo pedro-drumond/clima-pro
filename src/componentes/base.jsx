@@ -45,7 +45,6 @@ export function Moldura({ children }) {
         ) : (
           <>
             <Item para="/" texto="Início" fim />
-            <Item para="/chamar" texto="Quem chamar" />
             <Item para="/orcamentos" texto="Orçamentos" />
             <Item para="/pessoas" texto="Clientes" />
             <Item para="/biblioteca" texto="Biblioteca" />

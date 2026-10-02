@@ -18,10 +18,11 @@ export default function Ajuda() {
         </div>
 
         <div className="bloco">
-          <h2>Quem chamar</h2>
+          <h2>Chamar hoje</h2>
           <p>
-            A lista do dia. O sistema junta aqui todo mundo que tem alguma coisa vencida e mostra o motivo de cada um.
-            Você chama pelo WhatsApp com a mensagem já escrita, e depois marca o que aconteceu. Entram nesta lista:
+            Fica dentro de Orçamentos, no botão <strong>Chamar hoje</strong>. O sistema junta ali todo mundo que tem
+            alguma coisa vencida, separado por motivo. Você chama pelo WhatsApp com a mensagem já escrita e aperta
+            <strong> Chamei</strong>, que reagenda a próxima sozinho. Entram nesta lista:
           </p>
           <ul>
             <li>quem recebeu orçamento e não respondeu, nos prazos que você definiu;</li>
@@ -29,8 +30,9 @@ export default function Ajuda() {
             <li>cliente antigo que faz muito tempo que não aparece.</li>
           </ul>
           <p>
-            Ao chamar alguém, você pode marcar que já falou, adiar para outro dia, ou, no caso de orçamento, dizer se
-            ganhou ou perdeu. O sistema reagenda sozinho a próxima vez.
+            O que precisa de você também aparece no próprio quadro, como uma tarja na borda do cartão:{' '}
+            <strong>laranja</strong> quando está na hora de cobrar, e <strong>vermelho</strong> quando o orçamento
+            passou da validade. Cartão sem tarja é cartão que não precisa de ninguém hoje.
           </p>
         </div>
 

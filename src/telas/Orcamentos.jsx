@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDados } from '../componentes/base.jsx'
 import { moeda, totalDoOrcamento, dataCurta, parametros } from '../dados/armazenamento.js'
-import { reabrirOrcamento, moverOrcamento, apagarOrcamento } from '../dados/acoes.js'
+import { reabrirOrcamento, moverOrcamento, apagarOrcamento, registrarCobranca, registrarLimpeza, adiarPessoa } from '../dados/acoes.js'
+import { marcaDoCartao, tarefasDoDia, primeiroNome } from '../dados/agenda.js'
+import { linkWhatsapp } from '../dados/armazenamento.js'
 
 const ETAPAS = [
   ['contato', 'Em elaboração'],
@@ -22,7 +24,7 @@ const ORDENS = [
 export default function Orcamentos() {
   const { b, conta } = useDados()
   const navegar = useNavigate()
-  const [verPerdidos, setVerPerdidos] = useState(false)
+  const [vista, setVista] = useState('quadro')
   const [menuAberto, setMenuAberto] = useState('')
   const [apagando, setApagando] = useState('')
   const [arrastando, setArrastando] = useState('')
@@ -32,6 +34,13 @@ export default function Orcamentos() {
   const params = parametros(conta)
   const todos = b.orcamentos.filter((o) => o.contaId === conta.id)
   const perdidos = todos.filter((o) => o.situacao === 'perdido')
+  const tarefas = tarefasDoDia(b, conta, params)
+  const GRUPOS = [
+    ['cobranca', 'Cobrar orçamento'],
+    ['perda', 'Sem resposta há muito tempo'],
+    ['limpeza', 'Limpeza do aparelho'],
+    ['parado', 'Cliente sumido'],
+  ]
   const pessoaDe = (o) => b.pessoas.find((p) => p.id === o.pessoaId)
 
   function ordenar(lista, chave) {
@@ -60,8 +69,14 @@ export default function Orcamentos() {
         <h1>Orçamentos</h1>
         <div className="acoes">
           <button
-            className={'botao pequeno' + (verPerdidos ? ' principal' : '')}
-            onClick={() => setVerPerdidos(!verPerdidos)}
+            className={'botao pequeno' + (vista === 'acompanhamento' ? ' principal' : '')}
+            onClick={() => setVista(vista === 'acompanhamento' ? 'quadro' : 'acompanhamento')}
+          >
+            Chamar hoje {tarefas.length > 0 ? '(' + tarefas.length + ')' : ''}
+          </button>
+          <button
+            className={'botao pequeno' + (vista === 'perdidos' ? ' principal' : '')}
+            onClick={() => setVista(vista === 'perdidos' ? 'quadro' : 'perdidos')}
           >
             Perdidos {perdidos.length > 0 ? '(' + perdidos.length + ')' : ''}
           </button>
@@ -71,7 +86,53 @@ export default function Orcamentos() {
         </div>
       </div>
 
-      {verPerdidos ? (
+      {vista === 'acompanhamento' ? (
+        <div className="acompanhamento">
+          {tarefas.length === 0 ? (
+            <p className="fraco">Ninguém para chamar hoje.</p>
+          ) : (
+            GRUPOS.map(([tipo, titulo]) => {
+              const doGrupo = tarefas.filter((t) => t.tipo === tipo)
+              if (doGrupo.length === 0) return null
+              return (
+                <div className="grupo-tarefas" key={tipo}>
+                  <h2>
+                    {titulo} <span className="coluna-contagem">{doGrupo.length}</span>
+                  </h2>
+                  {doGrupo.map((t) => (
+                    <div className="linha-tarefa" key={t.chave}>
+                      <div className="tarefa-quem">
+                        <div className="tarefa-nome">{t.pessoa.nome}</div>
+                        <div className="tarefa-sub">{t.titulo}</div>
+                      </div>
+                      <div className="acoes">
+                        <a
+                          className="botao zap pequeno"
+                          href={linkWhatsapp(t.pessoa.whatsapp, t.mensagem)}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          WhatsApp
+                        </a>
+                        <button
+                          className="botao pequeno"
+                          onClick={() => {
+                            if (t.orcamento) registrarCobranca(t.orcamento.id, params)
+                            else if (t.equipamento) registrarLimpeza(t.equipamento.id)
+                            else adiarPessoa(t.pessoa.id, 30)
+                          }}
+                        >
+                          Chamei
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
+            })
+          )}
+        </div>
+      ) : vista === 'perdidos' ? (
         <div className="perdidos">
           {perdidos.length === 0 ? (
             <p className="fraco">Nenhum orçamento perdido.</p>
@@ -190,13 +251,18 @@ export default function Orcamentos() {
                     lista.map((o) => {
                       const pessoa = pessoaDe(o)
                       const posicao = ETAPAS.findIndex(([c]) => c === chave)
+                      const marca = marcaDoCartao(o, params)
                       const mover = (passo) => (e) => {
                         e.stopPropagation()
                         moverOrcamento(o, ETAPAS[posicao + passo][0], params)
                       }
                       return (
                         <div
-                          className={'cartao' + (arrastando === o.id ? ' arrastando' : '')}
+                          className={
+                            'cartao' +
+                            (arrastando === o.id ? ' arrastando' : '') +
+                            (marca ? ' marcado ' + marca.tipo : '')
+                          }
                           key={o.id}
                           role="link"
                           tabIndex={0}
@@ -232,6 +298,22 @@ export default function Orcamentos() {
                             nº {o.numero} · {dataCurta(o.enviadoEm || o.criadoEm)}
                           </div>
                           <div className="valor">{moeda(totalDoOrcamento(o))}</div>
+                          {marca ? (
+                            <div className="cartao-marca">
+                              <span>{marca.texto}</span>
+                              {marca.tipo === 'cobrar' ? (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    registrarCobranca(o.id, params)
+                                  }}
+                                  title="Registrar que você chamou, e reagendar"
+                                >
+                                  Chamei
+                                </button>
+                              ) : null}
+                            </div>
+                          ) : null}
                         </div>
                       )
                     })

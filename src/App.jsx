@@ -4,7 +4,6 @@ import { Moldura, useDados } from './componentes/base.jsx'
 import Entrar from './telas/Entrar.jsx'
 import NovaSenha from './telas/NovaSenha.jsx'
 import Inicio from './telas/Inicio.jsx'
-import ChamarHoje from './telas/ChamarHoje.jsx'
 import Orcamentos from './telas/Orcamentos.jsx'
 import NovoOrcamento from './telas/NovoOrcamento.jsx'
 import Orcamento from './telas/Orcamento.jsx'
@@ -49,7 +48,7 @@ function Interno() {
         ) : (
           <>
             <Route path="/" element={<Inicio />} />
-            <Route path="/chamar" element={<ChamarHoje />} />
+            <Route path="/chamar" element={<Navigate to="/orcamentos" replace />} />
             <Route path="/orcamentos" element={<Orcamentos />} />
             <Route path="/orcamentos/novo" element={<NovoOrcamento />} />
             <Route path="/orcamentos/:id" element={<Orcamento />} />

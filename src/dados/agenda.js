@@ -133,3 +133,30 @@ export function linkDaProposta(orcamento) {
 export function adiar(orcamentoOuPessoa, dias) {
   return somarDias(new Date().toISOString(), dias)
 }
+
+// A marca que aparece no cartão do quadro. Cartão sem marca é cartão que não
+// precisa de ninguém hoje — é isso que faz os outros saltarem aos olhos.
+export function marcaDoCartao(orcamento, params) {
+  if (orcamento.situacao !== 'enviado') return null
+
+  const fim = validadeDoOrcamento(orcamento)
+  if (venceu(fim)) {
+    return { tipo: 'vencido', texto: 'Venceu em ' + dataCurta(fim) }
+  }
+
+  if (venceu(orcamento.proximoContato)) {
+    const dias = diasDesde(orcamento.enviadoEm)
+    return {
+      tipo: 'cobrar',
+      texto: dias ? 'Cobrar · ' + dias + ' dias sem resposta' : 'Cobrar',
+    }
+  }
+
+  return null
+}
+
+export function validadeDoOrcamento(orcamento) {
+  const inicio = orcamento.enviadoEm || orcamento.criadoEm
+  if (!inicio) return null
+  return somarDias(inicio, orcamento.validadeDias || 7)
+}

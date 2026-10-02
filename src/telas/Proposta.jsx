@@ -4,12 +4,6 @@ import { supabase } from '../dados/supabase.js'
 import { moeda, dataCurta, somarDias } from '../dados/armazenamento.js'
 import { Aparelho } from '../componentes/aparelhos.jsx'
 
-const ESTILOS = [
-  { valor: 'cursivo', texto: 'Cursiva' },
-  { valor: 'rubrica', texto: 'Rubrica' },
-  { valor: 'selo', texto: 'Selo' },
-]
-
 function aparelhoDeQuemAbriu() {
   const ua = navigator.userAgent || ''
   if (/iPhone|iPad/.test(ua)) return 'Celular iPhone'
@@ -95,7 +89,6 @@ export default function Proposta() {
   const [dados, setDados] = useState(null)
   const [estado, setEstado] = useState('carregando')
   const [nome, setNome] = useState('')
-  const [estilo, setEstilo] = useState('cursivo')
   const [erro, setErro] = useState('')
 
   async function buscar() {
@@ -124,6 +117,7 @@ export default function Proposta() {
   const validade = somarDias(orcamento.enviadoEm || orcamento.criadoEm, orcamento.validadeDias)
   const somaItens = itens.reduce((s, i) => s + i.qtd * preco(i), 0)
   const premio = orcamento.seguro ? Number(orcamento.seguroPremio) || 0 : 0
+  const passouDaValidade = new Date(validade).setHours(23, 59, 59) < Date.now()
 
   async function aprovar() {
     if (!nome.trim()) {
@@ -133,7 +127,7 @@ export default function Proposta() {
     const { data } = await supabase.rpc('aceitar_proposta', {
       p_token: token,
       p_nome: nome.trim(),
-      p_estilo: estilo,
+      p_estilo: 'cursivo',
       p_aparelho: aparelhoDeQuemAbriu(),
     })
     if (data?.ok) buscar()
@@ -223,25 +217,18 @@ export default function Proposta() {
           <strong>Orçamento recusado.</strong>
           <div className="fraco">{orcamento.motivoPerda}</div>
         </div>
+      ) : passouDaValidade ? (
+        <div className="assinatura-caixa sem-impressao">
+          <strong>Este orçamento perdeu a validade em {dataCurta(validade)}.</strong>
+          <p className="fraco">
+            Fale com a {empresa.nomeFantasia} pelo telefone {empresa.telefone} para receber um orçamento atualizado.
+          </p>
+        </div>
       ) : (
         <div className="assinatura-caixa sem-impressao">
           <div className="campo">
             <label>Seu nome</label>
             <input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome de quem está aprovando" />
-          </div>
-          <div className="escolha-estilo">
-            {ESTILOS.map((e) => (
-              <button
-                key={e.valor}
-                className={estilo === e.valor ? 'ativo' : ''}
-                onClick={() => setEstilo(e.valor)}
-                type="button"
-              >
-                <span className={'assinado ' + e.valor} style={{ fontSize: e.valor === 'selo' ? 12 : 20 }}>
-                  {nome || 'Seu nome'}
-                </span>
-              </button>
-            ))}
           </div>
           {erro ? <p className="erro">{erro}</p> : null}
           <div className="acoes">
@@ -260,10 +247,6 @@ export default function Proposta() {
         <div className="linha-assinatura" />
         <div>{empresa.nomeFantasia}</div>
       </div>
-
-      <p className="fraco rodape-proposta">
-        Aprovação registrada com data, hora e aparelho. Não substitui contrato.
-      </p>
 
       <div className="barra-pdf sem-impressao">
         <button className="botao" onClick={() => window.print()}>

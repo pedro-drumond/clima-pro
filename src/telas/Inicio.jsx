@@ -37,8 +37,8 @@ export default function Inicio() {
 
       <div className="bloco">
         <div className="cabeca" style={{ marginBottom: 10 }}>
-          <h2 style={{ margin: 0 }}>Quem chamar hoje</h2>
-          <Link to="/chamar">Ver todos</Link>
+          <h2 style={{ margin: 0 }}>Para chamar hoje</h2>
+          <Link to="/orcamentos">Ver todos</Link>
         </div>
         {tarefas.length === 0 ? (
           <Vazio texto="Ninguém vencido hoje." />
