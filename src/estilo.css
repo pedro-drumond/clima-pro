@@ -791,6 +791,23 @@ th.n {
   font-size: 10.5px;
 }
 
+/* números do orçamento não podem encostar uns nos outros nem quebrar linha,
+   senão viram uma coisa só e ninguém entende o valor */
+.proposta td,
+.proposta th {
+  padding-right: 14px;
+}
+
+.proposta td:last-child,
+.proposta th:last-child {
+  padding-right: 0;
+}
+
+.proposta td.n,
+.proposta th.n {
+  white-space: nowrap;
+}
+
 .proposta .numero-grande {
   font-size: 22px;
 }
@@ -1986,7 +2003,8 @@ th.n {
 
 .proposta.dividida {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 200px 1fr;
+  max-width: 780px;
   align-items: stretch;
   padding: 0;
   overflow: hidden;
@@ -2042,7 +2060,7 @@ th.n {
 }
 
 .proposta-corpo {
-  padding: var(--esp-3) var(--esp-4);
+  padding: var(--esp-3);
 }
 
 @media (max-width: 700px) {
