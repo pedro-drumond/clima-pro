@@ -134,6 +134,26 @@ export function adiar(orcamentoOuPessoa, dias) {
   return somarDias(new Date().toISOString(), dias)
 }
 
+// A linha do meio do cartão: há quanto tempo nada acontece com este orçamento.
+// Ação é contato registrado; não havendo nenhum, é o envio.
+export function ultimaAcao(orcamento, contatos) {
+  const meus = (contatos || [])
+    .filter((c) => c.orcamentoId === orcamento.id)
+    .sort((a, b2) => new Date(b2.criadoEm) - new Date(a.criadoEm))
+
+  if (meus.length > 0) return { verbo: 'cobrado', dias: diasDesde(meus[0].criadoEm) }
+  if (orcamento.enviadoEm) return { verbo: 'enviado', dias: diasDesde(orcamento.enviadoEm) }
+  return { verbo: 'criado', dias: diasDesde(orcamento.criadoEm) }
+}
+
+export function textoDaUltimaAcao(orcamento, contatos) {
+  const a = ultimaAcao(orcamento, contatos)
+  if (a.dias === null) return ''
+  if (a.dias <= 0) return a.verbo + ' hoje'
+  if (a.dias === 1) return a.verbo + ' ontem'
+  return a.verbo + ' há ' + a.dias + ' dias'
+}
+
 // A marca que aparece no cartão do quadro. Cartão sem marca é cartão que não
 // precisa de ninguém hoje — é isso que faz os outros saltarem aos olhos.
 export function marcaDoCartao(orcamento, params) {
@@ -141,7 +161,7 @@ export function marcaDoCartao(orcamento, params) {
 
   const fim = validadeDoOrcamento(orcamento)
   if (venceu(fim)) {
-    return { tipo: 'vencido', texto: 'Venceu em ' + dataCurta(fim) }
+    return { tipo: 'vencido', em: fim, texto: 'Venceu em ' + dataCurta(fim) }
   }
 
   if (venceu(orcamento.proximoContato)) {

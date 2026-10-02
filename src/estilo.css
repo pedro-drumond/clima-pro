@@ -669,7 +669,7 @@ td.n {
 }
 
 /* metade do tamanho do nome: é referência, não informação principal */
-.cartao-sub {
+.cartao-sub-antigo {
   font-size: 11px;
   color: var(--texto-fraco);
   margin-top: 2px;
@@ -2792,4 +2792,85 @@ h2 .dica {
   .barra-motivo {
     display: none;
   }
+}
+
+/* ----- cartão do quadro: nome, tempo desde a última ação, valor ----- */
+
+.cartao-nome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cartao-tempo {
+  font-size: 12px;
+  color: var(--texto-fraco);
+  margin: 2px 0 10px;
+}
+
+.cartao-pe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.botao-registrar {
+  border: 1px solid var(--linha);
+  background: var(--branco);
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texto-fraco);
+}
+
+.botao-registrar:hover {
+  color: var(--marca);
+  border-color: var(--texto-fraco);
+}
+
+/* as quatro saídas, direto no cartão */
+.escolha-rapida {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--linha-suave);
+}
+
+.escolha-rapida button {
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--texto);
+}
+
+.escolha-rapida button:hover {
+  background: var(--fundo);
+}
+
+/* limpeza e cliente parado, no cartão da pessoa */
+.cartao-pessoa-chamar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--linha-suave);
+}
+
+.cartao-pessoa-chamar .fraco {
+  flex: 1;
+  line-height: 1.35;
+}
+
+.botao.zap.miudo {
+  padding: 3px 10px;
+  font-size: 12px;
 }

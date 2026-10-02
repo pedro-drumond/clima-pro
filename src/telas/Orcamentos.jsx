@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useDados, Linha, Campo, Texto } from '../componentes/base.jsx'
+import { useDados } from '../componentes/base.jsx'
 import { moeda, totalDoOrcamento, dataCurta, parametros, somarDias, hojeISO } from '../dados/armazenamento.js'
 import {
   reabrirOrcamento,
@@ -12,8 +12,7 @@ import {
   diasSugeridos,
   RESULTADOS,
 } from '../dados/acoes.js'
-import { marcaDoCartao, tarefasDoDia, primeiroNome } from '../dados/agenda.js'
-import { linkWhatsapp } from '../dados/armazenamento.js'
+import { marcaDoCartao, textoDaUltimaAcao } from '../dados/agenda.js'
 import Modelos from './Modelos.jsx'
 
 const ETAPAS = [
@@ -37,7 +36,7 @@ export default function Orcamentos() {
   const [vista, setVista] = useState('quadro')
   const [menuAberto, setMenuAberto] = useState('')
   const [apagando, setApagando] = useState('')
-  const [registrando, setRegistrando] = useState(null)
+  const [registrando, setRegistrando] = useState('')
   const [arrastando, setArrastando] = useState('')
   const [colunaAlvo, setColunaAlvo] = useState('')
   const [ordens, setOrdens] = useState({})
@@ -45,13 +44,7 @@ export default function Orcamentos() {
   const params = parametros(conta)
   const todos = b.orcamentos.filter((o) => o.contaId === conta.id)
   const perdidos = todos.filter((o) => o.situacao === 'perdido')
-  const tarefas = tarefasDoDia(b, conta, params)
-  const GRUPOS = [
-    ['cobranca', 'Cobrar orçamento'],
-    ['perda', 'Sem resposta há muito tempo'],
-    ['limpeza', 'Limpeza do aparelho'],
-    ['parado', 'Cliente sumido'],
-  ]
+  const contatos = b.contatos || []
   const pessoaDe = (o) => b.pessoas.find((p) => p.id === o.pessoaId)
 
   function ordenar(lista, chave) {
@@ -82,12 +75,6 @@ export default function Orcamentos() {
         <h1>Orçamentos</h1>
         <div className="acoes">
           <button
-            className={'botao pequeno' + (vista === 'acompanhamento' ? ' principal' : '')}
-            onClick={() => setVista(vista === 'acompanhamento' ? 'quadro' : 'acompanhamento')}
-          >
-            Acompanhamento {tarefas.length > 0 ? '(' + tarefas.length + ')' : ''}
-          </button>
-          <button
             className={'botao pequeno' + (vista === 'perdidos' ? ' principal' : '')}
             onClick={() => setVista(vista === 'perdidos' ? 'quadro' : 'perdidos')}
           >
@@ -105,120 +92,7 @@ export default function Orcamentos() {
         </div>
       </div>
 
-      {vista === 'acompanhamento' ? (
-        <div className="acompanhamento">
-          {tarefas.length === 0 ? (
-            <p className="fraco">Ninguém para chamar hoje.</p>
-          ) : (
-            GRUPOS.map(([tipo, titulo]) => {
-              const doGrupo = tarefas.filter((t) => t.tipo === tipo)
-              if (doGrupo.length === 0) return null
-              return (
-                <div className="grupo-tarefas" key={tipo}>
-                  <h2>
-                    {titulo} <span className="coluna-contagem">{doGrupo.length}</span>
-                  </h2>
-                  {doGrupo.map((t) => (
-                    <div className="tarefa" key={t.chave}>
-                    <div className="linha-tarefa">
-                      <div className="tarefa-quem">
-                        <div className="tarefa-nome">{t.pessoa.nome}</div>
-                        <div className="tarefa-sub">{t.titulo}</div>
-                      </div>
-                      <div className="acoes">
-                        <a
-                          className="botao zap pequeno"
-                          href={linkWhatsapp(t.pessoa.whatsapp, t.mensagem)}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          WhatsApp
-                        </a>
-                        <button
-                          className="botao pequeno"
-                          onClick={() =>
-                            setRegistrando(
-                              registrando?.chave === t.chave
-                                ? null
-                                : {
-                                    chave: t.chave,
-                                    tarefa: t,
-                                    resultado: 'nao-atendeu',
-                                    anotacao: '',
-                                    proximoEm: somarDias(hojeISO(), diasSugeridos('nao-atendeu')).slice(0, 10),
-                                  }
-                            )
-                          }
-                        >
-                          Registrar contato
-                        </button>
-                      </div>
-                    </div>
-                    {registrando?.chave === t.chave ? (
-                      <div className="caixa-contato">
-                        <div className="escolha-resultado">
-                          {RESULTADOS.map((r) => (
-                            <button
-                              key={r.valor}
-                              className={registrando.resultado === r.valor ? 'ativo' : ''}
-                              onClick={() =>
-                                setRegistrando({
-                                  ...registrando,
-                                  resultado: r.valor,
-                                  proximoEm: somarDias(hojeISO(), r.dias).slice(0, 10),
-                                })
-                              }
-                            >
-                              {r.texto}
-                            </button>
-                          ))}
-                        </div>
-                        <Linha>
-                          <Campo rotulo="Falar de novo em" tamanho="medio">
-                            <input
-                              type="date"
-                              value={registrando.proximoEm}
-                              onChange={(e) => setRegistrando({ ...registrando, proximoEm: e.target.value })}
-                            />
-                          </Campo>
-                          <Texto
-                            rotulo="Anotação (opcional)"
-                            valor={registrando.anotacao}
-                            aoMudar={(v) => setRegistrando({ ...registrando, anotacao: v })}
-                          />
-                        </Linha>
-                        <div className="acoes">
-                          <button
-                            className="botao principal pequeno"
-                            onClick={async () => {
-                              await registrarContato({
-                                contaId: conta.id,
-                                pessoaId: t.pessoa.id,
-                                orcamentoId: t.orcamento?.id,
-                                equipamentoId: t.equipamento?.id,
-                                resultado: registrando.resultado,
-                                anotacao: registrando.anotacao,
-                                proximoEm: new Date(registrando.proximoEm + 'T12:00:00').toISOString(),
-                              })
-                              setRegistrando(null)
-                            }}
-                          >
-                            Salvar
-                          </button>
-                          <button className="botao pequeno" onClick={() => setRegistrando(null)}>
-                            Cancelar
-                          </button>
-                        </div>
-                      </div>
-                    ) : null}
-                    </div>
-                  ))}
-                </div>
-              )
-            })
-          )}
-        </div>
-      ) : vista === 'perdidos' ? (
+      {vista === 'perdidos' ? (
         <div className="perdidos">
           {perdidos.length === 0 ? (
             <p className="fraco">Nenhum orçamento perdido.</p>
@@ -380,35 +254,66 @@ export default function Orcamentos() {
                             )}
                           </div>
                           <div className="cartao-nome">{pessoa ? pessoa.nome : 'Sem cliente'}</div>
-                          <div className="cartao-sub">
-                            nº {o.numero} · {dataCurta(o.enviadoEm || o.criadoEm)}
+                          <div className="cartao-tempo">
+                            {marca?.tipo === 'vencido'
+                              ? 'venceu em ' + dataCurta(marca.em)
+                              : textoDaUltimaAcao(o, contatos)}
                           </div>
-                          <div className="valor">{moeda(totalDoOrcamento(o))}</div>
-                          {marca ? (
-                            <div className="cartao-marca">
-                              <span>{marca.texto}</span>
-                              {marca.tipo === 'vencido' ? (
-                                <span className="cartao-acoes">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      renovarValidade(o, o.validadeDias)
-                                    }}
-                                    title="Empurrar a validade mantendo o preço"
-                                  >
-                                    Renovar
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      marcarPerdido(o.id, 'Validade vencida')
-                                    }}
-                                    title="Dar como perdido"
-                                  >
-                                    Perdido
-                                  </button>
-                                </span>
-                              ) : null}
+                          <div className="cartao-pe">
+                            <span className="valor">{moeda(totalDoOrcamento(o))}</span>
+                            {marca?.tipo === 'vencido' ? (
+                              <span className="cartao-acoes">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    renovarValidade(o, o.validadeDias)
+                                  }}
+                                  title="Empurrar a validade mantendo o preço"
+                                >
+                                  Renovar
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    marcarPerdido(o.id, 'Validade vencida')
+                                  }}
+                                >
+                                  Perdido
+                                </button>
+                              </span>
+                            ) : chave === 'enviado' ? (
+                              <button
+                                className="botao-registrar"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setRegistrando(registrando === o.id ? '' : o.id)
+                                }}
+                              >
+                                Registrar
+                              </button>
+                            ) : null}
+                          </div>
+
+                          {registrando === o.id ? (
+                            <div className="escolha-rapida" onClick={(e) => e.stopPropagation()}>
+                              {RESULTADOS.map((r) => (
+                                <button
+                                  key={r.valor}
+                                  onClick={async () => {
+                                    setRegistrando('')
+                                    await registrarContato({
+                                      contaId: conta.id,
+                                      pessoaId: o.pessoaId,
+                                      orcamentoId: o.id,
+                                      resultado: r.valor,
+                                      anotacao: '',
+                                      proximoEm: somarDias(hojeISO(), r.dias),
+                                    })
+                                  }}
+                                >
+                                  {r.texto}
+                                </button>
+                              ))}
                             </div>
                           ) : null}
                         </div>
