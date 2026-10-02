@@ -21,11 +21,27 @@ export function Moldura({ children }) {
 
   return (
     <div className="app">
-      <div className="topo">
-        <span className="marca">Clima Pro</span>
-        <div className="topo-direita">
-          <span>{conta ? conta.nomeFantasia : usuario ? usuario.nome : ''}</span>
+      <header className="topo">
+        <nav className="menu">
+          {master ? (
+            <>
+              <Item para="/master" texto="Contas" />
+              <Item para="/master/parametros" texto="Parâmetros gerais" />
+            </>
+          ) : (
+            <>
+              <Item para="/" texto="Início" fim />
+              <Item para="/orcamentos" texto="Orçamentos" />
+              <Item para="/pessoas" texto="Clientes" />
+              <Item para="/biblioteca" texto="Biblioteca" />
+              <Item para="/numeros" texto="Financeiro" />
+              <Item para="/empresa" texto="Minha empresa" />
+              <Item para="/ajuda" texto="Ajuda" />
+            </>
+          )}
+          <span className="menu-divisor" />
           <button
+            className="menu-sair"
             onClick={async () => {
               gravarPendentes()
               await sair()
@@ -34,28 +50,35 @@ export function Moldura({ children }) {
           >
             Sair
           </button>
+        </nav>
+
+        <div className="topo-direita">
+          <span className="topo-conta">{conta ? conta.nomeFantasia : usuario ? usuario.nome : ''}</span>
+          <span className="topo-marca">
+            <Logo />
+            Clima Pro
+          </span>
         </div>
-      </div>
-      <nav className="menu">
-        {master ? (
-          <>
-            <Item para="/master" texto="Contas" />
-            <Item para="/master/parametros" texto="Parâmetros gerais" />
-          </>
-        ) : (
-          <>
-            <Item para="/" texto="Início" fim />
-            <Item para="/orcamentos" texto="Orçamentos" />
-            <Item para="/pessoas" texto="Clientes" />
-            <Item para="/biblioteca" texto="Biblioteca" />
-            <Item para="/numeros" texto="Financeiro" />
-            <Item para="/empresa" texto="Minha empresa" />
-            <Item para="/ajuda" texto="Ajuda" />
-          </>
-        )}
-      </nav>
+      </header>
       <div className="conteudo">{children}</div>
     </div>
+  )
+}
+
+// marca do Clima Pro: o ar saindo do aparelho, em três correntes
+export function Logo({ tamanho = 22 }) {
+  return (
+    <svg className="logo" width={tamanho} height={tamanho} viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="2.5" y="3.5" width="19" height="7.5" rx="2.4" fill="none" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M6 7.2h12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.55" />
+      <path
+        d="M6.5 15c1.6-1.6 3.1 1.6 4.7 0M9.5 19.4c1.6-1.6 3.1 1.6 4.7 0M13.5 14.6c1.6-1.6 3.1 1.6 4.7 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+      />
+    </svg>
   )
 }
 

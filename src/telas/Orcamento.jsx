@@ -535,10 +535,13 @@ export default function Orcamento() {
                 tamanho="medio"
                 valor={avulso.unidade || 'unidade'}
                 aoMudar={(v) => setAvulso({ ...avulso, unidade: v })}
-                opcoes={['unidade', 'metro', 'hora', 'diária', 'peça'].map((u) => ({
-                  valor: u,
-                  texto: u[0].toUpperCase() + u.slice(1),
-                }))}
+                opcoes={[
+                  { valor: 'unidade', texto: 'Un.' },
+                  { valor: 'metro', texto: 'Metro' },
+                  { valor: 'hora', texto: 'Hora' },
+                  { valor: 'diária', texto: 'Diária' },
+                  { valor: 'peça', texto: 'Peça' },
+                ]}
               />
               <Numero rotulo="Quantidade" valor={avulso.qtd} aoMudar={(v) => setAvulso({ ...avulso, qtd: v })} />
               <Texto

@@ -1,0 +1,89 @@
+import React from 'react'
+
+// desenhos simples de linha, do mesmo traço, para os cartões da ajuda
+function Base({ children }) {
+  return (
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  )
+}
+
+export const Icone = {
+  inicio: () => (
+    <Base>
+      <path d="M4 10.5 12 4l8 6.5" />
+      <path d="M6 10v10h12V10" />
+      <path d="M10 20v-6h4v6" />
+    </Base>
+  ),
+  quadro: () => (
+    <Base>
+      <rect x="3" y="4" width="5.5" height="16" rx="1.4" />
+      <rect x="9.6" y="4" width="5.5" height="11" rx="1.4" />
+      <rect x="16.2" y="4" width="5.5" height="14" rx="1.4" />
+    </Base>
+  ),
+  telefone: () => (
+    <Base>
+      <path d="M5 4h3.5l1.6 4-2.2 1.5a12 12 0 0 0 5.6 5.6L15 12.9l4 1.6V18a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 3 6.2 2 2 0 0 1 5 4Z" />
+    </Base>
+  ),
+  documento: () => (
+    <Base>
+      <path d="M6 3h7l5 5v13H6z" />
+      <path d="M13 3v5h5" />
+      <path d="M9 13h6M9 17h4" />
+    </Base>
+  ),
+  escudo: () => (
+    <Base>
+      <path d="M12 3 5 6v6c0 4.2 2.9 7.6 7 9 4.1-1.4 7-4.8 7-9V6Z" />
+      <path d="M9.2 12.2 11.3 14l3.6-3.8" />
+    </Base>
+  ),
+  pessoas: () => (
+    <Base>
+      <circle cx="9.5" cy="8" r="3.2" />
+      <path d="M3.5 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5" />
+      <path d="M16.5 5.6a3.2 3.2 0 0 1 0 5.6M18 14.9c1.6.8 2.6 2.3 2.6 4.1" />
+    </Base>
+  ),
+  caixa: () => (
+    <Base>
+      <path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5Z" />
+      <path d="m3 7.5 9 4.5 9-4.5M12 12v9" />
+    </Base>
+  ),
+  grafico: () => (
+    <Base>
+      <path d="M4 20V4" />
+      <path d="M4 20h16" />
+      <path d="M8 16v-4M12.5 16V8M17 16v-6" />
+    </Base>
+  ),
+  empresa: () => (
+    <Base>
+      <path d="M4 20V7l7-3v16" />
+      <path d="M11 10h9v10" />
+      <path d="M7 9.5v.01M7 13v.01M7 16.5v.01M15 13v.01M15 16.5v.01" />
+    </Base>
+  ),
+  calculo: () => (
+    <Base>
+      <rect x="4.5" y="3" width="15" height="18" rx="2" />
+      <path d="M8 7.5h8" />
+      <path d="M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16.5h.01M12 16.5h.01M15.5 16.5h.01" />
+    </Base>
+  ),
+}
