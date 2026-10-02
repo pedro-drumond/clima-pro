@@ -10,6 +10,7 @@
   --verde: #1fa855;
   --vermelho: #b3261e;
   --amarelo: #8a6100;
+  --laranja: #c2762a;
   --raio: 8px;
   --esp-1: 8px;
   --esp-2: 16px;
@@ -647,36 +648,6 @@ td.n {
   border-top: 1px solid var(--linha);
   padding-top: 10px;
   margin-top: auto;
-}
-
-.cartao {
-  border: 1px solid var(--linha);
-  background: var(--branco);
-  border-radius: var(--raio);
-  padding: 14px;
-  margin-bottom: 12px;
-  display: block;
-  text-decoration: none;
-  color: var(--texto);
-}
-
-.cartao:last-child {
-  margin-bottom: 4px;
-}
-
-.cartao-nome {
-  font-weight: 600;
-}
-
-/* metade do tamanho do nome: é referência, não informação principal */
-.cartao-sub-antigo {
-  font-size: 11px;
-  color: var(--texto-fraco);
-  margin-top: 2px;
-}
-
-.cartao .valor {
-  margin-top: 8px;
 }
 
 /* ----- perdidos -----
@@ -1468,115 +1439,6 @@ td.n {
   }
 }
 
-/* setas discretas no alto do cartão, para mover de coluna sem abrir */
-.cartao {
-  position: relative;
-  cursor: pointer;
-}
-
-.cartao-setas {
-  display: flex;
-  justify-content: space-between;
-  margin: -6px -4px 2px;
-  opacity: 0;
-  transition: opacity 0.12s;
-}
-
-.cartao:hover .cartao-setas,
-.cartao:focus-within .cartao-setas {
-  opacity: 1;
-}
-
-.cartao-setas button {
-  border: none;
-  background: none;
-  color: var(--texto-fraco);
-  font-size: 18px;
-  line-height: 1;
-  padding: 2px 6px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.cartao-setas button:hover {
-  background: var(--fundo);
-  color: var(--marca);
-}
-
-/* no celular não existe passar o mouse: as setas ficam sempre visíveis */
-@media (hover: none) {
-  .cartao-setas {
-    opacity: 1;
-  }
-}
-
-/* ----- marca no cartão -----
-   Tarja na borda esquerda e uma linha curta. Cartão sem marca é cartão que
-   não precisa de ninguém hoje. */
-
-.cartao.marcado {
-  border-left-width: 3px;
-}
-
-.cartao.marcado.cobrar {
-  border-left-color: #c2700f;
-}
-
-.cartao.marcado.vencido {
-  border-left-color: #b4232a;
-}
-
-.cartao-marca {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 8px;
-  font-size: 11.5px;
-  font-weight: 600;
-}
-
-.cartao.cobrar .cartao-marca span {
-  color: #c2700f;
-}
-
-.cartao.vencido .cartao-marca span {
-  color: #b4232a;
-}
-
-.cartao-marca button {
-  border: 1px solid var(--linha);
-  background: var(--branco);
-  border-radius: 6px;
-  padding: 3px 9px;
-  font: inherit;
-  font-size: 11.5px;
-  color: var(--texto-fraco);
-  cursor: pointer;
-}
-
-.cartao-marca button:hover {
-  border-color: var(--marca);
-  color: var(--marca);
-}
-
-/* as setas saem do fluxo: antes empurravam o conteúdo e esticavam o cartão */
-.cartao-setas {
-  position: absolute;
-  top: 4px;
-  left: 6px;
-  right: 6px;
-  margin: 0;
-}
-
-.cartao {
-  padding: 12px 14px;
-}
-
-.cartao-nome {
-  padding-right: 4px;
-}
-
 /* ----- chamar hoje ----- */
 
 .acompanhamento {
@@ -1670,11 +1532,6 @@ td.n {
   background: var(--marca);
   border-color: var(--marca);
   color: #fff;
-}
-
-.cartao-acoes {
-  display: flex;
-  gap: 4px;
 }
 
 .historico {
@@ -2794,41 +2651,7 @@ h2 .dica {
   }
 }
 
-/* ----- cartão do quadro: nome, tempo desde a última ação, valor ----- */
 
-.cartao-nome {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.cartao-tempo {
-  font-size: 12px;
-  color: var(--texto-fraco);
-  margin: 2px 0 10px;
-}
-
-.cartao-pe {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.botao-registrar {
-  border: 1px solid var(--linha);
-  background: var(--branco);
-  border-radius: 999px;
-  padding: 3px 11px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--texto-fraco);
-}
-
-.botao-registrar:hover {
-  color: var(--marca);
-  border-color: var(--texto-fraco);
-}
 
 /* as quatro saídas, direto no cartão */
 .escolha-rapida {
@@ -2873,4 +2696,253 @@ h2 .dica {
 .botao.zap.miudo {
   padding: 3px 10px;
   font-size: 12px;
+}
+
+/* ===== cartão do quadro =====
+   Altura fixa, para a coluna nunca dançar. Em cima o nome com a bolinha de
+   temperatura e a linha do próximo passo; embaixo o valor. */
+
+.cartao {
+  position: relative;
+  height: 96px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--linha-suave);
+  background: var(--branco);
+  border-radius: 10px;
+  padding: 13px 14px;
+  margin-bottom: 12px;
+  color: var(--texto);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.cartao:last-child {
+  margin-bottom: 4px;
+}
+
+.cartao:hover {
+  border-color: var(--linha);
+}
+
+.cartao.arrastando {
+  opacity: 0.4;
+}
+
+.cartao.atrasado {
+  box-shadow: inset 3px 0 0 var(--laranja);
+}
+
+.cartao.vencido {
+  box-shadow: inset 3px 0 0 var(--vermelho);
+}
+
+/* setas e registrar no canto, longe do nome */
+.cartao-canto {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.cartao:hover .cartao-canto,
+.cartao:focus-within .cartao-canto,
+.cartao.aberto .cartao-canto,
+.cartao.atrasado .cartao-canto {
+  opacity: 1;
+}
+
+.cartao-canto button {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--texto-fraco);
+  cursor: pointer;
+}
+
+.cartao-canto button:hover {
+  background: var(--fundo);
+  color: var(--marca);
+}
+
+.cartao-canto .registrar {
+  color: var(--marca-clara);
+}
+
+.cartao.atrasado .cartao-canto .registrar {
+  color: var(--laranja);
+}
+
+@media (hover: none) {
+  .cartao-canto {
+    opacity: 1;
+  }
+}
+
+.cartao-linha-nome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 64px;
+}
+
+.bolinha {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--linha);
+}
+
+.bolinha.quente {
+  background: var(--verde);
+}
+
+.bolinha.morno {
+  background: var(--laranja);
+}
+
+.bolinha.frio {
+  background: #8fa5b8;
+}
+
+.cartao-nome {
+  font-weight: 700;
+  font-size: 14.5px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cartao-passo {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--texto-fraco);
+  margin-top: 2px;
+  padding-right: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cartao-passo.atrasado {
+  color: var(--laranja);
+  font-weight: 600;
+}
+
+.cartao-passo.vencido {
+  color: var(--vermelho);
+  font-weight: 600;
+}
+
+.cartao-pe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cartao-pe .valor {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cartao-pe .valor.zero {
+  color: var(--texto-fraco);
+  font-weight: 400;
+}
+
+.cartao-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cartao-mini button {
+  border: 1px solid var(--linha);
+  background: var(--branco);
+  border-radius: 999px;
+  padding: 0 8px;
+  font: inherit;
+  font-size: 10.5px;
+  line-height: 16px;
+  font-weight: 600;
+  color: var(--texto-fraco);
+  cursor: pointer;
+}
+
+.cartao-mini button:hover {
+  border-color: var(--texto-fraco);
+  color: var(--marca);
+}
+
+/* o menu flutua: abrir não pode empurrar a coluna */
+.cartao-menu {
+  position: absolute;
+  top: 32px;
+  right: 8px;
+  z-index: 5;
+  width: 214px;
+  background: var(--branco);
+  border: 1px solid var(--linha-suave);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(15, 43, 70, 0.18);
+  padding: 5px;
+  cursor: default;
+}
+
+.cartao-menu button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 6px 9px;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--texto);
+  cursor: pointer;
+}
+
+.cartao-menu button:hover {
+  background: var(--fundo);
+}
+
+.cartao-menu button i {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-style: normal;
+}
+
+.cartao-menu button span {
+  font-size: 11.5px;
+  color: var(--texto-fraco);
+}
+
+.cartao-menu .menu-risco {
+  height: 1px;
+  background: var(--linha-suave);
+  margin: 5px 9px;
+}
+
+.cartao-menu .menu-perdido {
+  color: var(--vermelho);
 }

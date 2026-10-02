@@ -240,11 +240,12 @@ export async function moverOrcamento(orcamento, novaSituacao, params) {
 
 // Registrar contato é o que tira um item do atrasado: fica gravado o que
 // aconteceu e, principalmente, a data do próximo passo.
+// cada saída carrega o prazo do próximo toque e a temperatura que deixa
 export const RESULTADOS = [
-  { valor: 'nao-atendeu', texto: 'Não atendeu', dias: 2 },
-  { valor: 'vai-pensar', texto: 'Falou, vai pensar', dias: 7 },
-  { valor: 'retornar', texto: 'Pediu para retornar', dias: 3 },
-  { valor: 'vai-fechar', texto: 'Vai fechar', dias: 2 },
+  { valor: 'nao-atendeu', texto: 'Não atendeu', dias: 2, temp: 'frio' },
+  { valor: 'vai-pensar', texto: 'Vai avaliar', dias: 7, temp: 'morno' },
+  { valor: 'retornar', texto: 'Pediu retorno', dias: 3, temp: 'morno' },
+  { valor: 'vai-fechar', texto: 'Vai fechar', dias: 2, temp: 'quente' },
 ]
 
 export function diasSugeridos(resultado) {

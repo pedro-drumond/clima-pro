@@ -134,45 +134,59 @@ export function adiar(orcamentoOuPessoa, dias) {
   return somarDias(new Date().toISOString(), dias)
 }
 
-// A linha do meio do cartão: há quanto tempo nada acontece com este orçamento.
-// Ação é contato registrado; não havendo nenhum, é o envio.
-export function ultimaAcao(orcamento, contatos) {
+// "hoje", "2D", "15D"
+function emDias(n) {
+  if (n === null || n === undefined) return ''
+  if (n <= 0) return 'hoje'
+  return n + 'D'
+}
+
+// Tudo que o cartão precisa mostrar, num lugar só. São dois relógios
+// diferentes: a validade do orçamento (vermelho) e o passo que você marcou
+// e não cumpriu (laranja).
+export function estadoDoCartao(orcamento, contatos, RESULTADOS) {
   const meus = (contatos || [])
     .filter((c) => c.orcamentoId === orcamento.id)
     .sort((a, b2) => new Date(b2.criadoEm) - new Date(a.criadoEm))
+  const tentativas = meus.length
+  const ultimo = meus[0]
+  const saida = ultimo ? RESULTADOS.find((r) => r.valor === ultimo.resultado) : null
 
-  if (meus.length > 0) return { verbo: 'cobrado', dias: diasDesde(meus[0].criadoEm) }
-  if (orcamento.enviadoEm) return { verbo: 'enviado', dias: diasDesde(orcamento.enviadoEm) }
-  return { verbo: 'criado', dias: diasDesde(orcamento.criadoEm) }
-}
+  let temperatura = null
+  if (orcamento.situacao === 'enviado') {
+    temperatura = saida ? saida.temp : 'morno'
+    if (tentativas >= 3 && temperatura !== 'quente') temperatura = 'frio'
+  }
 
-export function textoDaUltimaAcao(orcamento, contatos) {
-  const a = ultimaAcao(orcamento, contatos)
-  if (a.dias === null) return ''
-  if (a.dias <= 0) return a.verbo + ' hoje'
-  if (a.dias === 1) return a.verbo + ' ontem'
-  return a.verbo + ' há ' + a.dias + ' dias'
-}
+  const sufixo = tentativas > 0 ? ' · ' + tentativas + 'ª tentativa' : ''
 
-// A marca que aparece no cartão do quadro. Cartão sem marca é cartão que não
-// precisa de ninguém hoje — é isso que faz os outros saltarem aos olhos.
-export function marcaDoCartao(orcamento, params) {
-  if (orcamento.situacao !== 'enviado') return null
+  if (orcamento.situacao !== 'enviado') {
+    const quando = orcamento.enviadoEm || orcamento.criadoEm
+    const verbo = orcamento.enviadoEm ? 'enviado' : 'criado'
+    return { temperatura: null, tarja: null, linha: verbo + ' ' + emDias(diasDesde(quando)), tentativas }
+  }
 
   const fim = validadeDoOrcamento(orcamento)
   if (venceu(fim)) {
-    return { tipo: 'vencido', em: fim, texto: 'Venceu em ' + dataCurta(fim) }
+    return { temperatura, tarja: 'vencido', linha: 'venceu em ' + dataCurta(fim), tentativas }
   }
 
   if (venceu(orcamento.proximoContato)) {
-    const dias = diasDesde(orcamento.enviadoEm)
+    const atraso = diasDesde(orcamento.proximoContato)
+    return { temperatura, tarja: 'atrasado', linha: 'atrasado ' + emDias(atraso) + sufixo, tentativas }
+  }
+
+  if (saida && orcamento.proximoContato) {
+    const faltam = -diasDesde(orcamento.proximoContato)
     return {
-      tipo: 'cobrar',
-      texto: dias ? 'Cobrar · ' + dias + ' dias sem resposta' : 'Cobrar',
+      temperatura,
+      tarja: null,
+      linha: saida.texto.toLowerCase() + ' · retornar em ' + emDias(faltam),
+      tentativas,
     }
   }
 
-  return null
+  return { temperatura, tarja: null, linha: 'enviado ' + emDias(diasDesde(orcamento.enviadoEm)), tentativas }
 }
 
 export function validadeDoOrcamento(orcamento) {

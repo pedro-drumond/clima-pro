@@ -9,10 +9,9 @@ import {
   marcarPerdido,
   renovarValidade,
   registrarContato,
-  diasSugeridos,
   RESULTADOS,
 } from '../dados/acoes.js'
-import { marcaDoCartao, textoDaUltimaAcao } from '../dados/agenda.js'
+import { estadoDoCartao } from '../dados/agenda.js'
 import Modelos from './Modelos.jsx'
 
 const ETAPAS = [
@@ -211,7 +210,7 @@ export default function Orcamentos() {
                     lista.map((o) => {
                       const pessoa = pessoaDe(o)
                       const posicao = ETAPAS.findIndex(([c]) => c === chave)
-                      const marca = marcaDoCartao(o, params)
+                      const estado = estadoDoCartao(o, contatos, RESULTADOS)
                       const mover = (passo) => (e) => {
                         e.stopPropagation()
                         moverOrcamento(o, ETAPAS[posicao + passo][0], params)
@@ -221,7 +220,8 @@ export default function Orcamentos() {
                           className={
                             'cartao' +
                             (arrastando === o.id ? ' arrastando' : '') +
-                            (marca ? ' marcado ' + marca.tipo : '')
+                            (estado.tarja ? ' ' + estado.tarja : '') +
+                            (registrando === o.id ? ' aberto' : '')
                           }
                           key={o.id}
                           role="link"
@@ -237,32 +237,58 @@ export default function Orcamentos() {
                             if (e.key === 'Enter') navegar('/orcamentos/' + o.id)
                           }}
                         >
-                          <div className="cartao-setas">
+                          <div className="cartao-canto">
                             {posicao > 0 ? (
                               <button onClick={mover(-1)} title={'Voltar para ' + ETAPAS[posicao - 1][1]}>
                                 ‹
                               </button>
-                            ) : (
-                              <span />
-                            )}
+                            ) : null}
                             {posicao < ETAPAS.length - 1 ? (
                               <button onClick={mover(1)} title={'Passar para ' + ETAPAS[posicao + 1][1]}>
                                 ›
                               </button>
-                            ) : (
-                              <span />
-                            )}
+                            ) : null}
+                            {chave === 'enviado' && estado.tarja !== 'vencido' ? (
+                              <button
+                                className="registrar"
+                                title="Registrar contato"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setRegistrando(registrando === o.id ? '' : o.id)
+                                }}
+                              >
+                                <svg
+                                  width="15"
+                                  height="15"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="1.9"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.4-.7L3 21l1.9-5.1A8.3 8.3 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z" />
+                                </svg>
+                              </button>
+                            ) : null}
                           </div>
-                          <div className="cartao-nome">{pessoa ? pessoa.nome : 'Sem cliente'}</div>
-                          <div className="cartao-tempo">
-                            {marca?.tipo === 'vencido'
-                              ? 'venceu em ' + dataCurta(marca.em)
-                              : textoDaUltimaAcao(o, contatos)}
+
+                          <div className="cartao-alto">
+                            <div className="cartao-linha-nome">
+                              {estado.temperatura ? (
+                                <span className={'bolinha ' + estado.temperatura} title={'Negócio ' + estado.temperatura} />
+                              ) : null}
+                              <span className="cartao-nome">{pessoa ? pessoa.nome : 'Sem cliente'}</span>
+                            </div>
+                            <div className={'cartao-passo' + (estado.tarja ? ' ' + estado.tarja : '')}>{estado.linha}</div>
                           </div>
+
                           <div className="cartao-pe">
-                            <span className="valor">{moeda(totalDoOrcamento(o))}</span>
-                            {marca?.tipo === 'vencido' ? (
-                              <span className="cartao-acoes">
+                            <span className={'valor' + (totalDoOrcamento(o) === 0 ? ' zero' : '')}>
+                              {moeda(totalDoOrcamento(o))}
+                            </span>
+                            {estado.tarja === 'vencido' ? (
+                              <span className="cartao-mini">
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation()
@@ -281,21 +307,11 @@ export default function Orcamentos() {
                                   Perdido
                                 </button>
                               </span>
-                            ) : chave === 'enviado' ? (
-                              <button
-                                className="botao-registrar"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setRegistrando(registrando === o.id ? '' : o.id)
-                                }}
-                              >
-                                Registrar
-                              </button>
                             ) : null}
                           </div>
 
                           {registrando === o.id ? (
-                            <div className="escolha-rapida" onClick={(e) => e.stopPropagation()}>
+                            <div className="cartao-menu" onClick={(e) => e.stopPropagation()}>
                               {RESULTADOS.map((r) => (
                                 <button
                                   key={r.valor}
@@ -311,9 +327,24 @@ export default function Orcamentos() {
                                     })
                                   }}
                                 >
-                                  {r.texto}
+                                  <i>
+                                    <span className={'bolinha ' + r.temp} />
+                                    {r.texto}
+                                  </i>
+                                  <span>{r.dias}D</span>
                                 </button>
                               ))}
+                              <div className="menu-risco" />
+                              <button
+                                className="menu-perdido"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setRegistrando('')
+                                  marcarPerdido(o.id, prompt('Por que perdeu?') || '')
+                                }}
+                              >
+                                Perdido
+                              </button>
                             </div>
                           ) : null}
                         </div>
