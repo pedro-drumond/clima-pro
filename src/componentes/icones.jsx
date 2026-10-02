@@ -20,6 +20,17 @@ function Base({ children }) {
 }
 
 export const Icone = {
+  lapis: () => (
+    <Base>
+      <path d="M4.5 19.5h4l9.2-9.2-4-4-9.2 9.2z" />
+      <path d="M14.6 5.1 16 3.7a1.6 1.6 0 0 1 2.3 0l2 2a1.6 1.6 0 0 1 0 2.3l-1.4 1.4" />
+    </Base>
+  ),
+  fechar: () => (
+    <Base>
+      <path d="M6 6l12 12M18 6 6 18" />
+    </Base>
+  ),
   lixeira: () => (
     <Base>
       <path d="M4.5 6.5h15" />

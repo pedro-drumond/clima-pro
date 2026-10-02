@@ -65,6 +65,39 @@ export function Moldura({ children }) {
   )
 }
 
+// janela por cima da tela, para cadastrar ou explicar sem sair de onde se está
+export function Janela({ titulo, aoFechar, children }) {
+  useEffect(() => {
+    const tecla = (e) => {
+      if (e.key === 'Escape') aoFechar()
+    }
+    window.addEventListener('keydown', tecla)
+    return () => window.removeEventListener('keydown', tecla)
+  }, [aoFechar])
+
+  return (
+    <div className="janela-fundo" onClick={aoFechar}>
+      <div className="janela" onClick={(e) => e.stopPropagation()}>
+        <div className="janela-cabeca">
+          <h2>{titulo}</h2>
+          <button className="botao-icone" onClick={aoFechar} title="Fechar">
+            <IconeFechar />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function IconeFechar() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  )
+}
+
 // marca do Clima Pro: o aparelho com cara de quem está satisfeito
 export function Logo({ tamanho = 30 }) {
   return (
