@@ -55,7 +55,9 @@ export function Moldura({ children }) {
 
         <span className="topo-marca">
           <Logo />
-          Clima Pro
+          <span>
+            Clima <i>Pro</i>
+          </span>
         </span>
       </header>
       <div className="conteudo">{children}</div>
@@ -63,19 +65,24 @@ export function Moldura({ children }) {
   )
 }
 
-// marca do Clima Pro: o ar saindo do aparelho, em três correntes
-export function Logo({ tamanho = 22 }) {
+// marca do Clima Pro: o aparelho com cara de quem está satisfeito
+export function Logo({ tamanho = 30 }) {
   return (
-    <svg className="logo" width={tamanho} height={tamanho} viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="2.5" y="3.5" width="19" height="7.5" rx="2.4" fill="none" stroke="currentColor" strokeWidth="1.7" />
-      <path d="M6 7.2h12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.55" />
-      <path
-        d="M6.5 15c1.6-1.6 3.1 1.6 4.7 0M9.5 19.4c1.6-1.6 3.1 1.6 4.7 0M13.5 14.6c1.6-1.6 3.1 1.6 4.7 0"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-      />
+    <svg
+      className="logo"
+      width={tamanho}
+      height={(tamanho * 12) / 21}
+      viewBox="1.5 2.8 21 12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="2.5" y="3.8" width="19" height="10" rx="2.6" />
+      <path d="M8.2 7.5h1.9M13.9 7.5h1.9" />
+      <path d="M8.7 10.1q3.3 2.2 6.6 0" />
     </svg>
   )
 }

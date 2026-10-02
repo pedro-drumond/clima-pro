@@ -3,6 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDados, Vazio } from '../componentes/base.jsx'
 import { salvarPessoa } from '../dados/acoes.js'
 
+// deixa o telefone legível sem mexer no que está guardado
+function telefone(valor) {
+  const n = String(valor || '').replace(/\D/g, '')
+  if (n.length === 11) return `(${n.slice(0, 2)}) ${n.slice(2, 7)}-${n.slice(7)}`
+  if (n.length === 10) return `(${n.slice(0, 2)}) ${n.slice(2, 6)}-${n.slice(6)}`
+  return valor
+}
+
 export default function Pessoas() {
   const { b, conta } = useDados()
   const navegar = useNavigate()
@@ -62,21 +70,20 @@ export default function Pessoas() {
       ) : (
         <div className="cartoes-pessoa">
           {lista.map((p) => {
-            const orcamentos = b.orcamentos.filter((o) => o.pessoaId === p.id)
+            const dela = b.orcamentos.filter((o) => o.pessoaId === p.id)
+            // em aberto é o que ainda espera resposta; contrato é o que ela já
+            // fechou e ainda não foi entregue
+            const emAberto = dela.filter((o) => o.situacao === 'contato' || o.situacao === 'enviado').length
+            const contratos = dela.filter((o) => o.situacao === 'fechado').length
             return (
               <Link className="cartao-pessoa" to={'/pessoas/' + p.id} key={p.id}>
-                <span className="cartao-pessoa-topo">
-                  <span className="cartao-pessoa-nome">{p.nome}</span>
-                  <span className={'etiqueta-pessoa' + (p.ehCliente ? ' cliente' : '')}>
-                    {p.ehCliente ? 'Cliente' : 'Contato'}
-                  </span>
-                </span>
-                <span className="fraco">
-                  {p.whatsapp || (p.tipo === 'pj' ? 'Pessoa jurídica' : 'Pessoa física')}
-                  {p.endereco ? ' · ' + p.endereco : ''}
-                </span>
-                <span className="fraco">
-                  {orcamentos.length === 1 ? '1 orçamento' : orcamentos.length + ' orçamentos'}
+                <span className="cartao-pessoa-nome">{p.nome}</span>
+                {p.whatsapp ? <span className="cartao-pessoa-dado">{telefone(p.whatsapp)}</span> : null}
+                {p.email ? <span className="cartao-pessoa-dado">{p.email}</span> : null}
+                {p.endereco ? <span className="cartao-pessoa-dado">{p.endereco}</span> : null}
+                <span className="cartao-pessoa-conta">
+                  <span>{emAberto} orç.</span>
+                  {contratos > 0 ? <span>{contratos === 1 ? '1 contrato' : contratos + ' contratos'}</span> : null}
                 </span>
               </Link>
             )
