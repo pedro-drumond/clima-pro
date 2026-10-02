@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useDados } from '../componentes/base.jsx'
-import { parametros } from '../dados/armazenamento.js'
-import { moeda, totalDoOrcamento, dataCurta } from '../dados/armazenamento.js'
-import { reabrirOrcamento, moverOrcamento } from '../dados/acoes.js'
+import { moeda, totalDoOrcamento, dataCurta, parametros } from '../dados/armazenamento.js'
+import { reabrirOrcamento, moverOrcamento, apagarOrcamento } from '../dados/acoes.js'
 
 const ETAPAS = [
   ['contato', 'Em elaboração'],
@@ -25,7 +24,9 @@ export default function Orcamentos() {
   const navegar = useNavigate()
   const [verPerdidos, setVerPerdidos] = useState(false)
   const [colunaSozinha, setColunaSozinha] = useState('')
-  const [motivoAberto, setMotivoAberto] = useState('')
+  const [apagando, setApagando] = useState('')
+  const [arrastando, setArrastando] = useState('')
+  const [colunaAlvo, setColunaAlvo] = useState('')
   const [ordem, setOrdem] = useState('recente')
 
   const params = parametros(conta)
@@ -43,6 +44,13 @@ export default function Orcamentos() {
     if (ordem === 'menor') copia.sort((a, c) => totalDoOrcamento(a) - totalDoOrcamento(c))
     if (ordem === 'nome') copia.sort((a, c) => nome(a).localeCompare(nome(c)))
     return copia
+  }
+
+  function soltarEm(chave) {
+    const o = todos.find((x) => x.id === arrastando)
+    setArrastando('')
+    setColunaAlvo('')
+    if (o && o.situacao !== chave) moverOrcamento(o, chave, params)
   }
 
   const etapasNaTela = colunaSozinha ? ETAPAS.filter(([c]) => c === colunaSozinha) : ETAPAS
@@ -81,33 +89,60 @@ export default function Orcamentos() {
           ) : (
             ordenar(perdidos).map((o) => {
               const pessoa = pessoaDe(o)
-              const aberto = motivoAberto === o.id
-              return (
-                <div className={'cartao-perdido' + (aberto ? ' aberto' : '')} key={o.id}>
-                  <button
-                    className="perdido-topo"
-                    onClick={() => setMotivoAberto(aberto ? '' : o.id)}
-                    title="Ver o motivo"
-                  >
-                    <span className="perdido-nome">{pessoa ? pessoa.nome : 'Sem cliente'}</span>
-                    <span className="perdido-sub">
-                      nº {o.numero} · {dataCurta(o.decididoEm || o.criadoEm)}
-                    </span>
-                    <span className="perdido-valor">{moeda(totalDoOrcamento(o))}</span>
-                  </button>
-                  {aberto ? (
-                    <div className="perdido-motivo">
-                      <p>{o.motivoPerda || 'Sem motivo registrado.'}</p>
-                      <div className="acoes">
-                        <Link className="botao pequeno" to={'/orcamentos/' + o.id}>
-                          Abrir orçamento
-                        </Link>
-                        <button className="botao pequeno" onClick={() => reabrirOrcamento(o)}>
-                          Reabrir
-                        </button>
-                      </div>
+
+              if (apagando === o.id) {
+                return (
+                  <div className="cartao-perdido confirmando" key={o.id}>
+                    <div className="perdido-pergunta">Apagar este orçamento de vez?</div>
+                    <div className="acoes">
+                      <button className="botao perigo pequeno" onClick={() => apagarOrcamento(o.id)}>
+                        Apagar
+                      </button>
+                      <button className="botao pequeno" onClick={() => setApagando('')}>
+                        Cancelar
+                      </button>
                     </div>
-                  ) : null}
+                  </div>
+                )
+              }
+
+              return (
+                <div
+                  className="cartao-perdido"
+                  key={o.id}
+                  role="link"
+                  tabIndex={0}
+                  onClick={() => navegar('/orcamentos/' + o.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') navegar('/orcamentos/' + o.id)
+                  }}
+                >
+                  <button
+                    className="perdido-apagar"
+                    title="Apagar"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setApagando(o.id)
+                    }}
+                  >
+                    ×
+                  </button>
+                  <div className="perdido-nome">{pessoa ? pessoa.nome : 'Sem cliente'}</div>
+                  <div className="perdido-sub">
+                    nº {o.numero} · {dataCurta(o.decididoEm || o.criadoEm)}
+                  </div>
+                  <div className="perdido-rodape">
+                    <span className="valor">{moeda(totalDoOrcamento(o))}</span>
+                    <button
+                      className="botao pequeno"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        reabrirOrcamento(o)
+                      }}
+                    >
+                      Reabrir
+                    </button>
+                  </div>
                 </div>
               )
             })
@@ -119,7 +154,19 @@ export default function Orcamentos() {
             const lista = ordenar(todos.filter((o) => o.situacao === chave))
             const soma = lista.reduce((s, o) => s + totalDoOrcamento(o), 0)
             return (
-              <div className="coluna" key={chave}>
+              <div
+                className={'coluna' + (colunaAlvo === chave ? ' recebendo' : '')}
+                key={chave}
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  if (colunaAlvo !== chave) setColunaAlvo(chave)
+                }}
+                onDragLeave={() => setColunaAlvo((atual) => (atual === chave ? '' : atual))}
+                onDrop={(e) => {
+                  e.preventDefault()
+                  soltarEm(chave)
+                }}
+              >
                 <button
                   className={'coluna-cabeca' + (colunaSozinha === chave ? ' sozinha' : '')}
                   onClick={() => setColunaSozinha(colunaSozinha === chave ? '' : chave)}
@@ -141,10 +188,16 @@ export default function Orcamentos() {
                       }
                       return (
                         <div
-                          className="cartao"
+                          className={'cartao' + (arrastando === o.id ? ' arrastando' : '')}
                           key={o.id}
                           role="link"
                           tabIndex={0}
+                          draggable
+                          onDragStart={() => setArrastando(o.id)}
+                          onDragEnd={() => {
+                            setArrastando('')
+                            setColunaAlvo('')
+                          }}
                           onClick={() => navegar('/orcamentos/' + o.id)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') navegar('/orcamentos/' + o.id)
