@@ -216,10 +216,14 @@ p {
 /* texto dentro das caixas um ponto menor que o da página: a caixa é apoio,
    não é a leitura principal */
 .bloco p,
-.bloco li,
-.bloco table {
+.bloco li {
   font-size: 14px;
   line-height: 1.6;
+}
+
+.bloco table {
+  font-size: 13.5px;
+  line-height: 1.5;
 }
 
 .bloco h2 {
@@ -464,7 +468,7 @@ table {
 
 th {
   text-align: left;
-  font-size: 12px;
+  font-size: 11.5px;
   padding-bottom: 12px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -474,14 +478,18 @@ th {
 }
 
 td {
-  padding: 14px 12px 14px 0;
+  padding: 12px 12px 12px 0;
   border-bottom: 1px solid var(--linha-suave);
   vertical-align: middle;
 }
 
 td.n,
-th.n {
+/* colunas de número coladas uma na outra eram o motivo de "QTD.PREÇO UN." sair
+   grudado no cabeçalho e do Remover encostar no total */
+th.n,
+td.n {
   text-align: right;
+  padding-left: 20px;
   padding-right: 0;
   white-space: nowrap;
 }
