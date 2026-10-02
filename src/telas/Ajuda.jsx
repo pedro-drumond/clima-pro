@@ -41,6 +41,11 @@ const ASSUNTOS = [
           Em qualquer modelo você pode puxar itens da biblioteca ou escrever um item novo na hora. O item escrito na hora
           já vem marcado para ser salvo na biblioteca, e você desmarca se for algo que não vai repetir.
         </p>
+        <p>
+          No orçamento por margem, o bloco <strong>Preço</strong> traz a formação de preço: o imposto e a margem líquida.
+          Mudando ali, vale só para aquele orçamento. O botão <strong>Salvar como padrão da empresa</strong> faz os
+          próximos orçamentos já nascerem com esses números.
+        </p>
       </>
     ),
   },
@@ -104,6 +109,40 @@ const ASSUNTOS = [
     ),
   },
   {
+    id: 'modelos',
+    titulo: 'Modelos de proposta',
+    resumo: 'Escolher como o orçamento sai no papel',
+    icone: Icone.folha,
+    texto: (
+      <>
+        <p>
+          Fica em Orçamentos, no botão <strong>Modelos</strong>. São quatro jeitos de a proposta sair, e o que você
+          escolhe vale para todas: tanto para o link que o cliente abre quanto para o PDF.
+        </p>
+        <ul>
+          <li>
+            <strong>Vertical</strong> — logo e dados da empresa centralizados no alto, e o orçamento empilhado abaixo.
+          </li>
+          <li>
+            <strong>Horizontal</strong> — cabeçalho em faixa, com a empresa de um lado e a logo do outro.
+          </li>
+          <li>
+            <strong>Dividido</strong> — uma coluna escura à esquerda com a empresa e os números do orçamento, e a
+            proposta à direita.
+          </li>
+          <li>
+            <strong>Enxuto</strong> — sem faixa nem cor, só a empresa num canto e o orçamento logo abaixo.
+          </li>
+        </ul>
+        <p>
+          Cada opção mostra a proposta de verdade, reduzida. Em <strong>Ver inteiro</strong> ela abre em tamanho real,
+          com um orçamento de mentira mas com a sua logo e os seus dados, e dá para imprimir para ver como fica no
+          papel antes de escolher.
+        </p>
+      </>
+    ),
+  },
+  {
     id: 'seguro',
     titulo: 'Seguro do equipamento',
     resumo: 'Incluir um ano de cobertura no orçamento',
@@ -155,6 +194,15 @@ const ASSUNTOS = [
           <li>item de preço de venda aparece no orçamento por preço de venda;</li>
           <li>no orçamento de itens avulsos aparecem os dois.</li>
         </ul>
+        <p>
+          A coluna <strong>Preço final</strong> mostra, nos dois casos, quanto o item sai para o cliente. No item de
+          custo ela aplica a margem e o imposto que estão salvos como padrão da empresa; no item de preço de venda ela
+          repete o próprio valor, porque ali o preço já é o final.
+        </p>
+        <p>
+          O item novo entra na lista em ordem alfabética, então a lista rola sozinha até ele e ele pisca em verde por
+          alguns segundos.
+        </p>
       </>
     ),
   },
@@ -185,15 +233,14 @@ const ASSUNTOS = [
     icone: Icone.empresa,
     texto: (
       <>
-        <p>Tudo que é ajuste fica aqui, em caixas separadas:</p>
+        <p>
+          Tudo que é ajuste fica aqui, em caixas separadas. O imposto e a margem não ficam mais nesta tela: eles são
+          definidos dentro do próprio orçamento por margem.
+        </p>
         <ul>
           <li>
             <strong>Dados que saem no orçamento</strong> — nome, documento, telefone, endereço e logo, que aparecem no
             cabeçalho da proposta.
-          </li>
-          <li>
-            <strong>Formação de preço</strong> — o imposto e a margem líquida que você quer ganhar. O exemplo abaixo dos
-            campos mostra na hora quanto ficaria um custo de mil reais.
           </li>
           <li>
             <strong>Acompanhamento dos orçamentos</strong> — de quantos em quantos dias cobrar quem não respondeu, e com
@@ -289,9 +336,6 @@ export default function Ajuda() {
         })}
       </div>
 
-      <p className="ajuda-rodape">
-        Não achou o que procurava? Fale com a gente pelo WhatsApp ou em contato@rhrenovaveis.com.br
-      </p>
     </>
   )
 }

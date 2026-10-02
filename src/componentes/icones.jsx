@@ -60,6 +60,14 @@ export const Icone = {
       <path d="M9.2 12.2 11.3 14l3.6-3.8" />
     </Base>
   ),
+  folha: () => (
+    <Base>
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <path d="M7.5 7h9" />
+      <path d="M7.5 11h5" />
+      <path d="M7.5 15h9M7.5 18h6" />
+    </Base>
+  ),
   pessoas: () => (
     <Base>
       <circle cx="9.5" cy="8" r="3.2" />

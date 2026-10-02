@@ -182,7 +182,7 @@ export default function Orcamento() {
 
       <div className="ficha">
       <div className="coluna-lado">
-      <div className="bloco">
+      <div className="bloco bloco-cliente">
         <h2>Cliente</h2>
         <Linha>
           <Escolha
@@ -224,7 +224,7 @@ export default function Orcamento() {
         ) : null}
       </div>
 
-      <div className="bloco">
+      <div className="bloco bloco-preco">
         <h2>Preço</h2>
         {porMargem ? (
           <>
@@ -335,7 +335,7 @@ export default function Orcamento() {
         </div>
       </div>
 
-      <div className="bloco">
+      <div className="bloco bloco-envio">
         <h2>Envio e situação</h2>
         {orcamento.aceite ? (
           <p>
@@ -444,7 +444,7 @@ export default function Orcamento() {
 
       </div>
 
-      <div className="bloco">
+      <div className="bloco bloco-itens">
         <h2>Itens</h2>
         {itensNaTela.length === 0 ? (
           <p className="fraco">Nenhum item ainda.</p>
