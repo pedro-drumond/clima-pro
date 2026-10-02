@@ -5,7 +5,9 @@ import { moeda, totalDoOrcamento, custoDoOrcamento, ehPorMargem, dataCurta } fro
 export default function Numeros() {
   const { b, conta } = useDados()
   const todos = b.orcamentos.filter((o) => o.contaId === conta.id)
-  const enviados = todos.filter((o) => o.enviadoEm)
+  // sai de elaboração e já conta: inclusive o que foi fechado ou perdido sem
+  // nunca ter passado pelo botão de enviar
+  const enviados = todos.filter((o) => o.situacao !== 'contato')
   const ganhos = todos.filter((o) => o.situacao === 'fechado' || o.situacao === 'instalado')
   const perdidos = todos.filter((o) => o.situacao === 'perdido')
   const decididos = ganhos.length + perdidos.length
