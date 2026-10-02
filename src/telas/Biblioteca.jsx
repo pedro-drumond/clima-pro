@@ -109,9 +109,9 @@ export default function Biblioteca() {
           <option value="menor">Menor valor</option>
         </select>
         <select className="seletor-barra" value={natureza} onChange={(e) => setNatureza(e.target.value)}>
-          <option value="tudo">Custo e preço final</option>
+          <option value="tudo">Custo e preço de venda</option>
           <option value="custo">Só custo</option>
-          <option value="venda">Só preço final</option>
+          <option value="venda">Só preço de venda</option>
         </select>
         <div className="filtros">
           {[{ valor: 'todos', texto: 'Todos' }].concat(TIPOS).map((t) => (
@@ -147,7 +147,7 @@ export default function Biblioteca() {
               </span>
               <span className="n">
                 <span className="com-dica">
-                  Preço final
+                  Preço de venda
                   <span className="dica">
                     O valor já com a sua margem dentro, que é o que o cliente paga. Só aparece nos orçamentos por preço
                     de venda e nos de itens avulsos, onde você não informa margem.
@@ -240,11 +240,11 @@ export default function Biblioteca() {
               aoMudar={(v) => setEdicao({ ...edicao, tipoPreco: v })}
               opcoes={[
                 { valor: 'custo', texto: 'Custo' },
-                { valor: 'venda', texto: 'Preço final' },
+                { valor: 'venda', texto: 'Preço de venda' },
               ]}
             />
             <Texto
-              rotulo={porVenda ? 'Preço final (R$)' : 'Custo (R$)'}
+              rotulo={porVenda ? 'Preço de venda (R$)' : 'Custo (R$)'}
               type="number"
               valor={edicao.custo}
               aoMudar={(v) => setEdicao({ ...edicao, custo: v })}
@@ -274,18 +274,18 @@ export default function Biblioteca() {
       ) : null}
 
       {explicando ? (
-        <Janela titulo="Custo e preço final" aoFechar={() => setExplicando(false)}>
+        <Janela titulo="Custo e preço de venda" aoFechar={() => setExplicando(false)}>
           <p>
             <strong>Custo</strong> é o valor puro do item, sem nada por cima: o que você paga no material, ou o que a
             hora de serviço custa para você.
           </p>
           <p>
-            <strong>Preço final</strong> é o valor já com a sua margem dentro. É o que o cliente paga por aquele item.
+            <strong>Preço de venda</strong> é o valor já com a sua margem dentro. É o que o cliente paga por aquele item.
           </p>
           <p>
             A diferença decide onde o item aparece. No orçamento <strong>por margem</strong>, só entram itens de custo,
             porque é esse orçamento que aplica o imposto e a margem para chegar no preço. Nos orçamentos{' '}
-            <strong>por preço de venda</strong> e <strong>de itens avulsos</strong>, só entram itens de preço final,
+            <strong>por preço de venda</strong> e <strong>de itens avulsos</strong>, só entram itens de preço de venda,
             porque neles você não informa margem nenhuma.
           </p>
           <p className="fraco">

@@ -424,8 +424,8 @@ export function custoDoOrcamento(orcamento) {
 }
 
 // 'margem' — custo unitário com imposto e margem líquida.
-// 'venda'  — preço final de cada item, puxado da biblioteca.
-// 'avulso' — itens digitados na hora com preço final.
+// 'venda'  — preço de venda de cada item, puxado da biblioteca.
+// 'avulso' — itens digitados na hora com preço de venda.
 export function ehPorMargem(orcamento) {
   return (orcamento.modelo || 'margem') === 'margem'
 }

@@ -103,7 +103,7 @@ export default function Orcamento() {
   }
 
   // item escrito na hora, em qualquer modelo. No orçamento por margem o valor
-  // digitado é custo e o sistema calcula o preço; nos outros é o preço final.
+  // digitado é custo e o sistema calcula o preço; nos outros é o preço de venda.
   function adicionarAvulso() {
     if (!avulso.nome.trim()) return
     const valor = Number(avulso.preco) || 0

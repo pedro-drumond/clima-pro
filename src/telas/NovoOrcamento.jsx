@@ -13,13 +13,13 @@ export const MODELOS = [
   {
     valor: 'venda',
     titulo: 'Por preço de venda',
-    linha: 'Você entra com o preço final de venda de cada item e o sistema só soma.',
+    linha: 'Você entra com o preço de venda de cada item e o sistema só soma.',
   },
   {
     valor: 'avulso',
     titulo: 'Itens avulsos',
     linha:
-      'Você escreve os itens na hora com o preço final, e escolhe se quer salvar cada um na biblioteca.',
+      'Você escreve os itens na hora com o preço de venda, e escolhe se quer salvar cada um na biblioteca.',
   },
 ]
 
