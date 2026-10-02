@@ -20,6 +20,14 @@ function Base({ children }) {
 }
 
 export const Icone = {
+  lixeira: () => (
+    <Base>
+      <path d="M4.5 6.5h15" />
+      <path d="M9.5 6.5V4.8h5v1.7" />
+      <path d="M6.5 6.5 7.4 20h9.2l.9-13.5" />
+      <path d="M10.3 10v6M13.7 10v6" />
+    </Base>
+  ),
   inicio: () => (
     <Base>
       <path d="M4 10.5 12 4l8 6.5" />

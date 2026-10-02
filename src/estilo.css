@@ -1929,3 +1929,125 @@ th.n {
     padding: var(--esp-3);
   }
 }
+
+/* ----- formulário em grade -----
+   Dois campos por linha, da mesma largura, e quem precisa da linha inteira
+   pede. Sem isso cada campo fica do tamanho do que escrevem nele e a caixa
+   fica torta. */
+
+.forma {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--esp-2);
+}
+
+.forma-larga {
+  grid-column: 1 / -1;
+}
+
+.forma .campo input,
+.forma .campo select {
+  max-width: none;
+  width: 100%;
+}
+
+/* ----- biblioteca ----- */
+
+.filtros.centralizados {
+  justify-content: center;
+}
+
+.bloco-lista {
+  margin-bottom: 0;
+  padding: var(--esp-2) var(--esp-3) var(--esp-3);
+}
+
+.linha-biblioteca {
+  display: grid;
+  grid-template-columns: 1fr 108px 120px 34px;
+  gap: var(--esp-2);
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--linha-suave);
+}
+
+.linha-biblioteca:last-child {
+  border-bottom: none;
+}
+
+.cabeca-biblioteca {
+  padding-top: 0;
+  padding-bottom: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texto-fraco);
+  border-bottom: 1px solid var(--linha);
+}
+
+.rolagem-biblioteca {
+  max-height: 460px;
+  overflow-y: auto;
+}
+
+.linha-biblioteca .n {
+  text-align: right;
+}
+
+.nome-do-item {
+  display: block;
+  width: 100%;
+  border: none;
+  padding: 0;
+  font-weight: 600;
+  font-size: 14px;
+  background: none;
+}
+
+.valor-margem {
+  font-size: 13.5px;
+  color: var(--texto-fraco);
+}
+
+.botao-lixeira {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: none;
+  color: var(--texto-fraco);
+}
+
+.botao-lixeira:hover {
+  color: var(--vermelho);
+  border-color: var(--linha-suave);
+  background: var(--fundo);
+}
+
+.botao-lixeira svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* as duas colunas da biblioteca terminam juntas */
+.tela-dupla {
+  align-items: stretch;
+}
+
+.tela-dupla .coluna-lista {
+  display: flex;
+  flex-direction: column;
+}
+
+.tela-dupla .coluna-lista .bloco-lista {
+  flex: 1;
+}
+
+.linha-biblioteca .celula {
+  width: 100%;
+}

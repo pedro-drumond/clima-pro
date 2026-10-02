@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { useDados, Texto, Escolha, Vazio, Linha } from '../componentes/base.jsx'
+import { useDados, Texto, Escolha, Vazio } from '../componentes/base.jsx'
+import { Icone } from '../componentes/icones.jsx'
 import { moeda, precoDoCusto } from '../dados/armazenamento.js'
 import { salvarItem, apagarItem } from '../dados/acoes.js'
 
@@ -10,7 +11,13 @@ export const TIPOS = [
   { valor: 'outro', texto: 'Outros' },
 ]
 
-const UNIDADES = ['unidade', 'metro', 'hora', 'diária', 'peça']
+const UNIDADES = [
+  { valor: 'unidade', texto: 'Un.' },
+  { valor: 'metro', texto: 'Metro' },
+  { valor: 'hora', texto: 'Hora' },
+  { valor: 'diária', texto: 'Diária' },
+  { valor: 'peça', texto: 'Peça' },
+]
 
 const VAZIO = { tipo: 'servico', tipoOutro: '', tipoPreco: 'custo', nome: '', unidade: 'unidade', custo: '' }
 
@@ -36,6 +43,7 @@ export default function Biblioteca() {
   }
 
   const porVenda = novo.tipoPreco === 'venda'
+  const Lixeira = Icone.lixeira
 
   return (
     <>
@@ -44,156 +52,135 @@ export default function Biblioteca() {
       </div>
 
       <div className="tela-dupla">
-      <div className="bloco">
-        <h2>Novo item</h2>
-        <Texto rotulo="Nome" valor={novo.nome} aoMudar={(v) => setNovo({ ...novo, nome: v })} />
-        <Linha>
-          <Escolha
-            rotulo="Tipo"
-            tamanho="medio"
-            valor={novo.tipo}
-            aoMudar={(v) => setNovo({ ...novo, tipo: v, tipoOutro: '' })}
-            opcoes={TIPOS}
-          />
-          {novo.tipo === 'outro' ? (
-            <Texto
-              rotulo="Qual?"
-              tamanho="medio"
-              valor={novo.tipoOutro}
-              aoMudar={(v) => setNovo({ ...novo, tipoOutro: v })}
+        <div className="bloco">
+          <h2>Novo item</h2>
+
+          <div className="forma">
+            <div className="forma-larga">
+              <Texto rotulo="Nome" valor={novo.nome} aoMudar={(v) => setNovo({ ...novo, nome: v })} />
+            </div>
+
+            <Escolha
+              rotulo="Tipo"
+              valor={novo.tipo}
+              aoMudar={(v) => setNovo({ ...novo, tipo: v, tipoOutro: '' })}
+              opcoes={TIPOS}
             />
-          ) : null}
-
-          <Escolha
-            rotulo="Unidade"
-            tamanho="medio"
-            valor={outraUnidade ? 'outra' : novo.unidade}
-            aoMudar={(v) => {
-              if (v === 'outra') {
-                setOutraUnidade(true)
-                setNovo({ ...novo, unidade: '' })
-              } else {
-                setOutraUnidade(false)
-                setNovo({ ...novo, unidade: v })
-              }
-            }}
-            opcoes={UNIDADES.map((u) => ({ valor: u, texto: u[0].toUpperCase() + u.slice(1) })).concat([
-              { valor: 'outra', texto: 'Outra' },
-            ])}
-          />
-          {outraUnidade ? (
-            <Texto
-              rotulo="Qual unidade?"
-              tamanho="medio"
-              valor={novo.unidade}
-              aoMudar={(v) => setNovo({ ...novo, unidade: v })}
+            <Escolha
+              rotulo="Unidade"
+              valor={outraUnidade ? 'outra' : novo.unidade}
+              aoMudar={(v) => {
+                if (v === 'outra') {
+                  setOutraUnidade(true)
+                  setNovo({ ...novo, unidade: '' })
+                } else {
+                  setOutraUnidade(false)
+                  setNovo({ ...novo, unidade: v })
+                }
+              }}
+              opcoes={UNIDADES.concat([{ valor: 'outra', texto: 'Outra' }])}
             />
-          ) : null}
 
-          <Escolha
-            rotulo="O valor é"
-            tamanho="medio"
-            valor={novo.tipoPreco}
-            aoMudar={(v) => setNovo({ ...novo, tipoPreco: v })}
-            opcoes={[
-              { valor: 'custo', texto: 'Custo' },
-              { valor: 'venda', texto: 'Preço de venda' },
-            ]}
-          />
-          <Texto
-            rotulo={porVenda ? 'Preço de venda (R$)' : 'Custo (R$)'}
-            tamanho="curto"
-            type="number"
-            valor={novo.custo}
-            aoMudar={(v) => setNovo({ ...novo, custo: v })}
-          />
-        </Linha>
-        <button className="botao principal" onClick={adicionar}>
-          Adicionar
-        </button>
-        <p className="fraco">
-          Item de custo entra no orçamento por margem. Item de preço de venda entra no orçamento por preço de venda.
-          No orçamento de itens avulsos aparecem os dois.
-        </p>
-      </div>
+            {novo.tipo === 'outro' ? (
+              <div className="forma-larga">
+                <Texto
+                  rotulo="Qual tipo?"
+                  valor={novo.tipoOutro}
+                  aoMudar={(v) => setNovo({ ...novo, tipoOutro: v })}
+                />
+              </div>
+            ) : null}
 
-      <div className="coluna-lista">
-      <div className="filtros">
-        {[{ valor: 'todos', texto: 'Todos' }].concat(TIPOS).map((t) => (
-          <button
-            key={t.valor}
-            className={'botao pequeno' + (filtro === t.valor ? ' principal' : '')}
-            onClick={() => setFiltro(t.valor)}
-          >
-            {t.texto}
+            {outraUnidade ? (
+              <div className="forma-larga">
+                <Texto
+                  rotulo="Qual unidade?"
+                  valor={novo.unidade}
+                  aoMudar={(v) => setNovo({ ...novo, unidade: v })}
+                />
+              </div>
+            ) : null}
+
+            <Escolha
+              rotulo="O valor é"
+              valor={novo.tipoPreco}
+              aoMudar={(v) => setNovo({ ...novo, tipoPreco: v })}
+              opcoes={[
+                { valor: 'custo', texto: 'Custo' },
+                { valor: 'venda', texto: 'Preço de venda' },
+              ]}
+            />
+            <Texto
+              rotulo={porVenda ? 'Preço de venda (R$)' : 'Custo (R$)'}
+              type="number"
+              valor={novo.custo}
+              aoMudar={(v) => setNovo({ ...novo, custo: v })}
+            />
+          </div>
+
+          <button className="botao principal largo" onClick={adicionar}>
+            Adicionar
           </button>
-        ))}
-      </div>
+        </div>
 
-      <div className="bloco">
-        {itens.length === 0 ? (
-          <Vazio texto="Nenhum item cadastrado." />
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th className="n">Valor</th>
-                <th className="n">Preço com sua margem</th>
-                <th className="n"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {itens.map((i) => (
-                <tr key={i.id}>
-                  <td>
-                    <input
-                      value={i.nome}
-                      onChange={(e) => salvarItem({ ...i, nome: e.target.value }, conta.id)}
-                      style={{ width: '100%', border: 'none', padding: 0, fontWeight: 600 }}
-                    />
-                    <div className="fraco">
-                      {nomeDoTipo(i)} · por {i.unidade} · {i.tipoPreco === 'venda' ? 'preço de venda' : 'custo'}
+        <div className="coluna-lista">
+          <div className="filtros centralizados">
+            {[{ valor: 'todos', texto: 'Todos' }].concat(TIPOS).map((t) => (
+              <button
+                key={t.valor}
+                className={'botao pequeno' + (filtro === t.valor ? ' principal' : '')}
+                onClick={() => setFiltro(t.valor)}
+              >
+                {t.texto}
+              </button>
+            ))}
+          </div>
+
+          <div className="bloco bloco-lista">
+            {itens.length === 0 ? (
+              <Vazio texto="Nenhum item cadastrado." />
+            ) : (
+              <>
+                <div className="linha-biblioteca cabeca-biblioteca">
+                  <span>Item</span>
+                  <span className="n">Valor</span>
+                  <span className="n">Com a sua margem</span>
+                  <span />
+                </div>
+                <div className="rolagem-biblioteca">
+                  {itens.map((i) => (
+                    <div className="linha-biblioteca" key={i.id}>
+                      <span>
+                        <input
+                          className="nome-do-item"
+                          value={i.nome}
+                          onChange={(e) => salvarItem({ ...i, nome: e.target.value }, conta.id)}
+                        />
+                        <span className="fraco">
+                          {nomeDoTipo(i)} · por {i.unidade} · {i.tipoPreco === 'venda' ? 'preço de venda' : 'custo'}
+                        </span>
+                      </span>
+                      <span className="n">
+                        <input
+                          className="celula larga"
+                          type="number"
+                          value={i.custo}
+                          onChange={(e) => salvarItem({ ...i, custo: Number(e.target.value) }, conta.id)}
+                        />
+                      </span>
+                      <span className="n valor-margem">
+                        {i.tipoPreco === 'venda' ? '' : moeda(precoDoCusto(i.custo, conta.margemPct, conta.impostoPct))}
+                      </span>
+                      <button className="botao-lixeira" title="Remover item" onClick={() => apagarItem(i.id)}>
+                        <Lixeira />
+                      </button>
                     </div>
-                  </td>
-                  <td className="n" style={{ width: 120 }}>
-                    <input
-                      type="number"
-                      value={i.custo}
-                      onChange={(e) => salvarItem({ ...i, custo: Number(e.target.value) }, conta.id)}
-                      style={{
-                        width: 110,
-                        textAlign: 'right',
-                        padding: '6px 8px',
-                        border: '1px solid #e2e6ea',
-                        borderRadius: 8,
-                      }}
-                    />
-                  </td>
-                  <td className="n">
-                    {i.tipoPreco === 'venda' ? (
-                      <span className="fraco">—</span>
-                    ) : (
-                      moeda(precoDoCusto(i.custo, conta.margemPct, conta.impostoPct))
-                    )}
-                  </td>
-                  <td className="n">
-                    <button className="botao perigo" onClick={() => apagarItem(i.id)}>
-                      Remover
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      <p className="fraco">
-        O preço da coluna "com sua margem" usa a margem de {conta.margemPct}% e o imposto de {conta.impostoPct}% da sua
-        empresa. Em cada orçamento dá para mudar.
-      </p>
-      </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </>
   )
