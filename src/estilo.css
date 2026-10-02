@@ -1987,7 +1987,8 @@ th.n {
 }
 
 .rolagem-biblioteca {
-  max-height: 460px;
+  max-height: calc(100vh - 330px);
+  min-height: 420px;
   overflow-y: auto;
 }
 
@@ -2034,7 +2035,7 @@ th.n {
   height: 17px;
 }
 
-/* as duas colunas da biblioteca terminam juntas */
+/* as duas colunas terminam juntas */
 .tela-dupla {
   align-items: stretch;
 }
@@ -2048,6 +2049,67 @@ th.n {
   flex: 1;
 }
 
+/* na biblioteca os filtros ficam numa faixa só sobre a lista, e as duas
+   caixas começam e terminam na mesma altura */
+.tela-dupla.biblioteca {
+  grid-template-rows: auto 1fr;
+}
+
+.filtros.sobre-a-lista {
+  grid-column: 2;
+  grid-row: 1;
+  margin-bottom: var(--esp-2);
+}
+
+.tela-dupla.biblioteca .caixa-novo-item {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.tela-dupla.biblioteca .bloco-lista {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* o item que acabou de ser criado pisca, senão ele entra em ordem
+   alfabética e some lista abaixo */
+.linha-biblioteca.recem-criada {
+  background: #eef7f1;
+  box-shadow: inset 3px 0 0 var(--verde);
+}
+
+@media (max-width: 900px) {
+  .tela-dupla.biblioteca {
+    grid-template-rows: auto auto auto;
+  }
+  .filtros.sobre-a-lista,
+  .tela-dupla.biblioteca .caixa-novo-item,
+  .tela-dupla.biblioteca .bloco-lista {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
 .linha-biblioteca .celula {
   width: 100%;
+}
+
+/* formação de preço dentro do orçamento: muda só este, ou vira o padrão */
+.formacao-preco {
+  padding-bottom: var(--esp-2);
+  margin-bottom: var(--esp-2);
+  border-bottom: 1px solid var(--linha-suave);
+}
+
+.formacao-preco h3 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texto-fraco);
+  margin: 0 0 var(--esp-2);
+}
+
+.formacao-preco .fraco {
+  margin-bottom: 10px;
 }

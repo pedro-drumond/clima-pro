@@ -13,7 +13,6 @@ export default function Empresa() {
   const mudarParam = (campos) => salvarParametrosDaConta(conta.id, { ...p, ...campos })
   const mudarTexto = (chave, valor) => mudarParam({ textos: { ...p.textos, [chave]: valor } })
 
-  const exemplo = 1000 / (1 - (Number(conta.margemPct) + Number(conta.impostoPct)) / 100)
 
   return (
     <>
@@ -74,16 +73,7 @@ export default function Empresa() {
         </Campo>
       </div>
 
-      <div className="blocos-triplos">
-        <div className="bloco">
-          <h2>Formação de preço</h2>
-          <Linha>
-            <Numero rotulo="Imposto (%)" valor={conta.impostoPct} aoMudar={(v) => mudar({ impostoPct: v })} />
-            <Numero rotulo="Margem líquida (%)" valor={conta.margemPct} aoMudar={(v) => mudar({ margemPct: v })} />
-          </Linha>
-          <p className="fraco">Custo de R$ 1.000 sai por {moeda(exemplo)}.</p>
-        </div>
-
+      <div className="blocos-duplos">
         <div className="bloco">
           <h2>Acompanhamento dos orçamentos</h2>
           <Linha>

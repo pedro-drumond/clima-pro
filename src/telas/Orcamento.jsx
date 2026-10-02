@@ -28,6 +28,7 @@ import {
   marcarInstalado,
   salvarPessoa,
   salvarItem,
+  salvarConta,
 } from '../dados/acoes.js'
 import { MODELOS } from './NovoOrcamento.jsx'
 
@@ -41,6 +42,7 @@ export default function Orcamento() {
   const [novoEmail, setNovoEmail] = useState('')
   const [cadastrando, setCadastrando] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
+  const [padraoSalvo, setPadraoSalvo] = useState(false)
   const [avulso, setAvulso] = useState({ nome: '', qtd: 1, preco: '', unidade: 'unidade', salvar: true })
   // os itens ficam numa cópia enquanto ele digita; só vão para o banco quando
   // ele sai do campo, para não regravar a lista inteira a cada tecla
@@ -226,20 +228,40 @@ export default function Orcamento() {
         <h2>Preço</h2>
         {porMargem ? (
           <>
-            <Linha>
-              <Numero
-                rotulo="Imposto (%)"
-                valor={orcamento.impostoPct}
-                aoMudar={(v) => mudar({ impostoPct: v })}
-                disabled={!editavel}
-              />
-              <Numero
-                rotulo="Margem líquida (%)"
-                valor={orcamento.margemPct}
-                aoMudar={(v) => mudar({ margemPct: v })}
-                disabled={!editavel}
-              />
-            </Linha>
+            <div className="formacao-preco">
+              <h3>Formação de preço</h3>
+              <Linha>
+                <Numero
+                  rotulo="Imposto (%)"
+                  valor={orcamento.impostoPct}
+                  aoMudar={(v) => mudar({ impostoPct: v })}
+                  disabled={!editavel}
+                />
+                <Numero
+                  rotulo="Margem líquida (%)"
+                  valor={orcamento.margemPct}
+                  aoMudar={(v) => mudar({ margemPct: v })}
+                  disabled={!editavel}
+                />
+              </Linha>
+              <p className="fraco">Vale só para este orçamento, a não ser que você salve como padrão.</p>
+              {editavel ? (
+                <button
+                  className="botao largo"
+                  onClick={() => {
+                    salvarConta({
+                      ...conta,
+                      impostoPct: Number(orcamento.impostoPct) || 0,
+                      margemPct: Number(orcamento.margemPct) || 0,
+                    })
+                    setPadraoSalvo(true)
+                    setTimeout(() => setPadraoSalvo(false), 2500)
+                  }}
+                >
+                  {padraoSalvo ? 'Salvo como padrão' : 'Salvar como padrão da empresa'}
+                </button>
+              ) : null}
+            </div>
             <table>
               <tbody>
                 <tr>

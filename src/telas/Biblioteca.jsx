@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDados, Texto, Escolha, Vazio } from '../componentes/base.jsx'
 import { Icone } from '../componentes/icones.jsx'
 import { moeda, precoDoCusto } from '../dados/armazenamento.js'
@@ -31,15 +31,27 @@ export default function Biblioteca() {
   const [filtro, setFiltro] = useState('todos')
   const [novo, setNovo] = useState(VAZIO)
   const [outraUnidade, setOutraUnidade] = useState(false)
+  // guarda o item recém-criado para rolar até ele: sem isso o item entra em
+  // ordem alfabética, some lista abaixo, e parece que o botão não funcionou
+  const [recem, setRecem] = useState('')
+  const linhaNova = useRef(null)
+
+  useEffect(() => {
+    if (!recem || !linhaNova.current) return
+    linhaNova.current.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    const t = setTimeout(() => setRecem(''), 2600)
+    return () => clearTimeout(t)
+  }, [recem])
 
   const itens = b.itens
     .filter((i) => i.contaId === conta.id)
     .filter((i) => filtro === 'todos' || i.tipo === filtro)
 
-  function adicionar() {
+  async function adicionar() {
     if (!novo.nome.trim()) return
-    salvarItem({ ...novo, custo: Number(novo.custo) || 0 }, conta.id)
+    const id = await salvarItem({ ...novo, custo: Number(novo.custo) || 0 }, conta.id)
     setNovo({ ...VAZIO, tipo: novo.tipo, tipoPreco: novo.tipoPreco, unidade: novo.unidade })
+    if (id) setRecem(id)
   }
 
   const porVenda = novo.tipoPreco === 'venda'
@@ -51,8 +63,20 @@ export default function Biblioteca() {
         <h1>Biblioteca</h1>
       </div>
 
-      <div className="tela-dupla">
-        <div className="bloco">
+      <div className="tela-dupla biblioteca">
+        <div className="filtros centralizados sobre-a-lista">
+          {[{ valor: 'todos', texto: 'Todos' }].concat(TIPOS).map((t) => (
+            <button
+              key={t.valor}
+              className={'botao pequeno' + (filtro === t.valor ? ' principal' : '')}
+              onClick={() => setFiltro(t.valor)}
+            >
+              {t.texto}
+            </button>
+          ))}
+        </div>
+
+        <div className="bloco caixa-novo-item">
           <h2>Novo item</h2>
 
           <div className="forma">
@@ -123,20 +147,7 @@ export default function Biblioteca() {
           </button>
         </div>
 
-        <div className="coluna-lista">
-          <div className="filtros centralizados">
-            {[{ valor: 'todos', texto: 'Todos' }].concat(TIPOS).map((t) => (
-              <button
-                key={t.valor}
-                className={'botao pequeno' + (filtro === t.valor ? ' principal' : '')}
-                onClick={() => setFiltro(t.valor)}
-              >
-                {t.texto}
-              </button>
-            ))}
-          </div>
-
-          <div className="bloco bloco-lista">
+        <div className="bloco bloco-lista">
             {itens.length === 0 ? (
               <Vazio texto="Nenhum item cadastrado." />
             ) : (
@@ -144,12 +155,16 @@ export default function Biblioteca() {
                 <div className="linha-biblioteca cabeca-biblioteca">
                   <span>Item</span>
                   <span className="n">Valor</span>
-                  <span className="n">Com a sua margem</span>
+                  <span className="n">Preço final</span>
                   <span />
                 </div>
                 <div className="rolagem-biblioteca">
                   {itens.map((i) => (
-                    <div className="linha-biblioteca" key={i.id}>
+                    <div
+                      className={'linha-biblioteca' + (recem === i.id ? ' recem-criada' : '')}
+                      key={i.id}
+                      ref={recem === i.id ? linhaNova : null}
+                    >
                       <span>
                         <input
                           className="nome-do-item"
@@ -169,7 +184,9 @@ export default function Biblioteca() {
                         />
                       </span>
                       <span className="n valor-margem">
-                        {i.tipoPreco === 'venda' ? '' : moeda(precoDoCusto(i.custo, conta.margemPct, conta.impostoPct))}
+                        {i.tipoPreco === 'venda'
+                          ? moeda(i.custo)
+                          : moeda(precoDoCusto(i.custo, conta.margemPct, conta.impostoPct))}
                       </span>
                       <button className="botao-lixeira" title="Remover item" onClick={() => apagarItem(i.id)}>
                         <Lixeira />
@@ -179,7 +196,6 @@ export default function Biblioteca() {
                 </div>
               </>
             )}
-          </div>
         </div>
       </div>
     </>
