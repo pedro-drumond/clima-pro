@@ -464,6 +464,10 @@ th.n {
 
 /* cabeçalho da coluna: título centralizado, com a contagem ao lado.
    Clicar deixa só aquela coluna na tela. */
+.coluna-topo {
+  position: relative;
+}
+
 .coluna-cabeca {
   display: flex;
   align-items: center;
@@ -483,8 +487,53 @@ th.n {
   border-bottom-color: var(--marca);
 }
 
-.coluna-cabeca.sozinha {
+.coluna-cabeca.aberta {
   border-bottom-color: var(--marca);
+}
+
+.coluna-seta {
+  color: var(--texto-fraco);
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* menu de ordenação da coluna */
+.menu-ordem {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  box-shadow: 0 6px 20px rgba(15, 43, 70, 0.12);
+  padding: 4px;
+  min-width: 170px;
+  margin-top: -8px;
+}
+
+.menu-ordem button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--texto);
+  cursor: pointer;
+}
+
+.menu-ordem button:hover {
+  background: var(--fundo);
+}
+
+.menu-ordem button.escolhido {
+  color: var(--marca);
+  font-weight: 600;
 }
 
 .coluna-titulo {

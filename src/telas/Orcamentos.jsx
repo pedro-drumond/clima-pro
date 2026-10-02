@@ -14,27 +14,28 @@ const ETAPAS = [
 const ORDENS = [
   ['recente', 'Mais recente'],
   ['antigo', 'Mais antigo'],
-  ['maior', 'Maior valor'],
-  ['menor', 'Menor valor'],
-  ['nome', 'Nome do cliente'],
+  ['maior', 'Maior preço'],
+  ['menor', 'Menor preço'],
+  ['nome', 'Alfabética'],
 ]
 
 export default function Orcamentos() {
   const { b, conta } = useDados()
   const navegar = useNavigate()
   const [verPerdidos, setVerPerdidos] = useState(false)
-  const [colunaSozinha, setColunaSozinha] = useState('')
+  const [menuAberto, setMenuAberto] = useState('')
   const [apagando, setApagando] = useState('')
   const [arrastando, setArrastando] = useState('')
   const [colunaAlvo, setColunaAlvo] = useState('')
-  const [ordem, setOrdem] = useState('recente')
+  const [ordens, setOrdens] = useState({})
 
   const params = parametros(conta)
   const todos = b.orcamentos.filter((o) => o.contaId === conta.id)
   const perdidos = todos.filter((o) => o.situacao === 'perdido')
   const pessoaDe = (o) => b.pessoas.find((p) => p.id === o.pessoaId)
 
-  function ordenar(lista) {
+  function ordenar(lista, chave) {
+    const ordem = ordens[chave] || 'recente'
     const copia = lista.slice()
     const data = (o) => new Date(o.enviadoEm || o.criadoEm).getTime()
     const nome = (o) => (pessoaDe(o)?.nome || '').toLowerCase()
@@ -53,23 +54,11 @@ export default function Orcamentos() {
     if (o && o.situacao !== chave) moverOrcamento(o, chave, params)
   }
 
-  const etapasNaTela = colunaSozinha ? ETAPAS.filter(([c]) => c === colunaSozinha) : ETAPAS
-
   return (
     <>
       <div className="cabeca">
         <h1>Orçamentos</h1>
         <div className="acoes">
-          <span className="ordenar">
-            Ordenar por
-            <select value={ordem} onChange={(e) => setOrdem(e.target.value)}>
-              {ORDENS.map(([valor, texto]) => (
-                <option key={valor} value={valor}>
-                  {texto}
-                </option>
-              ))}
-            </select>
-          </span>
           <button
             className={'botao pequeno' + (verPerdidos ? ' principal' : '')}
             onClick={() => setVerPerdidos(!verPerdidos)}
@@ -87,7 +76,7 @@ export default function Orcamentos() {
           {perdidos.length === 0 ? (
             <p className="fraco">Nenhum orçamento perdido.</p>
           ) : (
-            ordenar(perdidos).map((o) => {
+            ordenar(perdidos, 'perdido').map((o) => {
               const pessoa = pessoaDe(o)
 
               if (apagando === o.id) {
@@ -149,9 +138,9 @@ export default function Orcamentos() {
           )}
         </div>
       ) : (
-        <div className={'quadro' + (colunaSozinha ? ' uma-coluna' : '')}>
-          {etapasNaTela.map(([chave, titulo]) => {
-            const lista = ordenar(todos.filter((o) => o.situacao === chave))
+        <div className="quadro">
+          {ETAPAS.map(([chave, titulo]) => {
+            const lista = ordenar(todos.filter((o) => o.situacao === chave), chave)
             const soma = lista.reduce((s, o) => s + totalDoOrcamento(o), 0)
             return (
               <div
@@ -167,14 +156,33 @@ export default function Orcamentos() {
                   soltarEm(chave)
                 }}
               >
-                <button
-                  className={'coluna-cabeca' + (colunaSozinha === chave ? ' sozinha' : '')}
-                  onClick={() => setColunaSozinha(colunaSozinha === chave ? '' : chave)}
-                  title={colunaSozinha === chave ? 'Ver o quadro inteiro' : 'Ver só esta coluna'}
-                >
-                  <span className="coluna-titulo">{titulo}</span>
-                  <span className="coluna-contagem">{lista.length}</span>
-                </button>
+                <div className="coluna-topo">
+                  <button
+                    className={'coluna-cabeca' + (menuAberto === chave ? ' aberta' : '')}
+                    onClick={() => setMenuAberto(menuAberto === chave ? '' : chave)}
+                    title="Ordenar esta coluna"
+                  >
+                    <span className="coluna-titulo">{titulo}</span>
+                    <span className="coluna-contagem">{lista.length}</span>
+                    <span className="coluna-seta">⌄</span>
+                  </button>
+                  {menuAberto === chave ? (
+                    <div className="menu-ordem">
+                      {ORDENS.map(([valor, texto]) => (
+                        <button
+                          key={valor}
+                          className={(ordens[chave] || 'recente') === valor ? 'escolhido' : ''}
+                          onClick={() => {
+                            setOrdens({ ...ordens, [chave]: valor })
+                            setMenuAberto('')
+                          }}
+                        >
+                          {texto}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
                 <div className="coluna-lista">
                   {lista.length === 0 ? (
                     <p className="fraco">—</p>
