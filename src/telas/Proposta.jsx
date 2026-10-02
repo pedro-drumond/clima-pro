@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../dados/supabase.js'
-import { moeda, dataCurta, somarDias } from '../dados/armazenamento.js'
-import { Aparelho } from '../componentes/aparelhos.jsx'
+import { dataCurta, somarDias } from '../dados/armazenamento.js'
+import { FolhaProposta } from '../componentes/proposta.jsx'
 
 function aparelhoDeQuemAbriu() {
   const ua = navigator.userAgent || ''
@@ -11,77 +11,6 @@ function aparelhoDeQuemAbriu() {
   if (/Mac/.test(ua)) return 'Computador Mac'
   if (/Windows/.test(ua)) return 'Computador Windows'
   return 'Navegador'
-}
-
-function Cabecalho({ empresa, orcamento, validade }) {
-  const modelo = empresa.modeloCabecalho || 'simples'
-
-  const identidade = (
-    <>
-      {empresa.logo ? <img className="logo" src={empresa.logo} alt="" /> : null}
-      <div className="nome-empresa">{empresa.nomeFantasia}</div>
-      <div className="fraco">
-        {empresa.cnpj ? empresa.cnpj + ' · ' : ''}
-        {empresa.telefone}
-      </div>
-      <div className="fraco">{empresa.endereco}</div>
-    </>
-  )
-
-  const numeros = (
-    <div className="fraco numeros-proposta">
-      Orçamento nº {orcamento.numero}
-      <br />
-      {dataCurta(orcamento.enviadoEm || orcamento.criadoEm)}
-      <br />
-      Válido até {dataCurta(validade)}
-    </div>
-  )
-
-  if (modelo === 'faixa') {
-    return (
-      <div className="cabecalho-proposta faixa">
-        <div className="faixa-marca">
-          <div className="faixa-esquerda">
-            {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={52} /> : null}
-            <div>
-              <div className="nome-empresa">{empresa.nomeFantasia}</div>
-              <div className="faixa-contato">
-                {empresa.telefone}
-                {empresa.endereco ? ' · ' + empresa.endereco : ''}
-              </div>
-            </div>
-          </div>
-          {empresa.logo ? <img className="logo" src={empresa.logo} alt="" /> : null}
-        </div>
-        <div className="faixa-abaixo">
-          <span className="fraco">{empresa.cnpj}</span>
-          {numeros}
-        </div>
-      </div>
-    )
-  }
-
-  if (modelo === 'centralizado') {
-    return (
-      <div className="cabecalho-proposta centralizado">
-        {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={64} /> : null}
-        {identidade}
-        <div className="linha-divisoria" />
-        {numeros}
-      </div>
-    )
-  }
-
-  return (
-    <div className="cabecalho-proposta simples">
-      <div className="cabecalho-esquerda">
-        {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={48} /> : null}
-        <div>{identidade}</div>
-      </div>
-      {numeros}
-    </div>
-  )
 }
 
 export default function Proposta() {
@@ -142,67 +71,15 @@ export default function Proposta() {
   }
 
   return (
-    <div className="proposta">
-      <Cabecalho empresa={empresa} orcamento={orcamento} validade={validade} />
-
-      {cliente.nome ? (
-        <p className="para-quem">
-          <strong>{cliente.nome}</strong>
-          {cliente.documento ? <span className="fraco"> · {cliente.documento}</span> : null}
-          <br />
-          <span className="fraco">{cliente.endereco}</span>
-        </p>
-      ) : null}
-
-      <table>
-        <thead>
-          <tr>
-            <th>Descrição</th>
-            <th className="n">Qtd.</th>
-            {orcamento.mostrarUnitario ? <th className="n">Valor un.</th> : null}
-            <th className="n">Valor</th>
-          </tr>
-        </thead>
-        <tbody>
-          {itens.map((i, n) => (
-            <tr key={n}>
-              <td>
-                {i.nome}
-                <div className="fraco">{i.unidade}</div>
-              </td>
-              <td className="n">{i.qtd}</td>
-              {orcamento.mostrarUnitario ? <td className="n">{moeda(preco(i))}</td> : null}
-              <td className="n">{moeda(i.qtd * preco(i))}</td>
-            </tr>
-          ))}
-          {orcamento.seguro ? (
-            <tr>
-              <td>
-                Seguro do equipamento
-                <div className="fraco">cobertura de 1 ano</div>
-              </td>
-              <td className="n">1</td>
-              {orcamento.mostrarUnitario ? <td className="n">{moeda(premio)}</td> : null}
-              <td className="n">{moeda(premio)}</td>
-            </tr>
-          ) : null}
-        </tbody>
-      </table>
-
-      <div className="total-linha">
-        <span>Total</span>
-        <span className="numero-grande">{moeda(somaItens + premio)}</span>
-      </div>
-
-      {orcamento.condicoes ? (
-        <p className="condicoes">
-          <strong>Pagamento</strong>
-          <br />
-          {orcamento.condicoes}
-        </p>
-      ) : null}
-      {orcamento.observacoes ? <p className="fraco">{orcamento.observacoes}</p> : null}
-
+    <FolhaProposta
+      empresa={empresa}
+      orcamento={orcamento}
+      cliente={cliente}
+      itens={itens}
+      validade={validade}
+      preco={preco}
+      premio={premio}
+    >
       {orcamento.aceite ? (
         <div className="assinatura-caixa">
           <div className={'assinado ' + orcamento.aceite.estilo}>{orcamento.aceite.nome}</div>
@@ -221,7 +98,8 @@ export default function Proposta() {
         <div className="assinatura-caixa sem-impressao">
           <strong>Este orçamento perdeu a validade em {dataCurta(validade)}.</strong>
           <p className="fraco">
-            Fale com a {empresa.nomeFantasia} pelo telefone {empresa.telefone} para receber um orçamento atualizado.
+            Fale com a {empresa.nomeFantasia} pelo telefone {empresa.telefone} para receber um orçamento
+            atualizado.
           </p>
         </div>
       ) : (
@@ -242,17 +120,11 @@ export default function Proposta() {
         </div>
       )}
 
-      {/* linha de assinatura, só no papel */}
-      <div className="assinatura-papel">
-        <div className="linha-assinatura" />
-        <div>{empresa.nomeFantasia}</div>
-      </div>
-
       <div className="barra-pdf sem-impressao">
         <button className="botao" onClick={() => window.print()}>
           Gerar PDF
         </button>
       </div>
-    </div>
+    </FolhaProposta>
   )
 }

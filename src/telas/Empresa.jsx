@@ -3,6 +3,7 @@ import { useDados, Texto, Numero, Area, Escolha, Campo, Linha } from '../compone
 import { APARELHOS, Aparelho } from '../componentes/aparelhos.jsx'
 import { parametros, moeda } from '../dados/armazenamento.js'
 import { salvarConta, salvarParametrosDaConta } from '../dados/acoes.js'
+import { MODELOS_PROPOSTA } from '../componentes/proposta.jsx'
 
 export default function Empresa() {
   const { conta } = useDados()
@@ -154,15 +155,11 @@ export default function Empresa() {
         <h2>Aparência da proposta</h2>
         <Linha>
           <Escolha
-            rotulo="Modelo de cabeçalho"
+            rotulo="Modelo da proposta"
             tamanho="medio"
             valor={conta.modeloCabecalho || 'simples'}
             aoMudar={(v) => mudar({ modeloCabecalho: v })}
-            opcoes={[
-              { valor: 'simples', texto: 'Simples' },
-              { valor: 'faixa', texto: 'Faixa colorida' },
-              { valor: 'centralizado', texto: 'Centralizado' },
-            ]}
+            opcoes={MODELOS_PROPOSTA.map((m) => ({ valor: m.valor, texto: m.titulo }))}
           />
           <Escolha
             rotulo="Desenho do aparelho"

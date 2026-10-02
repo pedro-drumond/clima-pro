@@ -80,7 +80,6 @@ export default function Pessoas() {
                 <span className="cartao-pessoa-nome">{p.nome}</span>
                 {p.whatsapp ? <span className="cartao-pessoa-dado">{telefone(p.whatsapp)}</span> : null}
                 {p.email ? <span className="cartao-pessoa-dado">{p.email}</span> : null}
-                {p.endereco ? <span className="cartao-pessoa-dado">{p.endereco}</span> : null}
                 <span className="cartao-pessoa-conta">
                   <span>{emAberto} orç.</span>
                   {contratos > 0 ? <span>{contratos === 1 ? '1 contrato' : contratos + ' contratos'}</span> : null}

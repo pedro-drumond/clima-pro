@@ -14,6 +14,7 @@ import {
 } from '../dados/acoes.js'
 import { marcaDoCartao, tarefasDoDia, primeiroNome } from '../dados/agenda.js'
 import { linkWhatsapp } from '../dados/armazenamento.js'
+import Modelos from './Modelos.jsx'
 
 const ETAPAS = [
   ['contato', 'Em elaboração'],
@@ -73,6 +74,8 @@ export default function Orcamentos() {
     if (o && o.situacao !== chave) moverOrcamento(o, chave, params)
   }
 
+  if (vista === 'modelos') return <Modelos aoVoltar={() => setVista('quadro')} />
+
   return (
     <>
       <div className="cabeca">
@@ -89,6 +92,12 @@ export default function Orcamentos() {
             onClick={() => setVista(vista === 'perdidos' ? 'quadro' : 'perdidos')}
           >
             Perdidos {perdidos.length > 0 ? '(' + perdidos.length + ')' : ''}
+          </button>
+          <button
+            className={'botao pequeno' + (vista === 'modelos' ? ' principal' : '')}
+            onClick={() => setVista(vista === 'modelos' ? 'quadro' : 'modelos')}
+          >
+            Modelos
           </button>
           <button className="botao principal" onClick={() => navegar('/orcamentos/novo')}>
             Novo orçamento
