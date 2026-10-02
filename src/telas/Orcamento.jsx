@@ -21,6 +21,8 @@ import {
   salvarItensDoOrcamento,
   apagarOrcamento,
   marcarEnviado,
+  marcarEnviadoSePreciso,
+  reabrirOrcamento,
   marcarFechado,
   marcarPerdido,
   marcarInstalado,
@@ -480,7 +482,13 @@ export default function Orcamento() {
         ) : null}
 
         <div className="acoes">
-          <a className="botao zap" href={linkWhatsapp(pessoa?.whatsapp, mensagemEnvio)} target="_blank" rel="noreferrer">
+          <a
+            className="botao zap"
+            href={linkWhatsapp(pessoa?.whatsapp, mensagemEnvio)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => marcarEnviadoSePreciso(orcamento, params)}
+          >
             Enviar pelo WhatsApp
           </a>
           <Link className="botao" to={'/proposta/' + (orcamento.token || orcamento.id)} target="_blank">
@@ -489,6 +497,7 @@ export default function Orcamento() {
           <button
             className="botao"
             onClick={() => {
+              marcarEnviadoSePreciso(orcamento, params)
               const alvo = window.open('#/proposta/' + (orcamento.token || orcamento.id), '_blank')
               // dá tempo de a proposta carregar antes de abrir a impressão
               if (alvo) setTimeout(() => alvo.print(), 2500)
@@ -501,6 +510,7 @@ export default function Orcamento() {
             onClick={() => {
               const endereco = window.location.origin + window.location.pathname + '#/proposta/' + (orcamento.token || orcamento.id)
               navigator.clipboard?.writeText(endereco)
+              marcarEnviadoSePreciso(orcamento, params)
               setLinkCopiado(true)
               setTimeout(() => setLinkCopiado(false), 2500)
             }}
@@ -524,6 +534,11 @@ export default function Orcamento() {
                 Perdeu
               </button>
             </>
+          ) : null}
+          {orcamento.situacao === 'perdido' ? (
+            <button className="botao principal" onClick={() => reabrirOrcamento(orcamento)}>
+              Reabrir orçamento
+            </button>
           ) : null}
           {orcamento.situacao === 'fechado' ? (
             <button className="botao principal" onClick={() => marcarInstalado(orcamento.id)}>

@@ -458,12 +458,50 @@ th.n {
   flex-direction: column;
 }
 
-.coluna h3 {
-  font-size: 13px;
+.quadro.uma-coluna {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* cabeçalho da coluna: título centralizado, com a contagem ao lado.
+   Clicar deixa só aquela coluna na tela. */
+.coluna-cabeca {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid var(--linha);
+  background: none;
+  padding: 0 0 10px;
   margin: 0 0 14px;
-  color: var(--texto-fraco);
+  cursor: pointer;
+  font: inherit;
+}
+
+.coluna-cabeca:hover {
+  border-bottom-color: var(--marca);
+}
+
+.coluna-cabeca.sozinha {
+  border-bottom-color: var(--marca);
+}
+
+.coluna-titulo {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--marca);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
+}
+
+.coluna-contagem {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--texto-fraco);
+  background: var(--fundo);
+  border-radius: 10px;
+  padding: 1px 8px;
 }
 
 .coluna-lista {
@@ -492,6 +530,85 @@ th.n {
 
 .cartao:last-child {
   margin-bottom: 4px;
+}
+
+.cartao-nome {
+  font-weight: 600;
+}
+
+/* metade do tamanho do nome: é referência, não informação principal */
+.cartao-sub {
+  font-size: 11px;
+  color: var(--texto-fraco);
+  margin-top: 2px;
+}
+
+.cartao .valor {
+  margin-top: 8px;
+}
+
+/* ----- perdidos -----
+   Cartão fechado, só o essencial. O motivo pode ser um texto longo, então
+   fica guardado até a pessoa clicar. */
+
+.perdidos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.cartao-perdido {
+  border: 1px solid var(--linha);
+  background: var(--branco);
+  border-radius: var(--raio);
+  overflow: hidden;
+}
+
+.cartao-perdido.aberto {
+  border-color: var(--marca);
+  grid-column: 1 / -1;
+}
+
+.perdido-topo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 12px;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 12px 14px;
+  cursor: pointer;
+  font: inherit;
+  color: var(--texto);
+}
+
+.perdido-nome {
+  font-weight: 600;
+}
+
+.perdido-valor {
+  grid-row: 1 / 3;
+  grid-column: 2;
+  align-self: center;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.perdido-sub {
+  font-size: 11px;
+  color: var(--texto-fraco);
+}
+
+.perdido-motivo {
+  border-top: 1px solid var(--linha-suave);
+  padding: 12px 14px 14px;
+}
+
+.perdido-motivo p {
+  margin: 0 0 12px;
+  line-height: 1.7;
 }
 
 .ordenar {

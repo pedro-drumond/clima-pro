@@ -175,6 +175,27 @@ export function marcarEnviado(orcamentoId, params) {
   )
 }
 
+// Marca como enviado sozinho, na primeira vez que o orçamento sai da mão do
+// instalador — gerar PDF, copiar o link ou abrir o WhatsApp. Ninguém lembra de
+// apertar "marcar como enviado", e sem isso a cobrança nunca é agendada.
+export function marcarEnviadoSePreciso(orcamento, params) {
+  if (!orcamento || orcamento.situacao !== 'contato') return
+  if (!(orcamento.itens || []).length) return
+  return marcarEnviado(orcamento.id, params)
+}
+
+// Volta um orçamento perdido para o quadro. Se ele já tinha sido enviado,
+// volta para Enviados e a cobrança é reagendada; se não, volta para Em
+// elaboração.
+export function reabrirOrcamento(orcamento) {
+  const voltaPara = orcamento.enviadoEm ? 'enviado' : 'contato'
+  return mudarOrcamento(
+    orcamento.id,
+    { situacao: voltaPara, motivoPerda: '', decididoEm: null, proximoContato: hojeISO() },
+    { situacao: voltaPara, motivo_perda: '', decidido_em: null, proximo_contato: hojeISO() }
+  )
+}
+
 export function registrarCobranca(orcamentoId, params) {
   const o = banco().orcamentos.find((x) => x.id === orcamentoId)
   if (!o) return
