@@ -30,6 +30,8 @@ export default function Biblioteca() {
   const { b, conta } = useDados()
   const [filtro, setFiltro] = useState('todos')
   const [busca, setBusca] = useState('')
+  const [natureza, setNatureza] = useState('tudo')
+  const [ordem, setOrdem] = useState('nome')
   // null = janela fechada; objeto = item sendo cadastrado ou editado
   const [edicao, setEdicao] = useState(null)
   const [erro, setErro] = useState('')
@@ -45,7 +47,16 @@ export default function Biblioteca() {
   const itens = b.itens
     .filter((i) => i.contaId === conta.id)
     .filter((i) => filtro === 'todos' || i.tipo === filtro)
+    .filter((i) =>
+      natureza === 'tudo' ? true : natureza === 'custo' ? i.tipoPreco !== 'venda' : i.tipoPreco === 'venda'
+    )
     .filter((i) => (i.nome + ' ' + nomeDoTipo(i)).toLowerCase().includes(busca.toLowerCase()))
+    .slice()
+    .sort((x, y) => {
+      if (ordem === 'maior') return Number(y.custo) - Number(x.custo)
+      if (ordem === 'menor') return Number(x.custo) - Number(y.custo)
+      return x.nome.localeCompare(y.nome, 'pt-BR')
+    })
 
   const unidadeConhecida = (u) => UNIDADES.some((x) => x.valor === u)
 
@@ -79,9 +90,6 @@ export default function Biblioteca() {
     <>
       <div className="cabeca">
         <h1>Biblioteca</h1>
-        <button className="botao principal" onClick={abrirNovo}>
-          Novo item
-        </button>
       </div>
 
       <div className="barra-biblioteca">
@@ -91,6 +99,16 @@ export default function Biblioteca() {
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
         />
+        <select className="seletor-barra" value={ordem} onChange={(e) => setOrdem(e.target.value)}>
+          <option value="nome">Ordem alfabética</option>
+          <option value="maior">Maior valor</option>
+          <option value="menor">Menor valor</option>
+        </select>
+        <select className="seletor-barra" value={natureza} onChange={(e) => setNatureza(e.target.value)}>
+          <option value="tudo">Custo e preço final</option>
+          <option value="custo">Só custo</option>
+          <option value="venda">Só preço final</option>
+        </select>
         <div className="filtros">
           {[{ valor: 'todos', texto: 'Todos' }].concat(TIPOS).map((t) => (
             <button
@@ -102,6 +120,9 @@ export default function Biblioteca() {
             </button>
           ))}
         </div>
+        <button className="botao principal" onClick={abrirNovo}>
+          Novo item
+        </button>
       </div>
 
       <div className="bloco bloco-lista">
@@ -111,12 +132,23 @@ export default function Biblioteca() {
           <>
             <div className="linha-biblioteca cabeca-biblioteca">
               <span>Item</span>
-              <span className="n">Custo</span>
               <span className="n">
-                Preço final
-                <button className="botao-detalhes" onClick={() => setExplicando(true)}>
-                  o que é?
-                </button>
+                <span className="com-dica">
+                  Custo
+                  <span className="dica">
+                    O valor puro do item, sem nada por cima. Só aparece nos orçamentos por margem, que é onde o sistema
+                    aplica o imposto e a margem para chegar no preço.
+                  </span>
+                </span>
+              </span>
+              <span className="n">
+                <span className="com-dica">
+                  Preço final
+                  <span className="dica">
+                    O valor já com a sua margem dentro, que é o que o cliente paga. Só aparece nos orçamentos por preço
+                    de venda e nos de itens avulsos, onde você não informa margem.
+                  </span>
+                </span>
               </span>
               <span />
             </div>
@@ -129,8 +161,12 @@ export default function Biblioteca() {
                       {nomeDoTipo(i)} · por {i.unidade}
                     </span>
                   </span>
-                  <span className="n valor-item">{i.tipoPreco === 'venda' ? '' : moeda(i.custo)}</span>
-                  <span className="n valor-item">{i.tipoPreco === 'venda' ? moeda(i.custo) : ''}</span>
+                  <span className="n valor-item">
+                    {i.tipoPreco === 'venda' ? <span className="sem-valor">—</span> : moeda(i.custo)}
+                  </span>
+                  <span className="n valor-item">
+                    {i.tipoPreco === 'venda' ? moeda(i.custo) : <span className="sem-valor">—</span>}
+                  </span>
                   <span className="acoes-linha">
                     <button className="botao-icone" title="Editar item" onClick={() => abrirEdicao(i)}>
                       <Lapis />

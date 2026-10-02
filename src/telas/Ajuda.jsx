@@ -195,13 +195,14 @@ const ASSUNTOS = [
           <li>no orçamento de itens avulsos aparecem os dois.</li>
         </ul>
         <p>
-          A coluna <strong>Preço final</strong> mostra, nos dois casos, quanto o item sai para o cliente. No item de
-          custo ela aplica a margem e o imposto que estão salvos como padrão da empresa; no item de preço de venda ela
-          repete o próprio valor, porque ali o preço já é o final.
+          A lista tem duas colunas de valor, <strong>Custo</strong> e <strong>Preço final</strong>, e cada item preenche
+          só a sua; na outra fica um traço. O sistema não sugere por quanto um item de custo sairia, porque isso depende
+          da margem que você usar em cada orçamento.
         </p>
         <p>
-          O item novo entra na lista em ordem alfabética, então a lista rola sozinha até ele e ele pisca em verde por
-          alguns segundos.
+          Em cima tem busca pelo nome, ordenação por nome ou por valor, e um seletor para ver só os de custo ou só os de
+          preço final. O botão <strong>Novo item</strong> abre uma janela para cadastrar, e o lápis de cada linha abre a
+          mesma janela para corrigir — inclusive o valor, que não se digita direto na lista.
         </p>
       </>
     ),
