@@ -94,7 +94,7 @@ export default function Orcamentos() {
             Perdidos {perdidos.length > 0 ? '(' + perdidos.length + ')' : ''}
           </button>
           <button
-            className={'botao pequeno' + (vista === 'modelos' ? ' principal' : '')}
+            className={'botao pequeno modelos' + (vista === 'modelos' ? ' principal' : '')}
             onClick={() => setVista(vista === 'modelos' ? 'quadro' : 'modelos')}
           >
             Modelos

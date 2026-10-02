@@ -768,12 +768,39 @@ th.n {
 /* proposta pública */
 
 .proposta {
+  --cor-proposta: var(--marca);
   max-width: 640px;
   margin: 24px auto;
   background: var(--branco);
   border: 1px solid var(--linha);
   border-radius: var(--raio);
   padding: 26px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* a proposta é um documento, não uma tela: letra menor cabe mais numa
+   folha e fica mais perto do que o cliente espera de um orçamento */
+.proposta table,
+.proposta p,
+.proposta .fraco {
+  font-size: 12.5px;
+}
+
+.proposta th {
+  font-size: 10.5px;
+}
+
+.proposta .numero-grande {
+  font-size: 22px;
+}
+
+.proposta .total-linha {
+  border-top-color: var(--cor-proposta);
+}
+
+.proposta .nome-empresa {
+  color: var(--cor-proposta);
 }
 
 /* ----- cabeçalho da proposta: três modelos ----- */
@@ -786,7 +813,7 @@ th.n {
 
 .cabecalho-proposta .nome-empresa {
   font-weight: 700;
-  font-size: 17px;
+  font-size: 15px;
 }
 
 .cabecalho-proposta .logo {
@@ -797,6 +824,10 @@ th.n {
 .numeros-proposta {
   text-align: right;
   white-space: nowrap;
+}
+
+.desenho-aparelho {
+  color: var(--cor-proposta);
 }
 
 .desenho-aparelho {
@@ -825,13 +856,13 @@ th.n {
 }
 
 .faixa-marca {
-  background: var(--marca);
+  background: var(--cor-proposta);
   color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  padding: 14px 18px;
+  padding: 18px 22px;
   border-radius: var(--raio);
 }
 
@@ -863,28 +894,43 @@ th.n {
   justify-content: space-between;
   align-items: flex-end;
   gap: 16px;
-  padding: 12px 2px 16px;
+  padding: 14px 2px 18px;
   border-bottom: 1px solid var(--linha);
 }
 
-/* centralizado */
-.cabecalho-proposta.centralizado {
-  text-align: center;
+/* vertical: a logo de um lado, a empresa do outro, e o traço fechando */
+.cabecalho-proposta.vertical {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
-.cabecalho-proposta.centralizado .numeros-proposta {
-  text-align: center;
+.vertical-topo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
 }
 
-.cabecalho-proposta.centralizado .desenho-aparelho {
-  margin-bottom: 4px;
+.vertical-marca {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.vertical-empresa {
+  text-align: right;
+}
+
+.cabecalho-proposta.vertical .numeros-proposta {
+  text-align: center;
 }
 
 .linha-divisoria {
-  height: 1px;
-  background: var(--linha);
-  margin: 14px auto;
-  width: 60%;
+  height: 2px;
+  background: var(--cor-proposta);
+  margin: 12px auto;
+  width: 100%;
+  opacity: 0.85;
 }
 
 .para-quem {
@@ -1741,6 +1787,8 @@ th.n {
   gap: var(--esp-2);
 }
 
+/* todos os cartões do mesmo tamanho: telefone e e-mail guardam a linha
+   mesmo quando estão vazios, senão um cartão fica mais alto que o outro */
 .cartao-pessoa {
   display: flex;
   flex-direction: column;
@@ -1866,7 +1914,43 @@ th.n {
 }
 
 .modelo-dados {
-  padding: 16px;
+  padding: 12px 14px;
+}
+
+.modelo-pe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modelo-acoes {
+  display: flex;
+  gap: 6px;
+}
+
+/* bolinhas de cor da proposta */
+.cores-proposta {
+  display: flex;
+  gap: 6px;
+}
+
+.bolinha-cor {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.bolinha-cor.escolhida {
+  box-shadow: 0 0 0 2px var(--branco), 0 0 0 3.5px var(--texto-fraco);
+}
+
+.botao.miudo {
+  padding: 4px 10px;
+  font-size: 12.5px;
 }
 
 .modelo-titulo {
@@ -1874,8 +1958,7 @@ th.n {
   align-items: center;
   gap: 8px;
   font-weight: 700;
-  font-size: 15px;
-  margin-bottom: 4px;
+  font-size: 14.5px;
 }
 
 .modelo-marca {
@@ -1888,10 +1971,6 @@ th.n {
   border: 1px solid #bfe4ce;
   border-radius: 999px;
   padding: 2px 8px;
-}
-
-.modelo-dados .acoes {
-  margin-top: 12px;
 }
 
 .aviso-exemplo {
@@ -1914,7 +1993,7 @@ th.n {
 }
 
 .proposta-lado {
-  background: var(--marca);
+  background: var(--cor-proposta);
   color: #fff;
   padding: var(--esp-3) 20px;
 }
@@ -1925,8 +2004,9 @@ th.n {
   margin-bottom: 14px;
 }
 
-.proposta-lado .nome-empresa {
-  font-size: 17px;
+.proposta.dividida .proposta-lado .nome-empresa {
+  color: #fff;
+  font-size: 15.5px;
   font-weight: 700;
   line-height: 1.3;
   margin: 12px 0 10px;
@@ -1938,13 +2018,27 @@ th.n {
   color: #bdcedf;
 }
 
-.lado-numeros {
+/* cada bloco da coluna: para quem é, e os números do orçamento */
+.lado-bloco {
   margin-top: var(--esp-3);
   padding-top: var(--esp-2);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 12px;
-  line-height: 1.7;
-  color: #bdcedf;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.lado-titulo {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 5px;
+}
+
+.lado-destaque {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
 }
 
 .proposta-corpo {
@@ -2142,4 +2236,10 @@ th.n {
 
 .formacao-preco .fraco {
   margin-bottom: 10px;
+}
+
+/* o botão Modelos pede mais respiro que os vizinhos */
+.cabeca .acoes .botao.modelos {
+  padding-left: 20px;
+  padding-right: 20px;
 }

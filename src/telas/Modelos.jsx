@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useDados } from '../componentes/base.jsx'
-import { FolhaProposta, MODELOS_PROPOSTA } from '../componentes/proposta.jsx'
-import { salvarConta } from '../dados/acoes.js'
+import { FolhaProposta, MODELOS_PROPOSTA, CORES_PROPOSTA, COR_PADRAO } from '../componentes/proposta.jsx'
+import { parametros } from '../dados/armazenamento.js'
+import { salvarConta, salvarParametrosDaConta } from '../dados/acoes.js'
 
 // um orçamento de mentira, só para o instalador ver como a proposta dele vai
 // sair em cada modelo. Os dados da empresa são os de verdade, para a logo
@@ -29,7 +30,7 @@ const EXEMPLO = {
 
 const precoExemplo = (i) => Number(i.precoUnit)
 
-function Exemplo({ empresa, modelo }) {
+function Exemplo({ empresa, modelo, cor }) {
   const validade = new Date(Date.now() + 15 * 86400000).toISOString()
   return (
     <FolhaProposta
@@ -40,6 +41,7 @@ function Exemplo({ empresa, modelo }) {
       validade={validade}
       preco={precoExemplo}
       modelo={modelo}
+      cor={cor}
     />
   )
 }
@@ -48,6 +50,9 @@ export default function Modelos({ aoVoltar }) {
   const { conta } = useDados()
   const [vendo, setVendo] = useState('')
   const atual = conta.modeloCabecalho || 'simples'
+  const p = parametros(conta)
+  const cor = p.corProposta || COR_PADRAO
+  const trocarCor = (valor) => salvarParametrosDaConta(conta.id, { ...p, corProposta: valor })
 
   if (vendo) {
     const escolhido = MODELOS_PROPOSTA.find((m) => m.valor === vendo)
@@ -81,7 +86,7 @@ export default function Modelos({ aoVoltar }) {
         </p>
 
         <div className="moldura-exemplo">
-          <Exemplo empresa={conta} modelo={vendo} />
+          <Exemplo empresa={conta} modelo={vendo} cor={cor} />
         </div>
       </>
     )
@@ -107,7 +112,7 @@ export default function Modelos({ aoVoltar }) {
           <div className={'modelo-cartao' + (atual === m.valor ? ' escolhido' : '')} key={m.valor}>
             <div className="modelo-miniatura" onClick={() => setVendo(m.valor)}>
               <div className="modelo-folha">
-                <Exemplo empresa={conta} modelo={m.valor} />
+                <Exemplo empresa={conta} modelo={m.valor} cor={cor} />
               </div>
             </div>
             <div className="modelo-dados">
@@ -115,16 +120,31 @@ export default function Modelos({ aoVoltar }) {
                 {m.titulo}
                 {atual === m.valor ? <span className="modelo-marca">Em uso</span> : null}
               </div>
-              <p className="fraco">{m.resumo}</p>
-              <div className="acoes">
-                <button className="botao pequeno" onClick={() => setVendo(m.valor)}>
-                  Ver inteiro
-                </button>
-                {atual === m.valor ? null : (
-                  <button className="botao pequeno principal" onClick={() => salvarConta({ ...conta, modeloCabecalho: m.valor })}>
-                    Usar este
+              <div className="modelo-pe">
+                <div className="cores-proposta">
+                  {CORES_PROPOSTA.map((c) => (
+                    <button
+                      key={c.valor}
+                      className={'bolinha-cor' + (cor === c.valor ? ' escolhida' : '')}
+                      style={{ background: c.valor }}
+                      title={c.nome}
+                      onClick={() => trocarCor(c.valor)}
+                    />
+                  ))}
+                </div>
+                <div className="modelo-acoes">
+                  <button className="botao miudo" onClick={() => setVendo(m.valor)}>
+                    Ver
                   </button>
-                )}
+                  {atual === m.valor ? null : (
+                    <button
+                      className="botao miudo principal"
+                      onClick={() => salvarConta({ ...conta, modeloCabecalho: m.valor })}
+                    >
+                      Usar este
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

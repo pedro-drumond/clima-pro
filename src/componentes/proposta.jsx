@@ -5,27 +5,21 @@ import { Aparelho } from './aparelhos.jsx'
 // os quatro jeitos de a proposta sair. O instalador escolhe um em Orçamentos,
 // no botão Modelos, e vale para todas as propostas da empresa.
 export const MODELOS_PROPOSTA = [
-  {
-    valor: 'centralizado',
-    titulo: 'Vertical',
-    resumo: 'Logo e dados da empresa centralizados no alto, tudo empilhado abaixo.',
-  },
-  {
-    valor: 'faixa',
-    titulo: 'Horizontal',
-    resumo: 'Cabeçalho em faixa: empresa de um lado, logo do outro, na mesma linha.',
-  },
-  {
-    valor: 'lateral',
-    titulo: 'Dividido',
-    resumo: 'Uma coluna escura à esquerda com a empresa, e a proposta à direita.',
-  },
-  {
-    valor: 'simples',
-    titulo: 'Enxuto',
-    resumo: 'Sem faixa nem cor: a empresa no canto e o orçamento logo abaixo.',
-  },
+  { valor: 'centralizado', titulo: 'Vertical' },
+  { valor: 'faixa', titulo: 'Horizontal' },
+  { valor: 'lateral', titulo: 'Dividido' },
+  { valor: 'simples', titulo: 'Enxuto' },
 ]
+
+// as cores que o instalador pode escolher para a proposta
+export const CORES_PROPOSTA = [
+  { valor: '#0f2b46', nome: 'Azul' },
+  { valor: '#14402c', nome: 'Verde escuro' },
+  { valor: '#5e1715', nome: 'Vermelho escuro' },
+  { valor: '#2b2f36', nome: 'Grafite' },
+]
+
+export const COR_PADRAO = CORES_PROPOSTA[0].valor
 
 function Identidade({ empresa }) {
   return (
@@ -41,14 +35,13 @@ function Identidade({ empresa }) {
   )
 }
 
+// numa linha só: em três linhas ocupava um bloco alto para três informações
+// curtas
 function Numeros({ orcamento, validade }) {
   return (
     <div className="fraco numeros-proposta">
-      Orçamento nº {orcamento.numero}
-      <br />
-      {dataCurta(orcamento.enviadoEm || orcamento.criadoEm)}
-      <br />
-      Válido até {dataCurta(validade)}
+      Orçamento nº {orcamento.numero} · {dataCurta(orcamento.enviadoEm || orcamento.criadoEm)} · válido até{' '}
+      {dataCurta(validade)}
     </div>
   )
 }
@@ -80,9 +73,21 @@ function Cabecalho({ empresa, orcamento, validade, modelo }) {
 
   if (modelo === 'centralizado') {
     return (
-      <div className="cabecalho-proposta centralizado">
-        {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={64} /> : null}
-        <Identidade empresa={empresa} />
+      <div className="cabecalho-proposta vertical">
+        <div className="vertical-topo">
+          <div className="vertical-marca">
+            {empresa.logo ? <img className="logo" src={empresa.logo} alt="" /> : null}
+            {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={44} /> : null}
+          </div>
+          <div className="vertical-empresa">
+            <div className="nome-empresa">{empresa.nomeFantasia}</div>
+            <div className="fraco">
+              {empresa.cnpj ? empresa.cnpj + ' · ' : ''}
+              {empresa.telefone}
+            </div>
+            <div className="fraco">{empresa.endereco}</div>
+          </div>
+        </div>
         <div className="linha-divisoria" />
         <Numeros orcamento={orcamento} validade={validade} />
       </div>
@@ -105,13 +110,25 @@ function Cabecalho({ empresa, orcamento, validade, modelo }) {
 // a folha inteira. O que vem depois do preço — aprovar, recusar, aviso de
 // validade — entra como filho, porque muda entre a proposta de verdade e o
 // exemplo mostrado na tela de modelos.
-export function FolhaProposta({ empresa, orcamento, cliente, itens, validade, preco, premio = 0, modelo, children }) {
+export function FolhaProposta({
+  empresa,
+  orcamento,
+  cliente,
+  itens,
+  validade,
+  preco,
+  premio = 0,
+  modelo,
+  cor,
+  children,
+}) {
   const qual = modelo || empresa.modeloCabecalho || 'simples'
+  const tinta = cor || empresa.corProposta || COR_PADRAO
   const somaItens = itens.reduce((s, i) => s + i.qtd * preco(i), 0)
 
   const corpo = (
     <>
-      {cliente?.nome ? (
+      {cliente?.nome && qual !== 'lateral' ? (
         <p className="para-quem">
           <strong>{cliente.nome}</strong>
           {cliente.documento ? <span className="fraco"> · {cliente.documento}</span> : null}
@@ -181,20 +198,30 @@ export function FolhaProposta({ empresa, orcamento, cliente, itens, validade, pr
 
   if (qual === 'lateral') {
     return (
-      <div className="proposta dividida">
+      <div className="proposta dividida" style={{ '--cor-proposta': tinta }}>
         <aside className="proposta-lado">
           {empresa.logo ? <img className="logo" src={empresa.logo} alt="" /> : null}
-          {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={56} /> : null}
+          {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={48} /> : null}
           <div className="nome-empresa">{empresa.nomeFantasia}</div>
           <div className="lado-contato">{empresa.cnpj}</div>
           <div className="lado-contato">{empresa.telefone}</div>
           <div className="lado-contato">{empresa.endereco}</div>
-          <div className="lado-numeros">
-            Orçamento nº {orcamento.numero}
-            <br />
-            {dataCurta(orcamento.enviadoEm || orcamento.criadoEm)}
-            <br />
-            Válido até {dataCurta(validade)}
+
+          {cliente?.nome ? (
+            <div className="lado-bloco">
+              <div className="lado-titulo">Para</div>
+              <div className="lado-destaque">{cliente.nome}</div>
+              {cliente.documento ? <div className="lado-contato">{cliente.documento}</div> : null}
+              {cliente.endereco ? <div className="lado-contato">{cliente.endereco}</div> : null}
+              {cliente.whatsapp ? <div className="lado-contato">{cliente.whatsapp}</div> : null}
+            </div>
+          ) : null}
+
+          <div className="lado-bloco">
+            <div className="lado-titulo">Orçamento</div>
+            <div className="lado-destaque">nº {orcamento.numero}</div>
+            <div className="lado-contato">{dataCurta(orcamento.enviadoEm || orcamento.criadoEm)}</div>
+            <div className="lado-contato">Válido até {dataCurta(validade)}</div>
           </div>
         </aside>
         <div className="proposta-corpo">{corpo}</div>
@@ -203,7 +230,7 @@ export function FolhaProposta({ empresa, orcamento, cliente, itens, validade, pr
   }
 
   return (
-    <div className="proposta">
+    <div className="proposta" style={{ '--cor-proposta': tinta }}>
       <Cabecalho empresa={empresa} orcamento={orcamento} validade={validade} modelo={qual} />
       {corpo}
     </div>

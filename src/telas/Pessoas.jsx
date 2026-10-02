@@ -78,8 +78,8 @@ export default function Pessoas() {
             return (
               <Link className="cartao-pessoa" to={'/pessoas/' + p.id} key={p.id}>
                 <span className="cartao-pessoa-nome">{p.nome}</span>
-                {p.whatsapp ? <span className="cartao-pessoa-dado">{telefone(p.whatsapp)}</span> : null}
-                {p.email ? <span className="cartao-pessoa-dado">{p.email}</span> : null}
+                <span className="cartao-pessoa-dado">{p.whatsapp ? telefone(p.whatsapp) : '\u00a0'}</span>
+                <span className="cartao-pessoa-dado">{p.email || '\u00a0'}</span>
                 <span className="cartao-pessoa-conta">
                   <span>{emAberto} orç.</span>
                   {contratos > 0 ? <span>{contratos === 1 ? '1 contrato' : contratos + ' contratos'}</span> : null}
