@@ -1187,3 +1187,45 @@ th.n {
     padding: var(--esp-3);
   }
 }
+
+/* setas discretas no alto do cartão, para mover de coluna sem abrir */
+.cartao {
+  position: relative;
+  cursor: pointer;
+}
+
+.cartao-setas {
+  display: flex;
+  justify-content: space-between;
+  margin: -6px -4px 2px;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.cartao:hover .cartao-setas,
+.cartao:focus-within .cartao-setas {
+  opacity: 1;
+}
+
+.cartao-setas button {
+  border: none;
+  background: none;
+  color: var(--texto-fraco);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cartao-setas button:hover {
+  background: var(--fundo);
+  color: var(--marca);
+}
+
+/* no celular não existe passar o mouse: as setas ficam sempre visíveis */
+@media (hover: none) {
+  .cartao-setas {
+    opacity: 1;
+  }
+}

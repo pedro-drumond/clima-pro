@@ -37,9 +37,15 @@ export default function Ajuda() {
         <div className="bloco">
           <h2>Orçamentos</h2>
           <p>
-            O quadro com as etapas: primeiro contato, enviado, fechado e instalado. Cada cartão é um orçamento, e a
-            coluna mostra a soma do que está ali. No seletor <strong>Ver</strong> você troca entre o quadro e a lista de
-            perdidos, e no <strong>Ordenar por</strong> muda a ordem dos cartões.
+            O quadro com as etapas: em elaboração, enviados, fechados e entregues. Cada cartão é um orçamento, e a
+            coluna mostra a soma do que está ali. O botão <strong>Perdidos</strong> mostra os que não deram certo, e
+            cada um deles pode voltar ao quadro pelo <strong>Reabrir</strong>.
+          </p>
+          <p>
+            O orçamento anda sozinho de <strong>em elaboração</strong> para <strong>enviados</strong> na primeira vez
+            que você copia o link, gera o PDF ou abre o WhatsApp — é isso que agenda a primeira cobrança. Para mover à
+            mão, passe o mouse no cartão e use as setas que aparecem no alto dele. Cada passagem guarda a data em que
+            aconteceu.
           </p>
           <p>Ao criar um orçamento você escolhe entre três modelos, e essa escolha muda como o preço é calculado:</p>
           <ul>
@@ -70,7 +76,7 @@ export default function Ajuda() {
             <li>
               <strong>Copiar link</strong> — o cliente abre no celular, vê a proposta e aprova ali mesmo, digitando o
               nome. Fica registrado quem aprovou, a data, a hora e de que aparelho, e o orçamento vai sozinho para a
-              coluna de fechados.
+              coluna de fechados. Se ele recusar, o orçamento vai para os perdidos e você pode reabrir.
             </li>
             <li>
               <strong>Gerar PDF</strong> — abre a proposta pronta para imprimir. Escolhendo "Salvar como PDF" na janela

@@ -20,7 +20,6 @@ import {
   salvarOrcamento,
   salvarItensDoOrcamento,
   apagarOrcamento,
-  marcarEnviado,
   marcarEnviadoSePreciso,
   reabrirOrcamento,
   marcarFechado,
@@ -491,9 +490,6 @@ export default function Orcamento() {
           >
             Enviar pelo WhatsApp
           </a>
-          <Link className="botao" to={'/proposta/' + (orcamento.token || orcamento.id)} target="_blank">
-            Abrir como o cliente vê
-          </Link>
           <button
             className="botao"
             onClick={() => {
@@ -517,11 +513,6 @@ export default function Orcamento() {
           >
             {linkCopiado ? 'Link copiado' : 'Copiar link'}
           </button>
-          {orcamento.situacao === 'contato' ? (
-            <button className="botao principal" onClick={() => marcarEnviado(orcamento.id, params)}>
-              Marcar como enviado
-            </button>
-          ) : null}
           {orcamento.situacao === 'enviado' ? (
             <>
               <button className="botao" onClick={() => marcarFechado(orcamento.id)}>
@@ -542,7 +533,7 @@ export default function Orcamento() {
           ) : null}
           {orcamento.situacao === 'fechado' ? (
             <button className="botao principal" onClick={() => marcarInstalado(orcamento.id)}>
-              Instalação concluída
+              Marcar como entregue
             </button>
           ) : null}
           <button

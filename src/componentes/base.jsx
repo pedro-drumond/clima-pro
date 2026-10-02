@@ -132,7 +132,7 @@ export function Marcador({ situacao }) {
     contato: 'Primeiro contato',
     enviado: 'Enviado',
     fechado: 'Fechado',
-    instalado: 'Instalado',
+    instalado: 'Entregue',
     perdido: 'Perdido',
   }
   return <span className={'marcador ' + situacao}>{nomes[situacao] || situacao}</span>

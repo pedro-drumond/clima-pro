@@ -41,7 +41,7 @@ export default function Numeros() {
               ['contato', 'Primeiro contato'],
               ['enviado', 'Enviado'],
               ['fechado', 'Fechado'],
-              ['instalado', 'Instalado'],
+              ['instalado', 'Entregue'],
               ['perdido', 'Perdido'],
             ].map(([chave, titulo]) => {
               const lista = todos.filter((o) => o.situacao === chave)

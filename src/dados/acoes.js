@@ -196,6 +196,47 @@ export function reabrirOrcamento(orcamento) {
   )
 }
 
+// Mover o cartão no quadro, pelas setas. Cada passagem guarda a data em que
+// aconteceu, e a data só é gravada na primeira vez — se ele mover para frente e
+// para trás, a original fica.
+export async function moverOrcamento(orcamento, novaSituacao, params) {
+  const agora = hojeISO()
+  const app = { situacao: novaSituacao }
+  const linha = { situacao: novaSituacao }
+
+  if (novaSituacao === 'enviado') {
+    if (!orcamento.enviadoEm) {
+      app.enviadoEm = agora
+      linha.enviado_em = agora
+    }
+    const proximo = somarDias(agora, params.cobrancaDias[0])
+    app.proximoContato = proximo
+    linha.proximo_contato = proximo
+  }
+
+  if (novaSituacao === 'fechado') {
+    if (!orcamento.decididoEm) {
+      app.decididoEm = agora
+      linha.decidido_em = agora
+    }
+    app.proximoContato = null
+    linha.proximo_contato = null
+  }
+
+  if (novaSituacao === 'instalado' && !orcamento.instaladoEm) {
+    app.instaladoEm = agora
+    linha.instalado_em = agora
+  }
+
+  if (novaSituacao === 'contato') {
+    app.proximoContato = null
+    linha.proximo_contato = null
+  }
+
+  await mudarOrcamento(orcamento.id, app, linha)
+  if (novaSituacao === 'fechado' && orcamento.pessoaId) await marcarComoCliente(orcamento.pessoaId)
+}
+
 export function registrarCobranca(orcamentoId, params) {
   const o = banco().orcamentos.find((x) => x.id === orcamentoId)
   if (!o) return

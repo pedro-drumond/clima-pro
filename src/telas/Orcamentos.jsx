@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDados } from '../componentes/base.jsx'
+import { parametros } from '../dados/armazenamento.js'
 import { moeda, totalDoOrcamento, dataCurta } from '../dados/armazenamento.js'
-import { reabrirOrcamento } from '../dados/acoes.js'
+import { reabrirOrcamento, moverOrcamento } from '../dados/acoes.js'
 
 const ETAPAS = [
   ['contato', 'Em elaboração'],
   ['enviado', 'Enviados'],
   ['fechado', 'Fechados'],
-  ['instalado', 'Instalados'],
+  ['instalado', 'Entregues'],
 ]
 
 const ORDENS = [
@@ -27,6 +28,7 @@ export default function Orcamentos() {
   const [motivoAberto, setMotivoAberto] = useState('')
   const [ordem, setOrdem] = useState('recente')
 
+  const params = parametros(conta)
   const todos = b.orcamentos.filter((o) => o.contaId === conta.id)
   const perdidos = todos.filter((o) => o.situacao === 'perdido')
   const pessoaDe = (o) => b.pessoas.find((p) => p.id === o.pessoaId)
@@ -132,14 +134,44 @@ export default function Orcamentos() {
                   ) : (
                     lista.map((o) => {
                       const pessoa = pessoaDe(o)
+                      const posicao = ETAPAS.findIndex(([c]) => c === chave)
+                      const mover = (passo) => (e) => {
+                        e.stopPropagation()
+                        moverOrcamento(o, ETAPAS[posicao + passo][0], params)
+                      }
                       return (
-                        <Link className="cartao" to={'/orcamentos/' + o.id} key={o.id}>
+                        <div
+                          className="cartao"
+                          key={o.id}
+                          role="link"
+                          tabIndex={0}
+                          onClick={() => navegar('/orcamentos/' + o.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') navegar('/orcamentos/' + o.id)
+                          }}
+                        >
+                          <div className="cartao-setas">
+                            {posicao > 0 ? (
+                              <button onClick={mover(-1)} title={'Voltar para ' + ETAPAS[posicao - 1][1]}>
+                                ‹
+                              </button>
+                            ) : (
+                              <span />
+                            )}
+                            {posicao < ETAPAS.length - 1 ? (
+                              <button onClick={mover(1)} title={'Passar para ' + ETAPAS[posicao + 1][1]}>
+                                ›
+                              </button>
+                            ) : (
+                              <span />
+                            )}
+                          </div>
                           <div className="cartao-nome">{pessoa ? pessoa.nome : 'Sem cliente'}</div>
                           <div className="cartao-sub">
                             nº {o.numero} · {dataCurta(o.enviadoEm || o.criadoEm)}
                           </div>
                           <div className="valor">{moeda(totalDoOrcamento(o))}</div>
-                        </Link>
+                        </div>
                       )
                     })
                   )}
