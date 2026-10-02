@@ -177,14 +177,13 @@ export function FolhaProposta({
         <span className="numero-grande">{moeda(somaItens + premio)}</span>
       </div>
 
-      {orcamento.condicoes ? (
-        <p className="condicoes">
-          <strong>Pagamento</strong>
-          <br />
-          {orcamento.condicoes}
-        </p>
+      {orcamento.condicoes || orcamento.observacoes ? (
+        <div className="bloco-pagamento">
+          {orcamento.condicoes ? <div className="titulo-pagamento">Pagamento</div> : null}
+          {orcamento.condicoes ? <p className="texto-pagamento">{orcamento.condicoes}</p> : null}
+          {orcamento.observacoes ? <p className="texto-pagamento fraco">{orcamento.observacoes}</p> : null}
+        </div>
       ) : null}
-      {orcamento.observacoes ? <p className="fraco">{orcamento.observacoes}</p> : null}
 
       {children}
 

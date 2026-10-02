@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDados, Texto, Escolha, Vazio, Janela } from '../componentes/base.jsx'
 import { Icone } from '../componentes/icones.jsx'
 import { moeda } from '../dados/armazenamento.js'
@@ -37,9 +37,13 @@ export default function Biblioteca() {
   const [erro, setErro] = useState('')
   const [explicando, setExplicando] = useState(false)
   const [recem, setRecem] = useState('')
+  const linhaNova = useRef(null)
 
+  // o item entra em ordem alfabética e pode cair fora da parte visível da
+  // lista; sem rolar até ele parece que o cadastro não funcionou
   useEffect(() => {
     if (!recem) return
+    if (linhaNova.current) linhaNova.current.scrollIntoView({ block: 'center', behavior: 'smooth' })
     const t = setTimeout(() => setRecem(''), 2600)
     return () => clearTimeout(t)
   }, [recem])
@@ -154,7 +158,11 @@ export default function Biblioteca() {
             </div>
             <div className="rolagem-biblioteca">
               {itens.map((i) => (
-                <div className={'linha-biblioteca' + (recem === i.id ? ' recem-criada' : '')} key={i.id}>
+                <div
+                  className={'linha-biblioteca' + (recem === i.id ? ' recem-criada' : '')}
+                  key={i.id}
+                  ref={recem === i.id ? linhaNova : null}
+                >
                   <span>
                     <span className="nome-do-item">{i.nome}</span>
                     <span className="fraco">
