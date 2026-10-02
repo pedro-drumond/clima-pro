@@ -66,7 +66,15 @@
         margin: 0 0 18px;
         letter-spacing: -0.01em;
       }
-      .abertura p { font-size: 18px; line-height: 1.6; color: #c5d6e6; margin: 0 0 28px; max-width: 620px; }
+      .abertura p {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #c5d6e6;
+        margin: 0 0 28px;
+        max-width: 640px;
+        text-align: justify;
+        hyphens: auto;
+      }
       .botao {
         display: inline-block;
         background: #fff;
@@ -78,27 +86,24 @@
         padding: 13px 26px;
       }
       .botao:hover { background: #e8f1f9; }
-      .abertura small { display: block; margin-top: 14px; color: #93a9bf; font-size: 13.5px; }
 
       /* o que faz */
-      .pontos .dentro { padding-top: 60px; padding-bottom: 20px; }
-      .pontos h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--texto-fraco); margin: 0 0 28px; }
+      .pontos .dentro { padding-top: 56px; padding-bottom: 20px; }
       .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 40px; }
       .ponto h3 { font-size: 18px; margin: 0 0 8px; line-height: 1.35; }
-      .ponto p { margin: 0; color: var(--texto-fraco); font-size: 15px; }
+      .ponto p { margin: 0; color: var(--texto-fraco); font-size: 15px; text-align: justify; hyphens: auto; }
       .ponto .risco { width: 34px; height: 3px; background: var(--marca-clara); border-radius: 2px; margin-bottom: 14px; }
 
       /* para quem */
       .quem { background: var(--fundo); margin-top: 60px; border-top: 1px solid var(--linha-suave); }
       .quem .dentro { padding-top: 48px; padding-bottom: 48px; max-width: 760px; }
-      .quem h2 { font-size: 24px; margin: 0 0 14px; }
-      .quem p { margin: 0 0 12px; color: var(--texto-fraco); font-size: 16px; }
+      .quem h2 { font-size: 22px; margin: 0 0 14px; }
+      .quem p { margin: 0; color: var(--texto-fraco); font-size: 16px; text-align: justify; hyphens: auto; }
       .quem p:last-child { margin-bottom: 0; }
 
       /* contato */
       .contato .dentro { padding-top: 56px; padding-bottom: 56px; text-align: center; }
-      .contato h2 { font-size: 24px; margin: 0 0 10px; }
-      .contato p { color: var(--texto-fraco); margin: 0 0 22px; }
+      .contato h2 { font-size: 24px; margin: 0 0 18px; }
       .contato a.email { font-size: 19px; font-weight: 700; color: var(--marca-clara); text-decoration: none; }
       .contato a.email:hover { text-decoration: underline; }
 
@@ -141,50 +146,48 @@
 
     <section class="abertura">
       <div class="dentro">
-        <h1>O orçamento sai pronto, e o cliente aprova pelo celular.</h1>
+        <h1>Gestão dos clientes, serviços e orçamentos.</h1>
         <p>
-          Clima Pro é o sistema de orçamento e acompanhamento feito para quem instala ar-condicionado. Você faz a
-          proposta em minutos, manda pelo WhatsApp e acompanha quem respondeu.
+          Clima Pro é o sistema que te ajuda na gestão e no acompanhamento da sua empresa de fornecimento e instalação
+          de ar-condicionado. Orçamentos rápidos, carteira de clientes organizada, recorrência de serviços e
+          monitoramento do que está em aberto.
         </p>
         <a class="botao" href="mailto:contato@climapro.com.br?subject=Quero%20testar%20o%20Clima%20Pro">Quero testar</a>
-        <small>Estamos abrindo para os primeiros instaladores.</small>
       </div>
     </section>
 
     <section class="pontos">
       <div class="dentro">
-        <h2>O que ele faz</h2>
         <div class="grade">
           <div class="ponto">
             <div class="risco"></div>
-            <h3>O preço sai calculado</h3>
+            <h3>Orçamento em minutos</h3>
             <p>
-              Você informa o custo, quanto quer ganhar e quanto paga de imposto. O sistema faz a conta e mostra o preço
-              de venda, já com a sua margem dentro de verdade.
+              Monte o orçamento com os itens que você já usa e cobre do jeito que você trabalha. O sistema fecha a conta
+              e devolve o preço pronto para mandar.
             </p>
           </div>
           <div class="ponto">
             <div class="risco"></div>
-            <h3>A proposta chega pronta</h3>
+            <h3>Proposta com a sua marca</h3>
             <p>
-              Com a sua logo e os seus dados, em quatro modelos diferentes. Vai por WhatsApp como link ou como PDF, e o
-              cliente aprova no celular, com data e hora registradas.
+              A proposta sai com a sua logo, no modelo e na cor que você escolher. Vai por WhatsApp ou em PDF, e o
+              cliente aprova pelo celular.
             </p>
           </div>
           <div class="ponto">
             <div class="risco"></div>
-            <h3>Nenhum orçamento esquecido</h3>
+            <h3>Retorno e recorrência</h3>
             <p>
-              O sistema diz quem você precisa chamar hoje: quem recebeu e não respondeu, quem está na época da limpeza e
-              quem sumiu faz tempo.
+              O sistema mostra quem recebeu orçamento e não respondeu, quem chegou na época da limpeza e quem está
+              parado faz tempo.
             </p>
           </div>
           <div class="ponto">
             <div class="risco"></div>
-            <h3>Sua biblioteca de serviços</h3>
+            <h3>Biblioteca de serviços</h3>
             <p>
-              Cadastre uma vez os serviços, materiais e equipamentos que você usa sempre. No próximo orçamento é só
-              escolher da lista.
+              Cadastre serviços, materiais e equipamentos que você usa sempre. No orçamento é só escolher da lista.
             </p>
           </div>
         </div>
@@ -198,17 +201,12 @@
           Para o instalador de ar-condicionado que atende sozinho ou com uma equipe pequena, no Brasil inteiro. Quem faz
           orçamento no caderno, no WhatsApp ou numa planilha, e perde serviço porque esqueceu de retornar.
         </p>
-        <p>
-          Não é um sistema de gestão cheio de telas. É o orçamento, a proposta e o acompanhamento do cliente — as três
-          coisas que decidem se o serviço fecha.
-        </p>
       </div>
     </section>
 
     <section class="contato">
       <div class="dentro">
         <h2>Quer testar?</h2>
-        <p>Escreve para a gente que a gente libera o seu acesso.</p>
         <a class="email" href="mailto:contato@climapro.com.br">contato@climapro.com.br</a>
       </div>
     </section>
