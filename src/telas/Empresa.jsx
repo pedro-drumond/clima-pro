@@ -49,17 +49,20 @@ export default function Empresa() {
           <Campo rotulo="Logo">
             <div className="campo-logo">
               {conta.logo ? <img src={conta.logo} alt="" /> : null}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const f = e.target.files && e.target.files[0]
-                  if (!f) return
-                  const leitor = new FileReader()
-                  leitor.onload = () => mudar({ logo: String(leitor.result) })
-                  leitor.readAsDataURL(f)
-                }}
-              />
+              <label className="botao arquivo">
+                {conta.logo ? 'Trocar' : 'Escolher arquivo'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const f = e.target.files && e.target.files[0]
+                    if (!f) return
+                    const leitor = new FileReader()
+                    leitor.onload = () => mudar({ logo: String(leitor.result) })
+                    leitor.readAsDataURL(f)
+                  }}
+                />
+              </label>
               {conta.logo ? (
                 <button className="botao perigo" onClick={() => mudar({ logo: '' })}>
                   Remover

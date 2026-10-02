@@ -2594,9 +2594,22 @@ th.n {
   max-width: 120px;
 }
 
-.campo-logo input[type='file'] {
-  width: auto;
-  flex: 1 1 200px;
+/* o campo de arquivo do navegador é feio e largo: escondemos ele atrás de um
+   botão igual aos outros do sistema */
+.botao.arquivo {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.botao.arquivo input[type='file'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 
 /* mensagens do WhatsApp: é texto de apoio, não precisa do tamanho da tela */
