@@ -1509,7 +1509,45 @@ th.n {
 /* separa itens de condições dentro da caixa grande */
 .divisor-bloco {
   border-top: 1px solid var(--linha-suave);
-  margin: 28px 0 24px;
+  margin: 20px 0 18px;
+}
+
+/* campo que ocupa a sobra da linha: deixa descrição e os textos de condições
+   dividirem o espaço em vez de cada um pedir uma linha inteira */
+.linha-campos .campo.cresce {
+  flex: 1 1 240px;
+  min-width: 200px;
+}
+
+/* botão de somar o item, no fim da linha do preço */
+.botao.mais {
+  padding: 8px 0;
+  width: 42px;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+/* botões de envio: menores e em duas colunas, para não ficarem esparramados
+   na coluna estreita */
+.acoes-envio {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.acoes-envio .botao {
+  padding: 8px 10px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.acoes-envio .botao.zap {
+  grid-column: 1 / -1;
+}
+
+.acoes-envio .botao.perigo {
+  grid-column: 1 / -1;
+  padding: 6px 0;
 }
 
 /* o modelo do orçamento vira etiqueta ao lado do número */

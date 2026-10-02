@@ -99,9 +99,9 @@ export function Numero({ rotulo, valor, aoMudar, tamanho = 'curto', ...resto }) 
   )
 }
 
-export function Area({ rotulo, valor, aoMudar, linhas = 3 }) {
+export function Area({ rotulo, valor, aoMudar, linhas = 3, tamanho }) {
   return (
-    <Campo rotulo={rotulo}>
+    <Campo rotulo={rotulo} tamanho={tamanho}>
       <textarea rows={linhas} value={valor ?? ''} onChange={(e) => aoMudar(e.target.value)} />
     </Campo>
   )
