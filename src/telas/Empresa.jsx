@@ -3,7 +3,6 @@ import { useDados, Texto, Numero, Area, Escolha, Campo, Linha } from '../compone
 import { APARELHOS, Aparelho } from '../componentes/aparelhos.jsx'
 import { parametros } from '../dados/armazenamento.js'
 import { salvarConta, salvarParametrosDaConta } from '../dados/acoes.js'
-import { MODELOS_PROPOSTA } from '../componentes/proposta.jsx'
 
 export default function Empresa() {
   const { conta } = useDados()
@@ -125,13 +124,6 @@ export default function Empresa() {
         <h2>Aparência da proposta</h2>
         <Linha>
           <Escolha
-            rotulo="Modelo da proposta"
-            tamanho="medio"
-            valor={conta.modeloCabecalho || 'simples'}
-            aoMudar={(v) => mudar({ modeloCabecalho: v })}
-            opcoes={MODELOS_PROPOSTA.map((m) => ({ valor: m.valor, texto: m.titulo }))}
-          />
-          <Escolha
             rotulo="Desenho do aparelho"
             tamanho="medio"
             valor={conta.icone || ''}
@@ -145,7 +137,8 @@ export default function Empresa() {
           </Campo>
         </Linha>
         <p className="fraco">
-          O cabeçalho e o desenho aparecem na proposta que o cliente abre e no PDF.
+          O desenho aparece na proposta que o cliente abre e no PDF. O modelo da proposta você escolhe em Orçamentos, no
+          botão Modelos, onde dá para ver como cada um fica.
         </p>
       </div>
 

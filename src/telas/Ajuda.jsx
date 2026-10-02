@@ -256,7 +256,8 @@ const ASSUNTOS = [
             preenchidas em todo orçamento novo.
           </li>
           <li>
-            <strong>Aparência da proposta</strong> — o modelo de cabeçalho e o desenho de aparelho.
+            <strong>Aparência da proposta</strong> — o desenho de aparelho que sai no cabeçalho. O modelo da proposta
+            fica em Orçamentos, no botão Modelos.
           </li>
           <li>
             <strong>Mensagens prontas do WhatsApp</strong> — os textos que o sistema usa ao chamar alguém. O que está
