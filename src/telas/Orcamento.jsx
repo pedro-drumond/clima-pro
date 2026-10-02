@@ -43,6 +43,7 @@ export default function Orcamento() {
   const [cadastrando, setCadastrando] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
   const [padraoSalvo, setPadraoSalvo] = useState(false)
+  const [condicoesSalvas, setCondicoesSalvas] = useState(false)
   const [avulso, setAvulso] = useState({ nome: '', qtd: 1, preco: '', unidade: 'unidade', salvar: true })
   // os itens ficam numa cópia enquanto ele digita; só vão para o banco quando
   // ele sai do campo, para não regravar a lista inteira a cada tecla
@@ -623,6 +624,27 @@ export default function Orcamento() {
           />
           Mostrar valor item a item para o cliente
         </label>
+
+        {editavel ? (
+          <div className="pe-condicoes">
+            <p className="fraco">Valem só para este orçamento, a não ser que você salve como padrão.</p>
+            <button
+              className="botao"
+              onClick={() => {
+                salvarConta({
+                  ...conta,
+                  validadeDias: Number(orcamento.validadeDias) || 0,
+                  condicoesPadrao: orcamento.condicoes || '',
+                  observacoesPadrao: orcamento.observacoes || '',
+                })
+                setCondicoesSalvas(true)
+                setTimeout(() => setCondicoesSalvas(false), 2500)
+              }}
+            >
+              {condicoesSalvas ? 'Salvo como padrão' : 'Salvar como padrão da empresa'}
+            </button>
+          </div>
+        ) : null}
       </div>
 
       </div>

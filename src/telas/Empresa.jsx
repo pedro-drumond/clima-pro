@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDados, Texto, Numero, Area, Escolha, Campo, Linha } from '../componentes/base.jsx'
 import { APARELHOS, Aparelho } from '../componentes/aparelhos.jsx'
-import { parametros, moeda } from '../dados/armazenamento.js'
+import { parametros } from '../dados/armazenamento.js'
 import { salvarConta, salvarParametrosDaConta } from '../dados/acoes.js'
 import { MODELOS_PROPOSTA } from '../componentes/proposta.jsx'
 
@@ -22,14 +22,11 @@ export default function Empresa() {
 
       <div className="bloco">
         <h2>Dados que saem no orçamento</h2>
-        <div className="par">
-          <Texto rotulo="Nome que aparece" valor={conta.nomeFantasia} aoMudar={(v) => mudar({ nomeFantasia: v })} />
+        <div className="trio">
+          <Texto rotulo="Nome fantasia" valor={conta.nomeFantasia} aoMudar={(v) => mudar({ nomeFantasia: v })} />
           <Texto rotulo="Razão social" valor={conta.razaoSocial} aoMudar={(v) => mudar({ razaoSocial: v })} />
-        </div>
-        <Linha>
           <Escolha
             rotulo="Tipo"
-            tamanho="medio"
             valor={conta.tipoPessoa}
             aoMudar={(v) => mudar({ tipoPessoa: v })}
             opcoes={[
@@ -37,46 +34,48 @@ export default function Empresa() {
               { valor: 'pf', texto: 'Pessoa física' },
             ]}
           />
+        </div>
+
+        <div className="trio">
           <Texto
             rotulo={conta.tipoPessoa === 'pj' ? 'CNPJ' : 'CPF'}
-            tamanho="medio"
             valor={conta.cnpj}
             aoMudar={(v) => mudar({ cnpj: v })}
           />
-          <Texto rotulo="Telefone" tamanho="medio" valor={conta.telefone} aoMudar={(v) => mudar({ telefone: v })} />
-        </Linha>
-        <div className="par">
+          <Texto rotulo="Telefone" valor={conta.telefone} aoMudar={(v) => mudar({ telefone: v })} />
           <Texto rotulo="E-mail" valor={conta.email} aoMudar={(v) => mudar({ email: v })} />
-          <Texto rotulo="Endereço" valor={conta.endereco} aoMudar={(v) => mudar({ endereco: v })} />
         </div>
 
-        <Campo rotulo="Logo">
-          {conta.logo ? (
-            <div style={{ marginBottom: 8 }}>
-              <img src={conta.logo} alt="" style={{ maxHeight: 60 }} />
-              <button className="botao perigo" onClick={() => mudar({ logo: '' })}>
-                Remover
-              </button>
-            </div>
-          ) : null}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const f = e.target.files && e.target.files[0]
-              if (!f) return
-              const leitor = new FileReader()
-              leitor.onload = () => mudar({ logo: String(leitor.result) })
-              leitor.readAsDataURL(f)
-            }}
-          />
-        </Campo>
+        <div className="par">
+          <Texto rotulo="Endereço" valor={conta.endereco} aoMudar={(v) => mudar({ endereco: v })} />
+          <Campo rotulo="Logo">
+            {conta.logo ? (
+              <div className="logo-atual">
+                <img src={conta.logo} alt="" />
+                <button className="botao perigo" onClick={() => mudar({ logo: '' })}>
+                  Remover
+                </button>
+              </div>
+            ) : null}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const f = e.target.files && e.target.files[0]
+                if (!f) return
+                const leitor = new FileReader()
+                leitor.onload = () => mudar({ logo: String(leitor.result) })
+                leitor.readAsDataURL(f)
+              }}
+            />
+          </Campo>
+        </div>
       </div>
 
       <div className="blocos-duplos">
         <div className="bloco">
           <h2>Acompanhamento dos orçamentos</h2>
-          <Linha>
+          <div className="par">
             <Numero
               rotulo="1ª cobrança (dias)"
               valor={p.cobrancaDias[0]}
@@ -97,12 +96,12 @@ export default function Empresa() {
               valor={p.sugerirPerdaDias}
               aoMudar={(v) => mudarParam({ sugerirPerdaDias: v })}
             />
-          </Linha>
+          </div>
         </div>
 
         <div className="bloco">
           <h2>Quando chamar para limpeza</h2>
-          <Linha>
+          <div className="trio">
             <Numero
               rotulo="Residencial (meses)"
               valor={p.limpezaResidencialMeses}
@@ -118,30 +117,11 @@ export default function Empresa() {
               valor={p.clienteParadoMeses}
               aoMudar={(v) => mudarParam({ clienteParadoMeses: v })}
             />
-          </Linha>
+          </div>
         </div>
       </div>
 
-      <div className="bloco">
-        <h2>Padrão do orçamento</h2>
-        <Numero rotulo="Validade (dias)" valor={conta.validadeDias} aoMudar={(v) => mudar({ validadeDias: v })} />
-        <div className="par">
-          <Area
-            rotulo="Condições de pagamento"
-            linhas={3}
-            valor={conta.condicoesPadrao}
-            aoMudar={(v) => mudar({ condicoesPadrao: v })}
-          />
-          <Area
-            rotulo="Observações"
-            linhas={3}
-            valor={conta.observacoesPadrao}
-            aoMudar={(v) => mudar({ observacoesPadrao: v })}
-          />
-        </div>
-      </div>
-
-      <div className="bloco">
+      <div className="bloco estreito">
         <h2>Aparência da proposta</h2>
         <Linha>
           <Escolha
@@ -160,7 +140,7 @@ export default function Empresa() {
           />
           <Campo rotulo="Como fica">
             <span className="amostra-aparelho">
-              <Aparelho tipo={conta.icone} tamanho={56} />
+              <Aparelho tipo={conta.icone} tamanho={42} />
             </span>
           </Campo>
         </Linha>
