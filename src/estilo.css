@@ -2641,3 +2641,147 @@ h2 .dica {
   right: auto;
   font-weight: 400;
 }
+
+/* ----- financeiro ----- */
+
+.numeros-topo {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--esp-2);
+  margin-bottom: var(--esp-3);
+}
+
+.cartao-numero {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--branco);
+  border: 1px solid var(--linha-suave);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.cartao-titulo {
+  font-size: 12.5px;
+  color: var(--texto-fraco);
+}
+
+.cartao-valor {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.cartao-apoio {
+  font-size: 12px;
+  color: var(--texto-fraco);
+}
+
+.cabeca-grafico {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  margin-bottom: var(--esp-3);
+}
+
+.cabeca-grafico h2 {
+  margin: 0;
+}
+
+.legenda {
+  display: flex;
+  gap: 16px;
+  font-size: 12.5px;
+  color: var(--texto-fraco);
+}
+
+.legenda-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.marca-legenda {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.moldura-grafico {
+  position: relative;
+}
+
+.grafico {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.rotulo-mes {
+  font-size: 11px;
+  fill: var(--texto-fraco);
+}
+
+.dica-grafico {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: var(--marca);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.5;
+  pointer-events: none;
+  box-shadow: 0 8px 22px rgba(15, 43, 70, 0.22);
+}
+
+/* motivos de perda, do mais comum para o menos */
+.linha-motivo {
+  display: grid;
+  grid-template-columns: 1fr 160px 36px;
+  align-items: center;
+  gap: var(--esp-2);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--linha-suave);
+  font-size: 14px;
+}
+
+.linha-motivo:last-child {
+  border-bottom: none;
+}
+
+.barra-motivo {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--fundo);
+  overflow: hidden;
+}
+
+.barra-motivo span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: #c2762a;
+}
+
+.linha-motivo .n {
+  text-align: right;
+  font-weight: 700;
+}
+
+@media (max-width: 860px) {
+  .numeros-topo {
+    grid-template-columns: 1fr 1fr;
+  }
+  .linha-motivo {
+    grid-template-columns: 1fr 60px;
+  }
+  .barra-motivo {
+    display: none;
+  }
+}

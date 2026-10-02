@@ -215,14 +215,19 @@ const ASSUNTOS = [
     texto: (
       <>
         <p>
-          O resumo do seu movimento: quanto você orçou, quanto fechou, e quanto sobrou depois do custo e do imposto.
-          Mostra também por que você está perdendo orçamento, com os motivos que você anotou ao marcar uma proposta como
-          perdida.
+          No alto você escolhe o período — este mês, últimos três, este ano ou tudo — e a tela inteira responde a ele.
+          Os quatro números são: <strong>orçado</strong>, que é tudo que saiu de Em elaboração no período;{' '}
+          <strong>fechado</strong>, o que o cliente aprovou; a <strong>taxa de aprovação</strong>; e o{' '}
+          <strong>ticket médio</strong> por serviço fechado.
         </p>
         <p>
-          Uma coisa para ter em mente: só os orçamentos feitos por margem têm custo registrado. Os outros dois modelos
-          entram no faturamento, mas ficam de fora da conta de sobra, porque neles o sistema não sabe quanto você
-          gastou.
+          A taxa de aprovação divide os fechados pelos fechados mais os perdidos. Quem recebeu o orçamento e ainda não
+          respondeu fica de fora da conta, para não derrubar o número à toa.
+        </p>
+        <p>
+          O gráfico mostra, mês a mês, quanto você orçou e quanto fechou. Passando o mouse em cima de um mês, aparecem
+          os dois valores daquele mês. Embaixo ficam os motivos de perda, juntados e ordenados do mais comum para o
+          menos.
         </p>
       </>
     ),
