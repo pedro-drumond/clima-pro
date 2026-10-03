@@ -1,5 +1,5 @@
 import React from 'react'
-import { useDados, Texto, Numero, Area, Escolha, Campo } from '../componentes/base.jsx'
+import { useDados, Texto, Numero, Escolha, Campo } from '../componentes/base.jsx'
 import { parametros } from '../dados/armazenamento.js'
 import { salvarConta, salvarParametrosDaConta } from '../dados/acoes.js'
 
@@ -9,7 +9,6 @@ export default function Empresa() {
 
   const mudar = (campos) => salvarConta({ ...conta, ...campos })
   const mudarParam = (campos) => salvarParametrosDaConta(conta.id, { ...p, ...campos })
-  const mudarTexto = (chave, valor) => mudarParam({ textos: { ...p.textos, [chave]: valor } })
 
 
   return (
@@ -73,64 +72,13 @@ export default function Empresa() {
         </div>
       </div>
 
-      <div className="blocos-duplos">
-        <div className="bloco centrado">
-          <h2>Quando chamar para limpeza</h2>
-          <p className="unidade-do-bloco">em meses</p>
-          <div className="grade-numeros de-tres">
-            <Numero
-              rotulo="Residencial"
-              valor={p.limpezaResidencialMeses}
-              aoMudar={(v) => mudarParam({ limpezaResidencialMeses: v })}
-            />
-            <Numero
-              rotulo="Comercial"
-              valor={p.limpezaComercialMeses}
-              aoMudar={(v) => mudarParam({ limpezaComercialMeses: v })}
-            />
-            <Numero
-              rotulo="Cliente parado"
-              valor={p.clienteParadoMeses}
-              aoMudar={(v) => mudarParam({ clienteParadoMeses: v })}
-            />
-          </div>
-        </div>
-      </div>
-
       <div className="bloco">
-        <h2>
-          <span className="com-dica">
-            Mensagens prontas do WhatsApp
-            <span className="dica">
-              O que está entre chaves o sistema troca pelo valor de verdade na hora de enviar: {'{pessoa}'},{' '}
-              {'{empresa}'}, {'{numero}'}, {'{total}'} e {'{link}'}.
-            </span>
-          </span>
-        </h2>
-        <div className="par mensagens">
-          <Area
-            rotulo="Enviar orçamento"
-            linhas={3}
-            valor={p.textos.enviarOrcamento}
-            aoMudar={(v) => mudarTexto('enviarOrcamento', v)}
-          />
-          <Area
-            rotulo="Cobrar orçamento"
-            linhas={3}
-            valor={p.textos.cobrarOrcamento}
-            aoMudar={(v) => mudarTexto('cobrarOrcamento', v)}
-          />
-          <Area
-            rotulo="Chamar para limpeza"
-            linhas={3}
-            valor={p.textos.limpeza}
-            aoMudar={(v) => mudarTexto('limpeza', v)}
-          />
-          <Area
-            rotulo="Cliente parado"
-            linhas={3}
-            valor={p.textos.clienteParado}
-            aoMudar={(v) => mudarTexto('clienteParado', v)}
+        <h2>Lembrete de limpeza</h2>
+        <div className="trio">
+          <Numero
+            rotulo="Meses depois da entrega"
+            valor={p.limpezaMeses}
+            aoMudar={(v) => mudarParam({ limpezaMeses: v })}
           />
         </div>
       </div>

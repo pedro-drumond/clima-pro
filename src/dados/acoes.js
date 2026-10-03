@@ -19,7 +19,6 @@ import {
   paraOrcamento,
   paraContato,
 } from './armazenamento.js'
-import { proximoPrazoDeCobranca } from './agenda.js'
 
 function avisarErro(erro, onde) {
   if (!erro) return false
@@ -270,15 +269,6 @@ export function renovarValidade(orcamento, dias) {
   return mudarOrcamento(orcamento.id, { validadeAte: nova }, { validade_ate: nova })
 }
 
-export function registrarCobranca(orcamentoId, params) {
-  const o = banco().orcamentos.find((x) => x.id === orcamentoId)
-  if (!o) return
-  const dias = proximoPrazoDeCobranca(o, params)
-  const proximo = somarDias(hojeISO(), dias)
-  const cobrancas = (o.cobrancas || 0) + 1
-  return mudarOrcamento(orcamentoId, { cobrancas, proximoContato: proximo }, { cobrancas, proximo_contato: proximo })
-}
-
 export function adiarOrcamento(orcamentoId, dias) {
   const proximo = somarDias(hojeISO(), dias)
   return mudarOrcamento(orcamentoId, { proximoContato: proximo }, { proximo_contato: proximo })
@@ -401,18 +391,6 @@ export async function apagarEquipamento(equipamentoId) {
   avisarErro(error, 'apagar equipamento')
 }
 
-export function registrarLimpeza(equipamentoId) {
-  const agora = hojeISO()
-  alterarLocal((b) => {
-    const e = b.equipamentos.find((x) => x.id === equipamentoId)
-    if (e) e.ultimaLimpeza = agora
-  })
-  return supabase
-    .from('equipamentos')
-    .update({ ultima_limpeza: agora })
-    .eq('id', equipamentoId)
-    .then(({ error }) => avisarErro(error, 'registrar limpeza'))
-}
 
 export function adiarLimpeza(equipamentoId, meses) {
   const e = banco().equipamentos.find((x) => x.id === equipamentoId)

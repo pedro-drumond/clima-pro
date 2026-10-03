@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDados, Vazio } from '../componentes/base.jsx'
-import { parametros, linkWhatsapp } from '../dados/armazenamento.js'
+import { parametros } from '../dados/armazenamento.js'
 import { tarefasDoDia } from '../dados/agenda.js'
 import { salvarPessoa } from '../dados/acoes.js'
 
@@ -20,18 +20,14 @@ export default function Pessoas() {
   const [filtro, setFiltro] = useState('todos')
 
   const params = parametros(conta)
-  // limpeza vencida e cliente parado são de cliente, não de orçamento: é aqui
-  // que eles fazem sentido
-  const tarefas = tarefasDoDia(b, conta, params).filter((t) => t.tipo === 'limpeza' || t.tipo === 'parado')
-  const tarefaDe = (id, tipo) => tarefas.find((t) => t.pessoa.id === id && t.tipo === tipo)
-  const chamar = tarefas.filter((t) => t.tipo === 'limpeza')
-  const parados = tarefas.filter((t) => t.tipo === 'parado')
+  // quem já passou do tempo de limpeza, contado da última entrega
+  const chamar = tarefasDoDia(b, conta, params)
+  const tarefaDe = (id) => chamar.find((t) => t.pessoa.id === id)
 
   const lista = b.pessoas
     .filter((p) => p.contaId === conta.id)
     .filter((p) => {
-      if (filtro === 'limpeza') return !!tarefaDe(p.id, 'limpeza')
-      if (filtro === 'parados') return !!tarefaDe(p.id, 'parado')
+      if (filtro === 'limpeza') return !!tarefaDe(p.id)
       if (filtro === 'clientes') return p.ehCliente
       if (filtro === 'contatos') return !p.ehCliente
       return true
@@ -65,7 +61,6 @@ export default function Pessoas() {
           ['contatos', 'Ainda não compraram'],
           ['clientes', 'Clientes'],
           ['limpeza', 'Limpeza vencida' + (chamar.length ? ' (' + chamar.length + ')' : '')],
-          ['parados', 'Parados' + (parados.length ? ' (' + parados.length + ')' : '')],
         ].map(([valor, texto]) => (
           <button
             key={valor}
@@ -93,7 +88,7 @@ export default function Pessoas() {
             // fechou e ainda não foi entregue
             const emAberto = dela.filter((o) => o.situacao === 'contato' || o.situacao === 'enviado').length
             const contratos = dela.filter((o) => o.situacao === 'fechado').length
-            const tarefa = filtro === 'limpeza' || filtro === 'parados' ? tarefaDe(p.id, filtro === 'limpeza' ? 'limpeza' : 'parado') : null
+            const tarefa = filtro === 'limpeza' ? tarefaDe(p.id) : null
             return (
               <Link className="cartao-pessoa" to={'/pessoas/' + p.id} key={p.id}>
                 <span className="cartao-pessoa-nome">{p.nome}</span>
@@ -106,15 +101,6 @@ export default function Pessoas() {
                 {tarefa ? (
                   <span className="cartao-pessoa-chamar">
                     <span className="fraco">{tarefa.titulo}</span>
-                    <a
-                      className="botao zap miudo"
-                      href={linkWhatsapp(p.whatsapp, tarefa.mensagem)}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      WhatsApp
-                    </a>
                   </span>
                 ) : null}
               </Link>

@@ -14,7 +14,7 @@ import {
   ehPorMargem,
   linkWhatsapp,
 } from '../dados/armazenamento.js'
-import { aplicarTexto } from '../dados/parametros.js'
+import { aplicarTexto, TEXTO_ENVIO } from '../dados/parametros.js'
 import { linkDaProposta, primeiroNome } from '../dados/agenda.js'
 import { resumoDaAcao } from '../dados/vocabulario.js'
 import { Temperatura } from '../componentes/icones.jsx'
@@ -159,7 +159,7 @@ export default function Orcamento() {
     setCadastrando(false)
   }
 
-  const mensagemEnvio = aplicarTexto(params.textos.enviarOrcamento, {
+  const mensagemEnvio = aplicarTexto(TEXTO_ENVIO, {
     pessoa: pessoa ? primeiroNome(pessoa.nome) : '',
     empresa: conta.nomeFantasia,
     numero: orcamento.numero,

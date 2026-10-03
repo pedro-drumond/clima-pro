@@ -135,8 +135,12 @@ const ASSUNTOS = [
     icone: Icone.documento,
     texto: (
       <>
-        <p>Dentro do orçamento existem duas formas de mandar para o cliente, e as duas mostram a mesma proposta.</p>
+        <p>Dentro do orçamento existem três formas de mandar para o cliente, e as três mostram a mesma proposta.</p>
         <ul>
+          <li>
+            <strong>Enviar pelo WhatsApp</strong> — abre a conversa com o cliente, com a mensagem e o link da proposta
+            já digitados. É só apertar enviar.
+          </li>
           <li>
             <strong>Copiar link</strong> — o cliente abre no celular, vê a proposta e aprova ali mesmo, digitando o nome.
             Fica registrado quem aprovou, a data, a hora e de que aparelho, e o orçamento vai sozinho para a coluna de
@@ -230,10 +234,14 @@ const ASSUNTOS = [
           isso que faz a pessoa aparecer na lista de quem chamar quando chega a época da manutenção.
         </p>
         <p>
-          Em cima da lista ficam os filtros, e dois deles são a sua lista de quem chamar hoje:{' '}
-          <strong>Limpeza vencida</strong>, que junta quem passou do prazo desde a última limpeza registrada, e{' '}
-          <strong>Parados</strong>, que junta cliente antigo que faz tempo que não aparece. Nos dois, o cartão mostra o
-          motivo e um botão de WhatsApp com a mensagem já escrita. Os prazos dos dois você define em Minha empresa.
+          Em cima da lista fica o filtro <strong>Limpeza vencida</strong>: quem já passou do tempo desde o último
+          serviço entregue. O prazo em meses você define em Minha empresa. É só informação — quem fala com o cliente é
+          você, pelo WhatsApp, do seu jeito.
+        </p>
+        <p>
+          O relógio da limpeza conta a partir da data em que o orçamento entrou na coluna <strong>Entregues</strong>,
+          não do aparelho cadastrado. Então funciona mesmo que você nunca cadastre equipamento nenhum, e todo serviço
+          novo entregue reinicia a contagem.
         </p>
       </>
     ),
@@ -301,10 +309,9 @@ const ASSUNTOS = [
     texto: (
       <>
         <p>
-          Tudo que é ajuste fica aqui, em quatro caixas. O imposto e a margem não ficam mais nesta tela: são definidos
-          dentro do próprio orçamento por margem. A validade e as condições de pagamento também saíram daqui — você as
-          ajusta dentro de um orçamento e usa o <strong>Salvar como padrão da empresa</strong> para os próximos já
-          nascerem com elas.
+          Sobraram duas caixas. O imposto e a margem são definidos dentro do próprio orçamento por margem; a validade e
+          as condições de pagamento também, com o botão <strong>Salvar como padrão da empresa</strong> para os
+          próximos já nascerem com elas.
         </p>
         <ul>
           <li>
@@ -312,17 +319,7 @@ const ASSUNTOS = [
             cabeçalho da proposta.
           </li>
           <li>
-            <strong>Acompanhamento dos orçamentos</strong> — de quantos em quantos dias cobrar quem não respondeu, e com
-            quantos dias o sistema sugere dar a proposta como perdida.
-          </li>
-          <li>
-            <strong>Quando chamar para limpeza</strong> — de quanto em quanto tempo o cliente volta para a lista, e a
-            partir de quantos meses ele conta como cliente parado.
-          </li>
-          <li>
-            <strong>Mensagens prontas do WhatsApp</strong> — os quatro textos que o sistema usa ao chamar alguém:
-            enviar orçamento, cobrar, chamar para limpeza e cliente parado. O que está entre chaves é trocado pelo
-            valor de verdade na hora de enviar.
+            <strong>Lembrete de limpeza</strong> — quantos meses depois da entrega o cliente volta para a lista.
           </li>
         </ul>
         <p>

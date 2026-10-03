@@ -1,125 +1,48 @@
-// Quem chamar hoje. Toda regra de prazo vem dos parâmetros, nunca escrita aqui dentro.
+// A agenda do cliente: quando ele volta para a lista de limpeza, e tudo que o
+// cartão do quadro precisa saber sobre o orçamento.
 
-import { venceu, somarMeses, somarDias, diasDesde, totalDoOrcamento, moeda, dataCurta } from './armazenamento.js'
-import { aplicarTexto } from './parametros.js'
+import { venceu, somarMeses, somarDias, diasDesde, dataCurta } from './armazenamento.js'
 import { resumoDaAcao, diaMes, DIAS_SEM_ACAO } from './vocabulario.js'
 
-export function proximaLimpeza(equipamento, params) {
-  const base = equipamento.ultimaLimpeza || equipamento.instaladoEm
-  if (!base) return null
-  const meses =
-    equipamento.uso === 'comercial' ? params.limpezaComercialMeses : params.limpezaResidencialMeses
-  return somarMeses(base, meses)
+// A limpeza é contada a partir da ENTREGA do serviço, não do aparelho
+// cadastrado. Antes dependia do equipamento ter sido cadastrado com data da
+// última limpeza, e isso ninguém preenche — a lista vivia vazia. Contando pela
+// entrega funciona sozinho, e cada serviço novo entregue reinicia o relógio.
+export function ultimaEntrega(pessoaId, b) {
+  const datas = b.orcamentos
+    .filter((o) => o.pessoaId === pessoaId && o.situacao === 'instalado' && o.instaladoEm)
+    .map((o) => o.instaladoEm)
+    .sort()
+  return datas.length ? datas[datas.length - 1] : null
 }
 
+export function limpezaVencida(pessoaId, b, params) {
+  const entrega = ultimaEntrega(pessoaId, b)
+  if (!entrega) return null
+  const quando = somarMeses(entrega, params.limpezaMeses)
+  if (!venceu(quando)) return null
+  return { desde: entrega, venceuEm: quando }
+}
+
+// Quem está na hora de chamar para limpeza. É informação, não automação:
+// nenhuma mensagem é montada, quem fala com o cliente é o instalador.
 export function tarefasDoDia(b, conta, params) {
   if (!conta) return []
-  const pessoas = b.pessoas.filter((p) => p.contaId === conta.id)
-  const pessoaPor = (id) => pessoas.find((p) => p.id === id)
-  const tarefas = []
-
-  b.orcamentos
-    .filter((o) => o.contaId === conta.id && o.situacao === 'enviado')
-    .forEach((o) => {
-      const pessoa = pessoaPor(o.pessoaId)
-      if (!pessoa) return
-      const dias = diasDesde(o.enviadoEm)
-      const passouDoPrazo = dias !== null && dias >= params.sugerirPerdaDias
-      if (passouDoPrazo) {
-        tarefas.push({
-          chave: 'perda-' + o.id,
-          tipo: 'perda',
-          titulo: 'Sem resposta há ' + dias + ' dias',
-          detalhe: 'Orçamento nº ' + o.numero + ' · ' + moeda(totalDoOrcamento(o)),
-          pessoa,
-          orcamento: o,
-          vencimento: o.proximoContato || o.enviadoEm,
-          mensagem: aplicarTexto(params.textos.cobrarOrcamento, {
-            pessoa: primeiroNome(pessoa.nome),
-            empresa: conta.nomeFantasia,
-            numero: o.numero,
-            total: moeda(totalDoOrcamento(o)),
-            link: linkDaProposta(o),
-          }),
-        })
-        return
-      }
-      if (venceu(o.proximoContato)) {
-        tarefas.push({
-          chave: 'cobranca-' + o.id,
-          tipo: 'cobranca',
-          titulo: 'Cobrar orçamento nº ' + o.numero,
-          detalhe:
-            moeda(totalDoOrcamento(o)) +
-            ' · enviado em ' +
-            dataCurta(o.enviadoEm) +
-            (o.cobrancas ? ' · já cobrado ' + o.cobrancas + 'x' : ''),
-          pessoa,
-          orcamento: o,
-          vencimento: o.proximoContato,
-          mensagem: aplicarTexto(params.textos.cobrarOrcamento, {
-            pessoa: primeiroNome(pessoa.nome),
-            empresa: conta.nomeFantasia,
-            numero: o.numero,
-            total: moeda(totalDoOrcamento(o)),
-            link: linkDaProposta(o),
-          }),
-        })
+  return b.pessoas
+    .filter((p) => p.contaId === conta.id)
+    .map((p) => {
+      const v = limpezaVencida(p.id, b, params)
+      if (!v) return null
+      return {
+        chave: 'limpeza-' + p.id,
+        tipo: 'limpeza',
+        titulo: 'Entregue em ' + dataCurta(v.desde),
+        pessoa: p,
+        vencimento: v.venceuEm,
       }
     })
-
-  b.equipamentos.forEach((e) => {
-    const pessoa = pessoaPor(e.pessoaId)
-    if (!pessoa) return
-    const quando = proximaLimpeza(e, params)
-    if (!venceu(quando)) return
-    tarefas.push({
-      chave: 'limpeza-' + e.id,
-      tipo: 'limpeza',
-      titulo: 'Limpeza vencida · ' + e.ambiente + ' ' + e.btu.toLocaleString('pt-BR') + ' BTU',
-      detalhe: 'Última em ' + dataCurta(e.ultimaLimpeza || e.instaladoEm),
-      pessoa,
-      equipamento: e,
-      vencimento: quando,
-      mensagem: aplicarTexto(params.textos.limpeza, {
-        pessoa: primeiroNome(pessoa.nome),
-        empresa: conta.nomeFantasia,
-      }),
-    })
-  })
-
-  pessoas.forEach((p) => {
-    const ultimo = b.orcamentos
-      .filter((o) => o.pessoaId === p.id)
-      .map((o) => o.criadoEm)
-      .sort()
-      .pop()
-    const base = ultimo || p.criadoEm
-    const limite = somarMeses(base, params.clienteParadoMeses)
-    if (!venceu(limite)) return
-    if (p.proximoContato && !venceu(p.proximoContato)) return
-    if (tarefas.some((t) => t.pessoa.id === p.id)) return
-    tarefas.push({
-      chave: 'parado-' + p.id,
-      tipo: 'parado',
-      titulo: 'Sem contato há mais de ' + params.clienteParadoMeses + ' meses',
-      detalhe: 'Último movimento em ' + dataCurta(base),
-      pessoa: p,
-      vencimento: limite,
-      mensagem: aplicarTexto(params.textos.clienteParado, {
-        pessoa: primeiroNome(p.nome),
-        empresa: conta.nomeFantasia,
-      }),
-    })
-  })
-
-  return tarefas.sort((a, b2) => new Date(a.vencimento) - new Date(b2.vencimento))
-}
-
-export function proximoPrazoDeCobranca(orcamento, params) {
-  const lista = params.cobrancaDias
-  const indice = Math.min(orcamento.cobrancas || 0, lista.length - 1)
-  return lista[indice]
+    .filter(Boolean)
+    .sort((a, b2) => new Date(a.vencimento) - new Date(b2.vencimento))
 }
 
 export function primeiroNome(nome) {

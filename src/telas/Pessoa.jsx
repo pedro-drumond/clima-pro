@@ -2,13 +2,11 @@ import React from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useDados, Texto, Area, Escolha, Marcador, Vazio , Linha } from '../componentes/base.jsx'
 import { moeda, dataCurta, totalDoOrcamento, parametros } from '../dados/armazenamento.js'
-import { proximaLimpeza } from '../dados/agenda.js'
 import {
   salvarPessoa,
   apagarPessoa,
   salvarEquipamento,
   apagarEquipamento,
-  registrarLimpeza,
 } from '../dados/acoes.js'
 
 export default function Pessoa() {
@@ -118,14 +116,8 @@ export default function Pessoa() {
                   ]}
                 />
               </Linha>
-              <p className="fraco">
-                Última limpeza em {dataCurta(e.ultimaLimpeza || e.instaladoEm)} · próxima em{' '}
-                {dataCurta(proximaLimpeza(e, params))}
-              </p>
+              <p className="fraco">Instalado em {dataCurta(e.instaladoEm)}</p>
               <div className="acoes">
-                <button className="botao pequeno" onClick={() => registrarLimpeza(e.id)}>
-                  Limpeza feita hoje
-                </button>
                 <button className="botao perigo" onClick={() => apagarEquipamento(e.id)}>
                   Remover
                 </button>
