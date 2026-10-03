@@ -289,9 +289,6 @@ export default function Orcamentos() {
                           {/* nome com a temperatura, e no canto o prazo */}
                           <div className="cartao-topo">
                             <div className="cartao-linha-nome">
-                              {estado.temperatura ? (
-                                <Temperatura valor={estado.temperatura} tamanho={11} traco={2.4} />
-                              ) : null}
                               <span className="cartao-nome">{pessoa ? pessoa.nome : 'Sem cliente'}</span>
                             </div>
                             {estado.prazo ? (

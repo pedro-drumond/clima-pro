@@ -100,28 +100,28 @@ export function estadoDoCartao(orcamento, contatos) {
 
   const temperatura = ultima ? ultima.temp : null
   const fim = validadeDoOrcamento(orcamento)
+  const expirou = venceu(fim)
 
-  // a validade manda em tudo: o link já parou de aceitar aprovação
-  if (venceu(fim)) {
-    return {
-      temperatura,
-      tarja: 'vencido',
-      prazo: { texto: diaMes(fim), estado: 'vencido' },
-      ultimas,
-      tudo,
-      vazio: ultima ? null : 'enviado ' + emDias(diasDesde(orcamento.enviadoEm)),
-    }
-  }
-
-  // quem manda a data: a ação registrada; na falta dela, uma semana do envio
+  // o canto de cima responde sempre a mesma pergunta: quando eu ajo de novo.
+  // Quem define é a ação registrada; sem nenhuma ação, a regra dos sete dias.
   const semAcao = tudo.length === 0
   const alvo = semAcao ? somarDias(orcamento.enviadoEm, DIAS_SEM_ACAO) : orcamento.proximoContato
   const atrasado = venceu(alvo)
 
+  // a validade vencida fica na tarja vermelha da borda. Ela só toma o canto
+  // quando não há nada melhor para mostrar ali — ou seja, enquanto você não
+  // registrou nenhuma ação.
+  const prazo =
+    expirou && semAcao
+      ? { texto: diaMes(fim), estado: 'vencido' }
+      : alvo
+        ? { texto: diaMes(alvo), estado: atrasado ? 'atrasado' : 'ok' }
+        : null
+
   return {
     temperatura,
-    tarja: atrasado ? 'atrasado' : null,
-    prazo: alvo ? { texto: diaMes(alvo), estado: atrasado ? 'atrasado' : 'ok' } : null,
+    tarja: expirou ? 'vencido' : atrasado ? 'atrasado' : null,
+    prazo,
     ultimas,
     tudo,
     vazio: semAcao ? 'enviado ' + emDias(diasDesde(orcamento.enviadoEm)) : null,
