@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDados } from '../componentes/base.jsx'
 import { moeda, totalDoOrcamento, dataCurta, parametros, somarDias, hojeISO } from '../dados/armazenamento.js'
+import { TEMPERATURAS, resultadosDa, OUTRO, DIAS_DO_OUTRO, diaMes } from '../dados/vocabulario.js'
+import { Temperatura, SetaAcao, Alerta, Balao } from '../componentes/icones.jsx'
 import {
   reabrirOrcamento,
   moverOrcamento,
@@ -9,7 +11,6 @@ import {
   marcarPerdido,
   renovarValidade,
   registrarContato,
-  RESULTADOS,
 } from '../dados/acoes.js'
 import { estadoDoCartao } from '../dados/agenda.js'
 import Modelos from './Modelos.jsx'
@@ -36,6 +37,35 @@ export default function Orcamentos() {
   const [menuAberto, setMenuAberto] = useState('')
   const [apagando, setApagando] = useState('')
   const [registrando, setRegistrando] = useState('')
+  // o menu tem dois passos: primeiro a temperatura, depois a frase
+  const [tempEscolhida, setTempEscolhida] = useState('')
+  const [textoLivre, setTextoLivre] = useState('')
+  const [diaEscolhido, setDiaEscolhido] = useState('')
+  const [editandoDia, setEditandoDia] = useState('')
+
+  function fecharMenu() {
+    setRegistrando('')
+    setTempEscolhida('')
+    setTextoLivre('')
+    setDiaEscolhido('')
+    setEditandoDia('')
+  }
+
+  // o dia que vai ser gravado: o escolhido na mão, senão o prazo da frase
+  const diaDe = (dias) => (diaEscolhido ? new Date(diaEscolhido + 'T12:00:00').toISOString() : somarDias(hojeISO(), dias))
+
+  async function registrar(orcamento, resultado, dias, anotacao) {
+    const proximoEm = diaDe(dias)
+    fecharMenu()
+    await registrarContato({
+      contaId: conta.id,
+      pessoaId: orcamento.pessoaId,
+      orcamentoId: orcamento.id,
+      resultado,
+      anotacao: anotacao || '',
+      proximoEm,
+    })
+  }
   const [arrastando, setArrastando] = useState('')
   const [colunaAlvo, setColunaAlvo] = useState('')
   const [ordens, setOrdens] = useState({})
@@ -210,7 +240,8 @@ export default function Orcamentos() {
                     lista.map((o) => {
                       const pessoa = pessoaDe(o)
                       const posicao = ETAPAS.findIndex(([c]) => c === chave)
-                      const estado = estadoDoCartao(o, contatos, RESULTADOS)
+                      const estado = estadoDoCartao(o, contatos)
+                      const aberto = registrando === o.id
                       const mover = (passo) => (e) => {
                         e.stopPropagation()
                         moverOrcamento(o, ETAPAS[posicao + passo][0], params)
@@ -221,7 +252,7 @@ export default function Orcamentos() {
                             'cartao' +
                             (arrastando === o.id ? ' arrastando' : '') +
                             (estado.tarja ? ' ' + estado.tarja : '') +
-                            (registrando === o.id ? ' aberto' : '')
+                            (aberto ? ' aberto' : '')
                           }
                           key={o.id}
                           role="link"
@@ -237,114 +268,198 @@ export default function Orcamentos() {
                             if (e.key === 'Enter') navegar('/orcamentos/' + o.id)
                           }}
                         >
-                          <div className="cartao-canto">
-                            {posicao > 0 ? (
-                              <button onClick={mover(-1)} title={'Voltar para ' + ETAPAS[posicao - 1][1]}>
-                                ‹
-                              </button>
-                            ) : null}
-                            {posicao < ETAPAS.length - 1 ? (
-                              <button onClick={mover(1)} title={'Passar para ' + ETAPAS[posicao + 1][1]}>
-                                ›
-                              </button>
-                            ) : null}
-                            {chave === 'enviado' && estado.tarja !== 'vencido' ? (
-                              <button
-                                className="registrar"
-                                title="Registrar contato"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setRegistrando(registrando === o.id ? '' : o.id)
-                                }}
-                              >
-                                <svg
-                                  width="15"
-                                  height="15"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="1.9"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.4-.7L3 21l1.9-5.1A8.3 8.3 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z" />
-                                </svg>
-                              </button>
-                            ) : null}
-                          </div>
-
-                          <div className="cartao-alto">
+                          {/* nome com a temperatura, e no canto o prazo */}
+                          <div className="cartao-topo">
                             <div className="cartao-linha-nome">
                               {estado.temperatura ? (
-                                <span className={'bolinha ' + estado.temperatura} title={'Negócio ' + estado.temperatura} />
+                                <Temperatura valor={estado.temperatura} tamanho={11} traco={2.4} />
                               ) : null}
                               <span className="cartao-nome">{pessoa ? pessoa.nome : 'Sem cliente'}</span>
                             </div>
-                            <div className={'cartao-passo' + (estado.tarja ? ' ' + estado.tarja : '')}>{estado.linha}</div>
+                            {estado.prazo ? (
+                              <span className={'cartao-prazo ' + estado.prazo.estado}>
+                                {estado.prazo.estado === 'ok' ? null : <Alerta />}
+                                {estado.prazo.texto}
+                              </span>
+                            ) : null}
+                          </div>
+
+                          {/* as duas últimas ações, a seta aponta para a mais recente */}
+                          <div className="cartao-acoes" title={estado.tudo.map((t) => t.texto).join('  →  ')}>
+                            {estado.vazio ? (
+                              <span className="acao-vazia">{estado.vazio}</span>
+                            ) : (
+                              estado.ultimas.map((t, i) => (
+                                <React.Fragment key={i}>
+                                  {i > 0 ? <SetaAcao /> : null}
+                                  <span className="acao">
+                                    <Temperatura valor={t.temp} tamanho={13} />
+                                    {t.curto}
+                                  </span>
+                                </React.Fragment>
+                              ))
+                            )}
                           </div>
 
                           <div className="cartao-pe">
                             <span className={'valor' + (totalDoOrcamento(o) === 0 ? ' zero' : '')}>
                               {moeda(totalDoOrcamento(o))}
                             </span>
-                            {estado.tarja === 'vencido' ? (
-                              <span className="cartao-mini">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    renovarValidade(o, o.validadeDias)
-                                  }}
-                                  title="Empurrar a validade mantendo o preço"
-                                >
-                                  Renovar
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    marcarPerdido(o.id, 'Validade vencida')
-                                  }}
-                                >
-                                  Perdido
-                                </button>
-                              </span>
-                            ) : null}
+
+                            <span className="cartao-mini">
+                              {estado.tarja === 'vencido' ? (
+                                <>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      renovarValidade(o, o.validadeDias)
+                                    }}
+                                    title="Empurrar a validade mantendo o preço"
+                                  >
+                                    Renovar
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      marcarPerdido(o.id, 'Validade vencida')
+                                    }}
+                                  >
+                                    Perdido
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  {posicao > 0 ? (
+                                    <button className="seta" onClick={mover(-1)} title={'Voltar para ' + ETAPAS[posicao - 1][1]}>
+                                      ‹
+                                    </button>
+                                  ) : null}
+                                  {posicao < ETAPAS.length - 1 ? (
+                                    <button className="seta" onClick={mover(1)} title={'Passar para ' + ETAPAS[posicao + 1][1]}>
+                                      ›
+                                    </button>
+                                  ) : null}
+                                  {chave === 'enviado' ? (
+                                    <button
+                                      className="registrar"
+                                      title="Registrar o que o cliente fez"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        if (aberto) fecharMenu()
+                                        else {
+                                          fecharMenu()
+                                          setRegistrando(o.id)
+                                        }
+                                      }}
+                                    >
+                                      <Balao />
+                                    </button>
+                                  ) : null}
+                                </>
+                              )}
+                            </span>
                           </div>
 
-                          {registrando === o.id ? (
+                          {aberto ? (
                             <div className="cartao-menu" onClick={(e) => e.stopPropagation()}>
-                              {RESULTADOS.map((r) => (
-                                <button
-                                  key={r.valor}
-                                  onClick={async () => {
-                                    setRegistrando('')
-                                    await registrarContato({
-                                      contaId: conta.id,
-                                      pessoaId: o.pessoaId,
-                                      orcamentoId: o.id,
-                                      resultado: r.valor,
-                                      anotacao: '',
-                                      proximoEm: somarDias(hojeISO(), r.dias),
-                                    })
-                                  }}
-                                >
-                                  <i>
-                                    <span className={'bolinha ' + r.temp} />
-                                    {r.texto}
-                                  </i>
-                                  <span>{r.dias}D</span>
-                                </button>
-                              ))}
-                              <div className="menu-risco" />
-                              <button
-                                className="menu-perdido"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setRegistrando('')
-                                  marcarPerdido(o.id, prompt('Por que perdeu?') || '')
-                                }}
-                              >
-                                Perdido
-                              </button>
+                              {!tempEscolhida ? (
+                                <div className="menu-temperaturas">
+                                  {TEMPERATURAS.map((t) => (
+                                    <button key={t.valor} onClick={() => setTempEscolhida(t.valor)}>
+                                      <Temperatura valor={t.valor} tamanho={22} traco={2} />
+                                      {t.texto}
+                                    </button>
+                                  ))}
+                                </div>
+                              ) : (
+                                <>
+                                  <div className="menu-cabeca">
+                                    <button className="menu-voltar" onClick={() => setTempEscolhida('')}>
+                                      ‹
+                                    </button>
+                                    <Temperatura valor={tempEscolhida} tamanho={15} traco={2.2} />
+                                    {TEMPERATURAS.find((t) => t.valor === tempEscolhida).texto}
+                                  </div>
+
+                                  {resultadosDa(tempEscolhida).map((r) => (
+                                    <button
+                                      key={r.valor}
+                                      className="menu-frase"
+                                      onClick={() => registrar(o, r.valor, r.dias)}
+                                    >
+                                      <i>{r.texto}</i>
+                                      <span
+                                        className={'menu-dia' + (diaEscolhido ? ' trocado' : '')}
+                                        role="button"
+                                        tabIndex={0}
+                                        title="Trocar o dia de chamar"
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          setEditandoDia(editandoDia === r.valor ? '' : r.valor)
+                                        }}
+                                      >
+                                        {diaEscolhido
+                                          ? diaMes(new Date(diaEscolhido + 'T12:00:00').toISOString())
+                                          : diaMes(somarDias(hojeISO(), r.dias))}
+                                      </span>
+                                    </button>
+                                  ))}
+
+                                  {editandoDia ? (
+                                    <input
+                                      className="menu-calendario"
+                                      type="date"
+                                      value={diaEscolhido}
+                                      onChange={(e) => setDiaEscolhido(e.target.value)}
+                                      onClick={(e) => e.stopPropagation()}
+                                    />
+                                  ) : null}
+
+                                  <div className="menu-risco" />
+
+                                  <div className="menu-outro">
+                                    <input
+                                      className="texto"
+                                      placeholder="Outro…"
+                                      value={textoLivre}
+                                      onChange={(ev) => setTextoLivre(ev.target.value)}
+                                      onClick={(ev) => ev.stopPropagation()}
+                                      onKeyDown={(ev) => {
+                                        if (ev.key === 'Enter' && textoLivre.trim()) {
+                                          registrar(o, OUTRO[tempEscolhida], DIAS_DO_OUTRO[tempEscolhida], textoLivre.trim())
+                                        }
+                                      }}
+                                    />
+                                    <div className="pe">
+                                      <input
+                                        type="date"
+                                        value={diaEscolhido || somarDias(hojeISO(), DIAS_DO_OUTRO[tempEscolhida]).slice(0, 10)}
+                                        onChange={(ev) => setDiaEscolhido(ev.target.value)}
+                                        onClick={(ev) => ev.stopPropagation()}
+                                      />
+                                      <button
+                                        className="botao miudo principal"
+                                        disabled={!textoLivre.trim()}
+                                        onClick={() =>
+                                          registrar(o, OUTRO[tempEscolhida], DIAS_DO_OUTRO[tempEscolhida], textoLivre.trim())
+                                        }
+                                      >
+                                        Marcar
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  <button
+                                    className="menu-perdido"
+                                    onClick={() => {
+                                      fecharMenu()
+                                      marcarPerdido(o.id, prompt('Por que perdeu?') || '')
+                                    }}
+                                  >
+                                    Perdido
+                                  </button>
+                                </>
+                              )}
                             </div>
                           ) : null}
                         </div>

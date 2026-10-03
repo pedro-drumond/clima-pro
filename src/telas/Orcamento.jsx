@@ -16,13 +16,14 @@ import {
 } from '../dados/armazenamento.js'
 import { aplicarTexto } from '../dados/parametros.js'
 import { linkDaProposta, primeiroNome } from '../dados/agenda.js'
+import { resumoDaAcao } from '../dados/vocabulario.js'
+import { Temperatura } from '../componentes/icones.jsx'
 import {
   salvarOrcamento,
   salvarItensDoOrcamento,
   apagarOrcamento,
   marcarEnviadoSePreciso,
   reabrirOrcamento,
-  RESULTADOS,
   marcarFechado,
   marcarPerdido,
   marcarInstalado,
@@ -419,19 +420,25 @@ export default function Orcamento() {
 
         {(b.contatos || []).filter((c) => c.orcamentoId === orcamento.id).length > 0 ? (
           <div className="historico">
-            <h3>Histórico de contato</h3>
+            <h3>O que já aconteceu</h3>
             {(b.contatos || [])
               .filter((c) => c.orcamentoId === orcamento.id)
-              .map((c) => (
-                <div className="linha-historico" key={c.id}>
-                  <span className="historico-data">{dataCurta(c.criadoEm)}</span>
-                  <span>
-                    {RESULTADOS.find((r) => r.valor === c.resultado)?.texto || c.resultado}
-                    {c.anotacao ? ' · ' + c.anotacao : ''}
-                  </span>
-                  {c.proximoEm ? <span className="fraco">próximo {dataCurta(c.proximoEm)}</span> : null}
-                </div>
-              ))}
+              .sort((a, c) => new Date(c.criadoEm) - new Date(a.criadoEm))
+              .map((c) => {
+                const r = resumoDaAcao(c)
+                return (
+                  <div className="linha-historico" key={c.id}>
+                    <span className="historico-data">{dataCurta(c.criadoEm)}</span>
+                    <span className="historico-acao">
+                      <Temperatura valor={r.temp} tamanho={13} />
+                      {r.texto}
+                    </span>
+                    {c.proximoEm ? (
+                      <span className="fraco">chamar em {dataCurta(c.proximoEm)}</span>
+                    ) : null}
+                  </div>
+                )
+              })}
           </div>
         ) : null}
 

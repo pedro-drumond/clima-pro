@@ -52,40 +52,78 @@ const ASSUNTOS = [
   {
     id: 'cartao',
     titulo: 'O cartão do quadro',
-    resumo: 'Temperatura, próximo passo e registro do contato',
+    resumo: 'Temperatura, o que já aconteceu e quando chamar',
     icone: Icone.telefone,
     texto: (
       <>
         <p>
-          Na coluna <strong>Enviados</strong>, o cartão deixa de ser só um nome e um valor: ele responde quem você tem
-          que chamar e quando. São três informações, de cima para baixo.
+          Na coluna <strong>Enviados</strong>, o cartão tem três coisas do lado esquerdo e uma do lado direito.
+          Do lado esquerdo, de cima para baixo: quem é, o que já aconteceu, quanto vale. Do lado direito, no alto,
+          quando você tem que chamar.
         </p>
         <p>
-          A <strong>bolinha</strong> antes do nome é a temperatura do negócio, e vem do último contato que você
-          registrou. Verde é quem disse que fecha. Laranja é quem falou e está avaliando. Cinza é quem não responde ou
-          pediu para esperar — e três tentativas sem resposta derrubam o negócio para cinza sozinhas.
+          O desenho antes do nome é a temperatura, e ela vem da última ação registrada — nunca do seu palpite. O{' '}
+          <strong>cubo de gelo</strong> é negócio frio, as <strong>ondas de calor</strong> morno, a{' '}
+          <strong>chama</strong> quente.
         </p>
         <p>
-          A <strong>linha do meio</strong> é o próximo passo, com o prazo em dias: "vai avaliar · retornar em 5D",
-          "atrasado 3D · 2ª tentativa", "venceu em 28/09". Enquanto o prazo não chega, o cartão fica quieto. Quando
-          passa, ele ganha uma tarja <strong>laranja</strong> na borda e a linha fica laranja também — é você que está
-          atrasado para ligar. A tarja <strong>vermelha</strong> é outra coisa: o orçamento passou da validade e o link
-          parou de aceitar aprovação. Cartão sem tarja é cartão que não precisa de ninguém hoje.
+          A linha do meio mostra as <strong>duas últimas ações</strong>, com a seta apontando da anterior para a mais
+          recente: <em>sem resp. → desconto</em> conta uma história que uma lista não contaria. Passando o mouse em
+          cima dela você vê todas; abrindo o orçamento, elas aparecem inteiras, com a data de cada uma.
         </p>
         <p>
-          No canto de cima fica o <strong>balãozinho de registrar contato</strong>. Ele abre as quatro saídas possíveis —
-          não atendeu, vai avaliar, pediu retorno, vai fechar — cada uma com o prazo que ela agenda e a cor que ela
-          deixa. Escolhendo uma, o sistema marca a data do próximo passo e conta mais uma tentativa. No mesmo menu, por
-          baixo da linha, fica o <strong>Perdido</strong>, que pede o motivo e tira o orçamento do quadro.
+          No canto de cima à direita fica só a data: cinza é o dia de chamar, <strong>laranja com alerta</strong> é
+          esse dia já passado, e <strong>vermelho com alerta</strong> é a validade vencida, quando o link do cliente
+          deixa de aceitar aprovação. A tarja na borda esquerda do cartão acompanha. Cartão sem tarja não precisa de
+          ninguém hoje.
         </p>
         <p>
-          No cartão vencido o balão some e aparecem dois botões pequenos ao lado do valor:{' '}
-          <strong>Renovar</strong>, que empurra a validade para a frente mantendo o preço, e{' '}
-          <strong>Perdido</strong>.
+          Orçamento que saiu e nunca recebeu nenhuma ação acende sozinho depois de <strong>sete dias</strong>. Esse
+          prazo é fixo e não depende do que está em Minha empresa — é a rede de segurança para o orçamento que você
+          mandou e esqueceu.
+        </p>
+      </>
+    ),
+  },
+  {
+    id: 'registrar',
+    titulo: 'Registrar o que aconteceu',
+    resumo: 'O balão do cartão e as frases de cada temperatura',
+    icone: Icone.quadro,
+    texto: (
+      <>
+        <p>
+          Passando o mouse no cartão aparece um <strong>balão</strong> no rodapé. Ele abre primeiro os três desenhos de
+          temperatura; você escolhe um e aí aparecem as frases daquela temperatura.
+        </p>
+        <ul>
+          <li>
+            <strong>Frio</strong> — Sem resposta, Achou caro, Sem pressa, Ele que avisa.
+          </li>
+          <li>
+            <strong>Morno</strong> — Pediu desconto, Pediu revisão, Cotando com outro, Vai pensar, Depende de outro.
+          </li>
+          <li>
+            <strong>Quente</strong> — Gostou, Pediu data da instalação, Pediu forma de pagar, Aceitou falta assinar.
+          </li>
+        </ul>
+        <p>
+          Todas são coisas que <strong>o cliente fez</strong>. Nenhuma é leitura sua da conversa, e é por isso que a
+          temperatura sai sozinha: você registra o fato e o sistema tira a conclusão.
         </p>
         <p>
-          Limpeza vencida e cliente parado não ficam aqui — eles são de cliente, não de orçamento, e aparecem como
-          filtros na tela de Clientes.
+          Cada frase já vem com o dia de chamar de novo, escrito do lado dela. Um clique na frase e está registrado. Se
+          o dia tiver que ser outro — ele viajou, pediu para chamar daqui a três semanas — clique na data e escolha no
+          calendário antes.
+        </p>
+        <p>
+          Se nenhuma frase servir, o campo <strong>Outro</strong> aceita o que você quiser escrever, junto com a data.
+          No cartão aparece só o começo do texto; o resto fica guardado e você lê abrindo o orçamento. Nas contas do
+          Financeiro os textos livres contam todos juntos como "Outro", porque frase escrita à mão não dá para agrupar.
+        </p>
+        <p>
+          No mesmo menu, embaixo, fica o <strong>Perdido</strong>. E quando a validade vence o balão dá lugar a{' '}
+          <strong>Renovar</strong>, que empurra o prazo mantendo o preço, e <strong>Perdido</strong>.
         </p>
       </>
     ),

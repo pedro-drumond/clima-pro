@@ -2,6 +2,7 @@
 
 import { venceu, somarMeses, somarDias, diasDesde, totalDoOrcamento, moeda, dataCurta } from './armazenamento.js'
 import { aplicarTexto } from './parametros.js'
+import { resumoDaAcao, diaMes, DIAS_SEM_ACAO } from './vocabulario.js'
 
 export function proximaLimpeza(equipamento, params) {
   const base = equipamento.ultimaLimpeza || equipamento.instaladoEm
@@ -141,52 +142,67 @@ function emDias(n) {
   return n + 'D'
 }
 
-// Tudo que o cartão precisa mostrar, num lugar só. São dois relógios
-// diferentes: a validade do orçamento (vermelho) e o passo que você marcou
-// e não cumpriu (laranja).
-export function estadoDoCartao(orcamento, contatos, RESULTADOS) {
+// Tudo que o cartão do quadro precisa mostrar, num lugar só.
+//
+// São dois relógios diferentes e eles nunca se misturam: a validade do
+// orçamento, que quando passa tira do cliente o direito de aprovar pelo link
+// (vermelho), e o próximo passo, que é você que está atrasado para ligar
+// (laranja).
+//
+// O terceiro caso é o orçamento que saiu e ninguém registrou nada: depois de
+// uma semana ele acende sozinho, senão some do radar sem nunca ter sido
+// cobrado.
+export function estadoDoCartao(orcamento, contatos) {
   const meus = (contatos || [])
     .filter((c) => c.orcamentoId === orcamento.id)
-    .sort((a, b2) => new Date(b2.criadoEm) - new Date(a.criadoEm))
-  const tentativas = meus.length
-  const ultimo = meus[0]
-  const saida = ultimo ? RESULTADOS.find((r) => r.valor === ultimo.resultado) : null
+    .sort((a, b2) => new Date(a.criadoEm) - new Date(b2.criadoEm))
 
-  let temperatura = null
-  if (orcamento.situacao === 'enviado') {
-    temperatura = saida ? saida.temp : 'morno'
-    if (tentativas >= 3 && temperatura !== 'quente') temperatura = 'frio'
-  }
+  const tudo = meus.map((c) => ({ ...resumoDaAcao(c), em: c.criadoEm, proximoEm: c.proximoEm }))
+  const ultimas = tudo.slice(-2)
+  const ultima = tudo[tudo.length - 1] || null
 
-  const sufixo = tentativas > 0 ? ' · ' + tentativas + 'ª tentativa' : ''
-
+  // fora de Enviados não existe temperatura nem relógio: é só a idade
   if (orcamento.situacao !== 'enviado') {
     const quando = orcamento.enviadoEm || orcamento.criadoEm
     const verbo = orcamento.enviadoEm ? 'enviado' : 'criado'
-    return { temperatura: null, tarja: null, linha: verbo + ' ' + emDias(diasDesde(quando)), tentativas }
-  }
-
-  const fim = validadeDoOrcamento(orcamento)
-  if (venceu(fim)) {
-    return { temperatura, tarja: 'vencido', linha: 'venceu em ' + dataCurta(fim), tentativas }
-  }
-
-  if (venceu(orcamento.proximoContato)) {
-    const atraso = diasDesde(orcamento.proximoContato)
-    return { temperatura, tarja: 'atrasado', linha: 'atrasado ' + emDias(atraso) + sufixo, tentativas }
-  }
-
-  if (saida && orcamento.proximoContato) {
-    const faltam = -diasDesde(orcamento.proximoContato)
     return {
-      temperatura,
+      temperatura: null,
       tarja: null,
-      linha: saida.texto.toLowerCase() + ' · retornar em ' + emDias(faltam),
-      tentativas,
+      prazo: null,
+      ultimas: [],
+      tudo,
+      vazio: verbo + ' ' + emDias(diasDesde(quando)),
     }
   }
 
-  return { temperatura, tarja: null, linha: 'enviado ' + emDias(diasDesde(orcamento.enviadoEm)), tentativas }
+  const temperatura = ultima ? ultima.temp : null
+  const fim = validadeDoOrcamento(orcamento)
+
+  // a validade manda em tudo: o link já parou de aceitar aprovação
+  if (venceu(fim)) {
+    return {
+      temperatura,
+      tarja: 'vencido',
+      prazo: { texto: diaMes(fim), estado: 'vencido' },
+      ultimas,
+      tudo,
+      vazio: ultima ? null : 'enviado ' + emDias(diasDesde(orcamento.enviadoEm)),
+    }
+  }
+
+  // quem manda a data: a ação registrada; na falta dela, uma semana do envio
+  const semAcao = tudo.length === 0
+  const alvo = semAcao ? somarDias(orcamento.enviadoEm, DIAS_SEM_ACAO) : orcamento.proximoContato
+  const atrasado = venceu(alvo)
+
+  return {
+    temperatura,
+    tarja: atrasado ? 'atrasado' : null,
+    prazo: alvo ? { texto: diaMes(alvo), estado: atrasado ? 'atrasado' : 'ok' } : null,
+    ultimas,
+    tudo,
+    vazio: semAcao ? 'enviado ' + emDias(diasDesde(orcamento.enviadoEm)) : null,
+  }
 }
 
 export function validadeDoOrcamento(orcamento) {

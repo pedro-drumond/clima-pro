@@ -2699,19 +2699,19 @@ h2 .dica {
 }
 
 /* ===== cartão do quadro =====
-   Altura fixa, para a coluna nunca dançar. Em cima o nome com a bolinha de
-   temperatura e a linha do próximo passo; embaixo o valor. */
+   Três coisas na esquerda, de cima para baixo: quem é, o que já aconteceu,
+   quanto vale. No alto à direita, só o relógio. Altura fixa, para a coluna
+   nunca dançar quando um orçamento muda de estado. */
 
 .cartao {
   position: relative;
   height: 96px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   border: 1px solid var(--linha-suave);
   background: var(--branco);
   border-radius: 10px;
-  padding: 13px 14px;
+  padding: 11px 13px;
   margin-bottom: 12px;
   color: var(--texto);
   text-decoration: none;
@@ -2730,6 +2730,8 @@ h2 .dica {
   opacity: 0.4;
 }
 
+/* laranja: você está atrasado para ligar. vermelho: a validade passou e o
+   link do cliente parou de aceitar aprovação. nunca querem dizer a mesma coisa */
 .cartao.atrasado {
   box-shadow: inset 3px 0 0 var(--laranja);
 }
@@ -2738,84 +2740,18 @@ h2 .dica {
   box-shadow: inset 3px 0 0 var(--vermelho);
 }
 
-/* setas e registrar no canto, longe do nome */
-.cartao-canto {
-  position: absolute;
-  top: 7px;
-  right: 8px;
+.cartao-topo {
   display: flex;
-  gap: 2px;
-  opacity: 0;
-  transition: opacity 0.12s;
-}
-
-.cartao:hover .cartao-canto,
-.cartao:focus-within .cartao-canto,
-.cartao.aberto .cartao-canto,
-.cartao.atrasado .cartao-canto {
-  opacity: 1;
-}
-
-.cartao-canto button {
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: none;
-  background: none;
-  border-radius: 6px;
-  font-size: 18px;
-  line-height: 1;
-  color: var(--texto-fraco);
-  cursor: pointer;
-}
-
-.cartao-canto button:hover {
-  background: var(--fundo);
-  color: var(--marca);
-}
-
-.cartao-canto .registrar {
-  color: var(--marca-clara);
-}
-
-.cartao.atrasado .cartao-canto .registrar {
-  color: var(--laranja);
-}
-
-@media (hover: none) {
-  .cartao-canto {
-    opacity: 1;
-  }
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .cartao-linha-nome {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding-right: 64px;
-}
-
-.bolinha {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--linha);
-}
-
-.bolinha.quente {
-  background: var(--verde);
-}
-
-.bolinha.morno {
-  background: var(--laranja);
-}
-
-.bolinha.frio {
-  background: #8fa5b8;
+  min-width: 0;
 }
 
 .cartao-nome {
@@ -2827,28 +2763,85 @@ h2 .dica {
   white-space: nowrap;
 }
 
-.cartao-passo {
-  font-size: 12px;
-  line-height: 1.4;
+/* o canto direito responde sempre a mesma pergunta: quando */
+.cartao-prazo {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
   color: var(--texto-fraco);
-  margin-top: 2px;
-  padding-right: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.cartao-passo.atrasado {
+.cartao-prazo.atrasado {
   color: var(--laranja);
-  font-weight: 600;
 }
 
-.cartao-passo.vencido {
+.cartao-prazo.vencido {
   color: var(--vermelho);
-  font-weight: 600;
 }
+
+/* ----- a linha das ações ----- */
+
+.cartao-acoes {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--texto-fraco);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.cartao-acoes .acao {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.acao-vazia {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* os desenhos e a seta descem 0,7px: é a distância entre o centro da caixa de
+   texto e o meio da altura das letras minúsculas, que é onde o olho procura.
+   Medido no navegador, não estimado. */
+.cartao-acoes svg,
+.historico-acao svg {
+  flex: none;
+  transform: translateY(0.7px);
+}
+
+.seta-acao {
+  margin: 0 6px;
+  color: #7d93a6;
+}
+
+.tinta-frio {
+  color: #5e86a8;
+  display: inline-flex;
+}
+
+.tinta-morno {
+  color: var(--laranja);
+  display: inline-flex;
+}
+
+.tinta-quente {
+  color: #d4521f;
+  display: inline-flex;
+}
+
+/* ----- rodapé ----- */
 
 .cartao-pe {
+  margin-top: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2856,10 +2849,11 @@ h2 .dica {
 }
 
 .cartao-pe .valor {
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 600;
 }
 
+/* valor zerado não rouba o olho de quem tem dinheiro em jogo */
 .cartao-pe .valor.zero {
   color: var(--texto-fraco);
   font-weight: 400;
@@ -2867,8 +2861,16 @@ h2 .dica {
 
 .cartao-mini {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  gap: 5px;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.cartao:hover .cartao-mini,
+.cartao:focus-within .cartao-mini,
+.cartao.aberto .cartao-mini,
+.cartao.atrasado .cartao-mini {
+  opacity: 1;
 }
 
 .cartao-mini button {
@@ -2878,7 +2880,7 @@ h2 .dica {
   padding: 0 8px;
   font: inherit;
   font-size: 10.5px;
-  line-height: 16px;
+  line-height: 17px;
   font-weight: 600;
   color: var(--texto-fraco);
   cursor: pointer;
@@ -2889,22 +2891,115 @@ h2 .dica {
   color: var(--marca);
 }
 
-/* o menu flutua: abrir não pode empurrar a coluna */
+.cartao-mini .registrar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 21px;
+  padding: 0;
+  color: var(--marca-clara);
+}
+
+.cartao.atrasado .cartao-mini .registrar {
+  color: var(--laranja);
+  border-color: var(--laranja);
+}
+
+/* as setas de mudar de coluna moram no rodapé, junto com o balão: um grupo
+   só de controles, todos escondidos até o mouse passar */
+.cartao-mini .seta {
+  width: 19px;
+  padding: 0;
+  border-color: transparent;
+  font-size: 15px;
+  line-height: 15px;
+}
+
+.cartao-mini .seta:hover {
+  background: var(--fundo);
+  border-color: var(--linha-suave);
+}
+
+@media (hover: none) {
+  .cartao-mini {
+    opacity: 1;
+  }
+}
+
+/* ----- o menu de registro -----
+   Flutua sobre o cartão: abrir não pode empurrar a coluna. */
+
 .cartao-menu {
   position: absolute;
-  top: 32px;
+  top: 30px;
   right: 8px;
   z-index: 5;
-  width: 214px;
+  width: 244px;
   background: var(--branco);
   border: 1px solid var(--linha-suave);
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(15, 43, 70, 0.18);
-  padding: 5px;
+  padding: 6px;
   cursor: default;
 }
 
-.cartao-menu button {
+/* passo 1: a temperatura */
+.menu-temperaturas {
+  display: flex;
+  gap: 4px;
+}
+
+.menu-temperaturas button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid transparent;
+  background: none;
+  padding: 11px 0 8px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--texto-fraco);
+  cursor: pointer;
+}
+
+.menu-temperaturas button:hover {
+  background: var(--fundo);
+  border-color: var(--linha-suave);
+}
+
+/* passo 2: as frases daquela temperatura */
+.menu-cabeca {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 2px 4px 7px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--linha-suave);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--texto-fraco);
+}
+
+.menu-voltar {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--texto-fraco);
+  cursor: pointer;
+}
+
+.menu-voltar:hover {
+  color: var(--marca);
+}
+
+.menu-frase {
   display: flex;
   width: 100%;
   align-items: center;
@@ -2913,7 +3008,7 @@ h2 .dica {
   border: none;
   background: none;
   text-align: left;
-  padding: 6px 9px;
+  padding: 6px 8px;
   border-radius: 7px;
   font: inherit;
   font-size: 13px;
@@ -2921,28 +3016,107 @@ h2 .dica {
   cursor: pointer;
 }
 
-.cartao-menu button:hover {
+.menu-frase:hover {
   background: var(--fundo);
 }
 
-.cartao-menu button i {
-  display: flex;
-  align-items: center;
-  gap: 7px;
+/* a frase nunca quebra em duas linhas: uma linha mais alta que as outras
+   estraga a lista inteira */
+.menu-frase i {
   font-style: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.cartao-menu button span {
+.menu-dia {
+  flex: none;
   font-size: 11.5px;
+  font-weight: 600;
+  color: #9fb0c0;
+  padding: 1px 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.menu-frase:hover .menu-dia {
   color: var(--texto-fraco);
+}
+
+.menu-dia:hover,
+.menu-dia.trocado {
+  background: var(--fundo);
+  color: var(--marca-clara);
+}
+
+.menu-calendario {
+  width: 100%;
+  margin: 2px 0 4px;
+  font-size: 12.5px;
+  padding: 5px 8px;
 }
 
 .cartao-menu .menu-risco {
   height: 1px;
   background: var(--linha-suave);
-  margin: 5px 9px;
+  margin: 5px 8px;
 }
 
-.cartao-menu .menu-perdido {
+/* o texto livre: escreve o motivo e escolhe o dia de chamar */
+.menu-outro {
+  padding: 2px 4px 4px;
+}
+
+.menu-outro input {
+  font-size: 12.5px;
+  padding: 5px 8px;
+  min-width: 0;
+}
+
+.menu-outro .texto {
+  width: 100%;
+}
+
+.menu-outro .pe {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+}
+
+.menu-outro .pe input {
+  flex: 1;
+  min-width: 0;
+}
+
+.menu-outro .pe .botao {
+  flex: none;
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.menu-perdido {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 6px 8px;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 13px;
   color: var(--vermelho);
+  cursor: pointer;
+}
+
+.menu-perdido:hover {
+  background: var(--fundo);
+}
+
+/* ----- a ficha: tudo que aconteceu, na ordem ----- */
+
+.historico-acao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }

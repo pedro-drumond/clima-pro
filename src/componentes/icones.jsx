@@ -114,3 +114,87 @@ export const Icone = {
     </Base>
   ),
 }
+
+// ----- os três desenhos de temperatura -----
+//
+// Cada um foi empurrado dentro da própria caixa até o CENTRO DE MASSA da tinta
+// cair em 12, não o centro da caixa. A chama é bicuda em cima e gorda embaixo:
+// centrando a caixa, mais da metade da tinta fica para baixo e o desenho
+// parece afundado ao lado da palavra. Os números vieram de medição, não de
+// tentativa — não mexa neles sem medir de novo.
+
+export function Gelo({ tamanho = 13, traco = 2.2 }) {
+  return (
+    <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth={traco} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="4.5" y="4.5" width="15" height="15" rx="3" />
+      <path d="M9 9.5h2M13 14.5h2" />
+    </svg>
+  )
+}
+
+export function Ondas({ tamanho = 13, traco = 2.4 }) {
+  return (
+    <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth={traco} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <g transform="translate(0,.3)">
+        <path d="M3.5 15.4q2.8-2.8 5.6 0t5.6 0 5.8 0" />
+        <path d="M3.5 8.6q2.8-2.8 5.6 0t5.6 0 5.8 0" />
+      </g>
+    </svg>
+  )
+}
+
+export function Fogo({ tamanho = 13 }) {
+  return (
+    <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <g transform="translate(0,-.85)">
+        <path d="M12 2.6c3.6 4.2 6.6 6.6 6.6 10.6a6.6 6.6 0 0 1-13.2 0c0-2.4 1-4.4 2.5-6.2.4 1.3 1.1 2.1 2.1 2.1 1.6 0 2.2-2.3 2-6.5Z" />
+      </g>
+    </svg>
+  )
+}
+
+export const DESENHO_TEMPERATURA = { frio: Gelo, morno: Ondas, quente: Fogo }
+
+export function Temperatura({ valor, tamanho = 13, traco }) {
+  const Desenho = DESENHO_TEMPERATURA[valor]
+  if (!Desenho) return null
+  return (
+    <span className={'tinta-' + valor}>
+      <Desenho tamanho={tamanho} traco={traco} />
+    </span>
+  )
+}
+
+// A seta entre duas ações. Era um caractere de texto e a fonte decidia a
+// altura dela — no Mac caía num lugar, no Windows em outro. Virou desenho.
+export function SetaAcao() {
+  return (
+    <svg className="seta-acao" width="17" height="13" viewBox="0 0 17 13" fill="none"
+      stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M1.6 6.5h13.2" />
+      <path d="M10.6 2.4 14.8 6.5l-4.2 4.1" />
+    </svg>
+  )
+}
+
+export function Alerta({ tamanho = 12 }) {
+  return (
+    <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+      <path d="M12 9v4" />
+      <path d="M12 17h.01" />
+    </svg>
+  )
+}
+
+export function Balao({ tamanho = 15 }) {
+  return (
+    <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.4-.7L3 21l1.9-5.1A8.3 8.3 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z" />
+    </svg>
+  )
+}
