@@ -3141,3 +3141,84 @@ h2 .dica {
   align-items: center;
   gap: 6px;
 }
+
+/* ===== biblioteca no celular =====
+   No computador a lista é uma tabela de quatro colunas. Num telefone de 390px
+   essas colunas não cabem: o nome era cortado e a caixa rolava para o lado,
+   que é o pior jeito de esconder informação — ninguém descobre que tem mais
+   coisa ali. Aqui a linha vira um bloco empilhado e nada rola na horizontal. */
+
+@media (max-width: 760px) {
+  .bloco-lista {
+    padding: var(--esp-2);
+  }
+
+  /* o cabeçalho de colunas não quer dizer nada quando não há colunas */
+  .cabeca-biblioteca {
+    display: none;
+  }
+
+  /* a lista acompanha a página em vez de ter rolagem própria dentro de uma
+     caixa de altura fixa */
+  .rolagem-biblioteca {
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .linha-biblioteca {
+    grid-template-columns: 1fr auto;
+    gap: 3px 10px;
+    padding: 13px 0;
+  }
+
+  .linha-biblioteca > :first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .linha-biblioteca .acoes-linha {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+  }
+
+  /* o valor desce para a linha de baixo e ganha o nome da coluna, que no
+     computador vem do cabeçalho */
+  .linha-biblioteca .valor-item {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    text-align: left;
+  }
+
+  .linha-biblioteca .valor-item::before {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--texto-fraco);
+  }
+
+  .linha-biblioteca .valor-item:nth-child(2)::before {
+    content: 'Custo';
+  }
+
+  .linha-biblioteca .valor-item:nth-child(3)::before {
+    content: 'Preço de venda';
+  }
+
+  /* o item preenche só uma das duas colunas: a outra sai de cena em vez de
+     mostrar um traço sozinho */
+  .linha-biblioteca .valor-item:has(.sem-valor) {
+    display: none;
+  }
+
+  .nome-do-item {
+    -webkit-line-clamp: 3;
+  }
+
+  /* no telefone o botão ocupa a largura toda em vez de ficar solto à direita */
+  .barra-biblioteca .botao.principal {
+    width: 100%;
+  }
+}
