@@ -310,6 +310,7 @@ export default function Orcamentos() {
                                   <span className="acao">
                                     <Temperatura valor={t.temp} tamanho={13} />
                                     {t.curto}
+                                    {t.vezes > 1 ? <b>({t.vezes})</b> : null}
                                   </span>
                                 </React.Fragment>
                               ))

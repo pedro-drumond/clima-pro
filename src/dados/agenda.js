@@ -81,8 +81,24 @@ export function estadoDoCartao(orcamento, contatos) {
     .sort((a, b2) => new Date(a.criadoEm) - new Date(b2.criadoEm))
 
   const tudo = meus.map((c) => ({ ...resumoDaAcao(c), em: c.criadoEm, proximoEm: c.proximoEm }))
-  const ultimas = tudo.slice(-2)
   const ultima = tudo[tudo.length - 1] || null
+
+  // A mesma frase registrada duas vezes seguidas vira uma só, com a contagem:
+  // "cotando (2)" em vez de "cotando → cotando", que parece repetição à toa e
+  // ainda gasta o lugar da ação anterior, que era a informação nova. Alternado
+  // não colapsa: "cotando → desconto → cotando" continua sendo três coisas.
+  const juntadas = []
+  tudo.forEach((t) => {
+    const anterior = juntadas[juntadas.length - 1]
+    if (anterior && anterior.texto === t.texto && anterior.temp === t.temp) {
+      anterior.vezes += 1
+      anterior.em = t.em
+      anterior.proximoEm = t.proximoEm
+      return
+    }
+    juntadas.push({ ...t, vezes: 1 })
+  })
+  const ultimas = juntadas.slice(-2)
 
   // fora de Enviados não existe temperatura nem relógio: é só a idade
   if (orcamento.situacao !== 'enviado') {
