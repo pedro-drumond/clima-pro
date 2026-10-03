@@ -20,8 +20,8 @@ const ASSUNTOS = [
         <p>
           O orçamento anda sozinho de <strong>em elaboração</strong> para <strong>enviados</strong> na primeira vez que
           você copia o link, gera o PDF ou abre o WhatsApp — é isso que agenda a primeira cobrança. Para mover à mão,
-          arraste o cartão para a coluna que quiser, ou use as setas que aparecem no alto dele. Cada passagem guarda a
-          data em que aconteceu.
+          arraste o cartão para a coluna que quiser, ou use as duas setinhas que aparecem no canto de cima dele. Cada
+          passagem guarda a data em que aconteceu.
         </p>
         <p>Ao criar um orçamento você escolhe entre três modelos, e essa escolha muda como o preço é calculado:</p>
         <ul>
@@ -50,30 +50,42 @@ const ASSUNTOS = [
     ),
   },
   {
-    id: 'acompanhamento',
-    titulo: 'Acompanhamento',
-    resumo: 'Quem chamar hoje e como registrar o contato',
+    id: 'cartao',
+    titulo: 'O cartão do quadro',
+    resumo: 'Temperatura, próximo passo e registro do contato',
     icone: Icone.telefone,
     texto: (
       <>
         <p>
-          Fica dentro de Orçamentos, no botão <strong>Acompanhamento</strong>. O sistema junta ali todo mundo que tem
-          alguma coisa vencida, separado por motivo. Entram nesta lista:
-        </p>
-        <ul>
-          <li>quem recebeu orçamento e não respondeu, nos prazos que você definiu;</li>
-          <li>quem está na época da limpeza do aparelho, contada desde a última visita registrada;</li>
-          <li>cliente antigo que faz muito tempo que não aparece.</li>
-        </ul>
-        <p>
-          Você chama pelo WhatsApp com a mensagem já escrita e depois registra o contato: escolhe o que aconteceu — não
-          atendeu, falou e vai pensar, pediu para retornar, vai fechar — e o sistema marca sozinho a data do próximo
-          passo. É esse registro que tira a pessoa da lista de hoje; enquanto você não registra, ela continua aparecendo.
+          Na coluna <strong>Enviados</strong>, o cartão deixa de ser só um nome e um valor: ele responde quem você tem
+          que chamar e quando. São três informações, de cima para baixo.
         </p>
         <p>
-          O que precisa de você também aparece no próprio quadro, como uma tarja na borda do cartão:{' '}
-          <strong>laranja</strong> quando está na hora de cobrar, e <strong>vermelho</strong> quando o orçamento passou
-          da validade. Cartão sem tarja é cartão que não precisa de ninguém hoje.
+          A <strong>bolinha</strong> antes do nome é a temperatura do negócio, e vem do último contato que você
+          registrou. Verde é quem disse que fecha. Laranja é quem falou e está avaliando. Cinza é quem não responde ou
+          pediu para esperar — e três tentativas sem resposta derrubam o negócio para cinza sozinhas.
+        </p>
+        <p>
+          A <strong>linha do meio</strong> é o próximo passo, com o prazo em dias: "vai avaliar · retornar em 5D",
+          "atrasado 3D · 2ª tentativa", "venceu em 28/09". Enquanto o prazo não chega, o cartão fica quieto. Quando
+          passa, ele ganha uma tarja <strong>laranja</strong> na borda e a linha fica laranja também — é você que está
+          atrasado para ligar. A tarja <strong>vermelha</strong> é outra coisa: o orçamento passou da validade e o link
+          parou de aceitar aprovação. Cartão sem tarja é cartão que não precisa de ninguém hoje.
+        </p>
+        <p>
+          No canto de cima fica o <strong>balãozinho de registrar contato</strong>. Ele abre as quatro saídas possíveis —
+          não atendeu, vai avaliar, pediu retorno, vai fechar — cada uma com o prazo que ela agenda e a cor que ela
+          deixa. Escolhendo uma, o sistema marca a data do próximo passo e conta mais uma tentativa. No mesmo menu, por
+          baixo da linha, fica o <strong>Perdido</strong>, que pede o motivo e tira o orçamento do quadro.
+        </p>
+        <p>
+          No cartão vencido o balão some e aparecem dois botões pequenos ao lado do valor:{' '}
+          <strong>Renovar</strong>, que empurra a validade para a frente mantendo o preço, e{' '}
+          <strong>Perdido</strong>.
+        </p>
+        <p>
+          Limpeza vencida e cliente parado não ficam aqui — eles são de cliente, não de orçamento, e aparecem como
+          filtros na tela de Clientes.
         </p>
       </>
     ),
@@ -102,8 +114,8 @@ const ASSUNTOS = [
           orçamento.
         </p>
         <p>
-          A aparência da proposta você escolhe em Minha empresa: o modelo de cabeçalho e o desenho de aparelho que
-          aparece nele.
+          A aparência da proposta — o modelo, a cor e o desenho de aparelho do cabeçalho — fica em Orçamentos, no botão{' '}
+          <strong>Modelos</strong>.
         </p>
       </>
     ),
@@ -117,7 +129,8 @@ const ASSUNTOS = [
       <>
         <p>
           Fica em Orçamentos, no botão <strong>Modelos</strong>. São quatro jeitos de a proposta sair, e o que você
-          escolhe vale para todas: tanto para o link que o cliente abre quanto para o PDF.
+          escolhe vale para todas: tanto para o link que o cliente abre quanto para o PDF. No alto da tela fica também o
+          desenho de aparelho que sai no cabeçalho.
         </p>
         <ul>
           <li>
@@ -135,9 +148,13 @@ const ASSUNTOS = [
           </li>
         </ul>
         <p>
-          Cada opção mostra a proposta de verdade, reduzida. Em <strong>Ver inteiro</strong> ela abre em tamanho real,
-          com um orçamento de mentira mas com a sua logo e os seus dados, e dá para imprimir para ver como fica no
-          papel antes de escolher.
+          Cada opção mostra a proposta de verdade, reduzida. Em <strong>Ver</strong> ela abre em tamanho real, com um
+          orçamento de mentira mas com a sua logo e os seus dados, e dá para imprimir para ver como fica no papel antes
+          de escolher. <strong>Usar este</strong> troca o modelo da empresa.
+        </p>
+        <p>
+          As quatro bolinhas de cor embaixo de cada modelo mudam a cor da proposta inteira — azul, verde escuro,
+          vermelho escuro ou grafite. A cor é uma só para a empresa: trocando em qualquer modelo, troca em todos.
         </p>
       </>
     ),
@@ -173,6 +190,12 @@ const ASSUNTOS = [
         <p>
           Na ficha de cada pessoa ficam os aparelhos instalados, com ambiente, marca, BTU e a data da última limpeza. É
           isso que faz a pessoa aparecer na lista de quem chamar quando chega a época da manutenção.
+        </p>
+        <p>
+          Em cima da lista ficam os filtros, e dois deles são a sua lista de quem chamar hoje:{' '}
+          <strong>Limpeza vencida</strong>, que junta quem passou do prazo desde a última limpeza registrada, e{' '}
+          <strong>Parados</strong>, que junta cliente antigo que faz tempo que não aparece. Nos dois, o cartão mostra o
+          motivo e um botão de WhatsApp com a mensagem já escrita. Os prazos dos dois você define em Minha empresa.
         </p>
       </>
     ),
@@ -240,8 +263,10 @@ const ASSUNTOS = [
     texto: (
       <>
         <p>
-          Tudo que é ajuste fica aqui, em caixas separadas. O imposto e a margem não ficam mais nesta tela: eles são
-          definidos dentro do próprio orçamento por margem.
+          Tudo que é ajuste fica aqui, em quatro caixas. O imposto e a margem não ficam mais nesta tela: são definidos
+          dentro do próprio orçamento por margem. A validade e as condições de pagamento também saíram daqui — você as
+          ajusta dentro de um orçamento e usa o <strong>Salvar como padrão da empresa</strong> para os próximos já
+          nascerem com elas.
         </p>
         <ul>
           <li>
@@ -254,21 +279,17 @@ const ASSUNTOS = [
           </li>
           <li>
             <strong>Quando chamar para limpeza</strong> — de quanto em quanto tempo o cliente volta para a lista, e a
-            partir de quando ele conta como cliente parado.
+            partir de quantos meses ele conta como cliente parado.
           </li>
           <li>
-            <strong>Padrão do orçamento</strong> — validade, condições de pagamento e observações que já entram
-            preenchidas em todo orçamento novo.
-          </li>
-          <li>
-            <strong>Aparência da proposta</strong> — o desenho de aparelho que sai no cabeçalho. O modelo da proposta
-            fica em Orçamentos, no botão Modelos.
-          </li>
-          <li>
-            <strong>Mensagens prontas do WhatsApp</strong> — os textos que o sistema usa ao chamar alguém. O que está
-            entre chaves é trocado pelo valor de verdade na hora de enviar.
+            <strong>Mensagens prontas do WhatsApp</strong> — os quatro textos que o sistema usa ao chamar alguém:
+            enviar orçamento, cobrar, chamar para limpeza e cliente parado. O que está entre chaves é trocado pelo
+            valor de verdade na hora de enviar.
           </li>
         </ul>
+        <p>
+          O modelo, a cor e o desenho de aparelho da proposta ficam em Orçamentos, no botão <strong>Modelos</strong>.
+        </p>
       </>
     ),
   },
