@@ -80,7 +80,6 @@ export default function Pessoa() {
                 ambiente: 'Novo ambiente',
                 btu: 12000,
                 marca: '',
-                uso: pessoa.tipo === 'pj' ? 'comercial' : 'residencial',
                 instaladoEm: new Date().toISOString(),
                 ultimaLimpeza: new Date().toISOString(),
               })
@@ -94,28 +93,11 @@ export default function Pessoa() {
         ) : (
           equipamentos.map((e) => (
             <div key={e.id} style={{ borderTop: '1px solid #e2e6ea', paddingTop: 12, marginTop: 12 }}>
-              <div className="par">
+              <div className="trio">
                 <Texto rotulo="Ambiente" valor={e.ambiente} aoMudar={(v) => salvarEquipamento({ ...e, ambiente: v })} />
                 <Texto rotulo="Marca" valor={e.marca} aoMudar={(v) => salvarEquipamento({ ...e, marca: v })} />
+                <Texto rotulo="BTU" valor={e.btu} aoMudar={(v) => salvarEquipamento({ ...e, btu: Number(v) || 0 })} />
               </div>
-              <Linha>
-                <Texto
-                  rotulo="BTU"
-                  tamanho="curto"
-                  valor={e.btu}
-                  aoMudar={(v) => salvarEquipamento({ ...e, btu: Number(v) || 0 })}
-                />
-                <Escolha
-                  rotulo="Uso"
-                  tamanho="medio"
-                  valor={e.uso}
-                  aoMudar={(v) => salvarEquipamento({ ...e, uso: v })}
-                  opcoes={[
-                    { valor: 'residencial', texto: 'Residencial' },
-                    { valor: 'comercial', texto: 'Comercial' },
-                  ]}
-                />
-              </Linha>
               <p className="fraco">Instalado em {dataCurta(e.instaladoEm)}</p>
               <div className="acoes">
                 <button className="botao perigo" onClick={() => apagarEquipamento(e.id)}>

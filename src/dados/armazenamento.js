@@ -133,7 +133,6 @@ const doEquipamento = (r) => ({
   ambiente: r.ambiente,
   btu: r.btu,
   marca: r.marca,
-  uso: r.uso,
   instaladoEm: r.instalado_em,
   ultimaLimpeza: r.ultima_limpeza,
 })
@@ -144,7 +143,6 @@ export const paraEquipamento = (e) => ({
   ambiente: e.ambiente || '',
   btu: Number(e.btu) || 0,
   marca: e.marca || '',
-  uso: e.uso || 'residencial',
   instalado_em: e.instaladoEm || null,
   ultima_limpeza: e.ultimaLimpeza || null,
 })
