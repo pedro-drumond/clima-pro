@@ -18,7 +18,6 @@ export const RESULTADOS = [
   { valor: 'sem-resposta', temp: 'frio', texto: 'Sem resposta', curto: 'sem resp.', dias: 2 },
   { valor: 'achou-caro', temp: 'frio', texto: 'Achou caro', curto: 'caro', dias: 7 },
   { valor: 'sem-pressa', temp: 'frio', texto: 'Sem pressa', curto: 'sem pressa', dias: 15 },
-  { valor: 'ele-avisa', temp: 'frio', texto: 'Ele que avisa', curto: 'avisa', dias: 30 },
 
   { valor: 'desconto', temp: 'morno', texto: 'Pediu desconto', curto: 'desconto', dias: 2 },
   { valor: 'revisao', temp: 'morno', texto: 'Pediu revisão', curto: 'revisão', dias: 2 },

@@ -98,7 +98,7 @@ const ASSUNTOS = [
         </p>
         <ul>
           <li>
-            <strong>Frio</strong> — Sem resposta, Achou caro, Sem pressa, Ele que avisa.
+            <strong>Frio</strong> — Sem resposta, Achou caro, Sem pressa.
           </li>
           <li>
             <strong>Morno</strong> — Pediu desconto, Pediu revisão, Cotando com outro, Vai pensar, Depende de outro.
