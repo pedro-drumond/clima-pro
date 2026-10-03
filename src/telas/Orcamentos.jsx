@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDados } from '../componentes/base.jsx'
 import { moeda, totalDoOrcamento, dataCurta, parametros, somarDias, hojeISO } from '../dados/armazenamento.js'
@@ -42,6 +42,24 @@ export default function Orcamentos() {
   const [textoLivre, setTextoLivre] = useState('')
   const [diaEscolhido, setDiaEscolhido] = useState('')
   const [editandoDia, setEditandoDia] = useState('')
+
+  // clicar fora ou apertar Escape fecha. Sem isso o menu fica preso aberto e
+  // não há nada óbvio para clicar.
+  useEffect(() => {
+    if (!registrando) return
+    const fora = (e) => {
+      if (!e.target.closest || !e.target.closest('.cartao-menu, .cartao-mini')) fecharMenu()
+    }
+    const tecla = (e) => {
+      if (e.key === 'Escape') fecharMenu()
+    }
+    document.addEventListener('mousedown', fora)
+    document.addEventListener('keydown', tecla)
+    return () => {
+      document.removeEventListener('mousedown', fora)
+      document.removeEventListener('keydown', tecla)
+    }
+  }, [registrando])
 
   function fecharMenu() {
     setRegistrando('')
@@ -307,70 +325,69 @@ export default function Orcamentos() {
                             </span>
 
                             <span className="cartao-mini">
-                              {estado.tarja === 'vencido' ? (
-                                <>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      renovarValidade(o, o.validadeDias)
-                                    }}
-                                    title="Empurrar a validade mantendo o preço"
-                                  >
-                                    Renovar
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      marcarPerdido(o.id, 'Validade vencida')
-                                    }}
-                                  >
-                                    Perdido
-                                  </button>
-                                </>
-                              ) : (
-                                <>
-                                  {posicao > 0 ? (
-                                    <button className="seta" onClick={mover(-1)} title={'Voltar para ' + ETAPAS[posicao - 1][1]}>
-                                      ‹
-                                    </button>
-                                  ) : null}
-                                  {posicao < ETAPAS.length - 1 ? (
-                                    <button className="seta" onClick={mover(1)} title={'Passar para ' + ETAPAS[posicao + 1][1]}>
-                                      ›
-                                    </button>
-                                  ) : null}
-                                  {chave === 'enviado' ? (
-                                    <button
-                                      className="registrar"
-                                      title="Registrar o que o cliente fez"
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        if (aberto) fecharMenu()
-                                        else {
-                                          fecharMenu()
-                                          setRegistrando(o.id)
-                                        }
-                                      }}
-                                    >
-                                      <Balao />
-                                    </button>
-                                  ) : null}
-                                </>
-                              )}
+                              {posicao > 0 ? (
+                                <button className="seta" onClick={mover(-1)} title={'Voltar para ' + ETAPAS[posicao - 1][1]}>
+                                  ‹
+                                </button>
+                              ) : null}
+                              {posicao < ETAPAS.length - 1 ? (
+                                <button className="seta" onClick={mover(1)} title={'Passar para ' + ETAPAS[posicao + 1][1]}>
+                                  ›
+                                </button>
+                              ) : null}
+                              {chave === 'enviado' ? (
+                                <button
+                                  className="registrar"
+                                  title="Registrar o que o cliente fez"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    if (aberto) fecharMenu()
+                                    else {
+                                      fecharMenu()
+                                      setRegistrando(o.id)
+                                    }
+                                  }}
+                                >
+                                  <Balao />
+                                </button>
+                              ) : null}
                             </span>
                           </div>
 
                           {aberto ? (
                             <div className="cartao-menu" onClick={(e) => e.stopPropagation()}>
                               {!tempEscolhida ? (
-                                <div className="menu-temperaturas">
-                                  {TEMPERATURAS.map((t) => (
-                                    <button key={t.valor} onClick={() => setTempEscolhida(t.valor)}>
-                                      <Temperatura valor={t.valor} tamanho={22} traco={2} />
-                                      {t.texto}
+                                <>
+                                  <div className="menu-temperaturas">
+                                    {TEMPERATURAS.map((t) => (
+                                      <button key={t.valor} onClick={() => setTempEscolhida(t.valor)}>
+                                        <Temperatura valor={t.valor} tamanho={22} traco={2} />
+                                        {t.texto}
+                                      </button>
+                                    ))}
+                                  </div>
+                                  <div className="menu-risco" />
+                                  {estado.tarja === 'vencido' ? (
+                                    <button
+                                      className="menu-saida"
+                                      onClick={() => {
+                                        fecharMenu()
+                                        renovarValidade(o, o.validadeDias)
+                                      }}
+                                    >
+                                      Renovar validade
                                     </button>
-                                  ))}
-                                </div>
+                                  ) : null}
+                                  <button
+                                    className="menu-saida perdido"
+                                    onClick={() => {
+                                      fecharMenu()
+                                      marcarPerdido(o.id, prompt('Por que perdeu?') || '')
+                                    }}
+                                  >
+                                    Perdido
+                                  </button>
+                                </>
                               ) : (
                                 <>
                                   <div className="menu-cabeca">
@@ -449,15 +466,6 @@ export default function Orcamentos() {
                                     </div>
                                   </div>
 
-                                  <button
-                                    className="menu-perdido"
-                                    onClick={() => {
-                                      fecharMenu()
-                                      marcarPerdido(o.id, prompt('Por que perdeu?') || '')
-                                    }}
-                                  >
-                                    Perdido
-                                  </button>
                                 </>
                               )}
                             </div>

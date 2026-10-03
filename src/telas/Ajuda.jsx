@@ -104,7 +104,7 @@ const ASSUNTOS = [
             <strong>Morno</strong> — Pediu desconto, Pediu revisão, Cotando com outro, Vai pensar, Depende de outro.
           </li>
           <li>
-            <strong>Quente</strong> — Gostou, Pediu data da instalação, Pediu forma de pagar, Aceitou falta assinar.
+            <strong>Quente</strong> — Gostou, Pediu data, Forma de pagar, Aceitou falta assinar.
           </li>
         </ul>
         <p>

@@ -26,8 +26,8 @@ export const RESULTADOS = [
   { valor: 'terceiro', temp: 'morno', texto: 'Depende de outro', curto: 'terceiro', dias: 7 },
 
   { valor: 'gostou', temp: 'quente', texto: 'Gostou', curto: 'gostou', dias: 3 },
-  { valor: 'pediu-data', temp: 'quente', texto: 'Pediu data da instalação', curto: 'data', dias: 2 },
-  { valor: 'pagamento', temp: 'quente', texto: 'Pediu forma de pagar', curto: 'pagamento', dias: 2 },
+  { valor: 'pediu-data', temp: 'quente', texto: 'Pediu data', curto: 'data', dias: 2 },
+  { valor: 'pagamento', temp: 'quente', texto: 'Forma de pagar', curto: 'pagamento', dias: 2 },
   { valor: 'aceitou', temp: 'quente', texto: 'Aceitou, falta assinar', curto: 'aceitou', dias: 2 },
 ]
 

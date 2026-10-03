@@ -745,6 +745,11 @@ td.n {
   opacity: 0.4;
 }
 
+/* o cartão aberto sobe: o menu passa por cima dos cartões de baixo */
+.cartao.aberto {
+  z-index: 20;
+}
+
 /* proposta pública */
 
 .proposta {
@@ -2730,6 +2735,11 @@ h2 .dica {
   opacity: 0.4;
 }
 
+/* o cartão aberto sobe: o menu passa por cima dos cartões de baixo */
+.cartao.aberto {
+  z-index: 20;
+}
+
 /* laranja: você está atrasado para ligar. vermelho: a validade passou e o
    link do cliente parou de aceitar aprovação. nunca querem dizer a mesma coisa */
 .cartao.atrasado {
@@ -2930,12 +2940,14 @@ h2 .dica {
 /* ----- o menu de registro -----
    Flutua sobre o cartão: abrir não pode empurrar a coluna. */
 
+/* o menu tem a largura do cartão: numa janela estreita a coluna fica com uns
+   200px e um menu de largura fixa sai por fora e é cortado pela coluna do lado */
 .cartao-menu {
   position: absolute;
   top: 30px;
-  right: 8px;
+  left: 0;
+  right: 0;
   z-index: 5;
-  width: 244px;
   background: var(--branco);
   border: 1px solid var(--linha-suave);
   border-radius: 10px;
@@ -3004,14 +3016,14 @@ h2 .dica {
   width: 100%;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   border: none;
   background: none;
   text-align: left;
   padding: 6px 8px;
   border-radius: 7px;
   font: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--texto);
   cursor: pointer;
 }
@@ -3031,7 +3043,7 @@ h2 .dica {
 
 .menu-dia {
   flex: none;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   color: #9fb0c0;
   padding: 1px 5px;
@@ -3095,7 +3107,7 @@ h2 .dica {
   font-size: 12px;
 }
 
-.menu-perdido {
+.menu-saida {
   display: block;
   width: 100%;
   border: none;
@@ -3104,13 +3116,22 @@ h2 .dica {
   padding: 6px 8px;
   border-radius: 7px;
   font: inherit;
-  font-size: 13px;
-  color: var(--vermelho);
+  font-size: 12.5px;
+  color: var(--texto-fraco);
   cursor: pointer;
 }
 
-.menu-perdido:hover {
+.menu-saida:hover {
   background: var(--fundo);
+  color: var(--marca);
+}
+
+.menu-saida.perdido {
+  color: var(--vermelho);
+}
+
+.menu-saida.perdido:hover {
+  color: var(--vermelho);
 }
 
 /* ----- a ficha: tudo que aconteceu, na ordem ----- */
