@@ -166,13 +166,14 @@ async function mudarOrcamento(orcamentoId, camposApp, camposBanco) {
   avisarErro(error, 'atualizar orçamento')
 }
 
-export function marcarEnviado(orcamentoId, params) {
+// Enviar não marca data de cobrança. Enquanto não houver nenhuma ação
+// registrada, quem acende o cartão é a regra dos sete dias, no cartão mesmo.
+export function marcarEnviado(orcamentoId) {
   const agora = hojeISO()
-  const proximo = somarDias(agora, params.cobrancaDias[0])
   return mudarOrcamento(
     orcamentoId,
-    { situacao: 'enviado', enviadoEm: agora, cobrancas: 0, proximoContato: proximo },
-    { situacao: 'enviado', enviado_em: agora, cobrancas: 0, proximo_contato: proximo }
+    { situacao: 'enviado', enviadoEm: agora, cobrancas: 0, proximoContato: null },
+    { situacao: 'enviado', enviado_em: agora, cobrancas: 0, proximo_contato: null }
   )
 }
 
@@ -182,7 +183,7 @@ export function marcarEnviado(orcamentoId, params) {
 export function marcarEnviadoSePreciso(orcamento, params) {
   if (!orcamento || orcamento.situacao !== 'contato') return
   if (!(orcamento.itens || []).length) return
-  return marcarEnviado(orcamento.id, params)
+  return marcarEnviado(orcamento.id)
 }
 
 // Volta um orçamento perdido para o quadro. Se ele já tinha sido enviado,
@@ -210,9 +211,6 @@ export async function moverOrcamento(orcamento, novaSituacao, params) {
       app.enviadoEm = agora
       linha.enviado_em = agora
     }
-    const proximo = somarDias(agora, params.cobrancaDias[0])
-    app.proximoContato = proximo
-    linha.proximo_contato = proximo
   }
 
   if (novaSituacao === 'fechado') {

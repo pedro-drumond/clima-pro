@@ -75,33 +75,6 @@ export default function Empresa() {
 
       <div className="blocos-duplos">
         <div className="bloco centrado">
-          <h2>Acompanhamento dos orçamentos</h2>
-          <p className="unidade-do-bloco">em dias</p>
-          <div className="grade-numeros de-dois">
-            <Numero
-              rotulo="1ª cobrança"
-              valor={p.cobrancaDias[0]}
-              aoMudar={(v) => mudarParam({ cobrancaDias: [v, p.cobrancaDias[1], p.cobrancaDias[2]] })}
-            />
-            <Numero
-              rotulo="2ª cobrança"
-              valor={p.cobrancaDias[1]}
-              aoMudar={(v) => mudarParam({ cobrancaDias: [p.cobrancaDias[0], v, p.cobrancaDias[2]] })}
-            />
-            <Numero
-              rotulo="3ª cobrança"
-              valor={p.cobrancaDias[2]}
-              aoMudar={(v) => mudarParam({ cobrancaDias: [p.cobrancaDias[0], p.cobrancaDias[1], v] })}
-            />
-            <Numero
-              rotulo="Sugerir perda"
-              valor={p.sugerirPerdaDias}
-              aoMudar={(v) => mudarParam({ sugerirPerdaDias: v })}
-            />
-          </div>
-        </div>
-
-        <div className="bloco centrado">
           <h2>Quando chamar para limpeza</h2>
           <p className="unidade-do-bloco">em meses</p>
           <div className="grade-numeros de-tres">
