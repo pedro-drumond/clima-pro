@@ -150,3 +150,10 @@ Diário cronológico. Só se acrescenta; nada se apaga. A entrada mais recente f
   a tela de nova senha. Corrigido em `main.jsx`. Falta o servidor de e-mail.
 - Segurança: criados os workflows de backup diário e de manter o banco acordado.
 
+## 14/10/2026 — preço editável, item oculto, aprovação reorganizada
+- Pedido do Pedro depois de testar: lápis no preço ao cliente, olho e lixeira em
+  cada item, e a caixa de aprovação com o nome à direita (D31). Amostra mostrada
+  antes; a primeira versão tinha linha de desconto e o Pedro tirou.
+- Migração colada pelo Pedro no SQL Editor; o Claude Code ainda não enxerga o
+  projeto do Clima Pro pelo conector do Supabase (está em outra conta).
+

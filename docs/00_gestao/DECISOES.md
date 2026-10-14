@@ -194,3 +194,14 @@ Status possíveis: **Decidida** · **Aberta** · **Revista** (neste caso, dizer 
   barra dos perdidos e os botões "Mês a mês" e "Semana a semana" (últimas 12
   semanas).
 
+### D31 — Preço ao cliente editável e item oculto
+- Status: **Decidida** pelo Pedro em 14/10/2026.
+- O preço ao cliente é a soma de tudo, mas o lápis ao lado dele deixa digitar
+  outro valor, maior ou menor. Não aparece linha de desconto nem de acréscimo,
+  nem no sistema nem na proposta: "se ele quiser diminuir, é problema dele".
+- O olho de cada item tira o item da proposta, e o valor dele continua no total.
+- Na proposta aprovada, data, aparelho e IP ficam pequenos à esquerda e o nome
+  de quem aprovou à direita.
+- Banco: `orcamentos.preco_final` e `orcamento_itens.oculto` (migração
+  20261014120000), colada pelo Pedro no SQL Editor.
+
