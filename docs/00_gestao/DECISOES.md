@@ -166,3 +166,31 @@ Status possíveis: **Decidida** · **Aberta** · **Revista** (neste caso, dizer 
   página ou fazer logout grava o que estava esperando.
 - Alternativa descartada: botão "salvar" em cada tela. Custa um clique a mais em
   todo lugar e é exatamente o tipo de atrito que faz o instalador abandonar.
+
+### D27 — Orçamento só por preço de venda
+- Status: **Decidida** na reunião de 13/10/2026 (Pedro, Mauro e Marco).
+- Sai o orçamento por margem e imposto. Por preço de venda e itens avulsos viram
+  um só: o instalador escreve o preço que o cliente paga, e marca se o item vai
+  para a biblioteca. Na biblioteca sai a escolha entre custo e preço de venda.
+- Por quê: o Mauro achou a escolha entre custo e preço confusa, e o Marco contou
+  que o instalador pequeno só trabalha com preço de venda. "A margem é problema
+  dele." Menos opção, menos chance de errar.
+- Substitui a D23 (três modelos) e a regra da margem líquida sobre a venda.
+
+### D28 — Proposta sem desenho de aparelho no cabeçalho
+- Status: **Decidida** pelo Pedro na reunião de 13/10/2026.
+- Saiu a escolha do desenho (split, cassete de teto, piso-teto) da tela de
+  Modelos e da proposta. Ficam a logo, os quatro modelos e as cores.
+
+### D29 — Filtro "Só atrasados" no quadro
+- Status: **Decidida** na reunião de 13/10/2026, por sugestão do Mauro.
+- Sem aba nova, para não poluir: é uma opção a mais no menu da coluna Enviados,
+  junto com as ordenações. Mostra só os cartões com tarja (laranja ou vermelha),
+  e o número da coluna fica laranja enquanto o filtro está ligado.
+
+### D30 — Financeiro com perdidos e visão por semana
+- Status: **Decidida** na reunião de 13/10/2026.
+- Entra o número "Perdido" ao lado de orçado e fechado, e o gráfico ganha a
+  barra dos perdidos e os botões "Mês a mês" e "Semana a semana" (últimas 12
+  semanas).
+

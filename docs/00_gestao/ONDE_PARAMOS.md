@@ -1,7 +1,30 @@
 # Onde paramos
 
-Atualizado em: 25/09/2026
-(seção de 03/10 no fim — o resto deste documento está velho)
+Atualizado em: 13/10/2026. A seção logo abaixo é a que vale; o resto é
+histórico de 25/09 e 03/10.
+
+# 13/10/2026 — estado atual
+
+- Sistema no ar em https://frizo.pedro-4f6.workers.dev, banco no Supabase
+  `wmkalrkerjmqzkjiowto`. Só o master (Pedro) cria contas.
+- Feito hoje, a partir da reunião: orçamento só por preço de venda, biblioteca
+  só com preço, financeiro com perdidos e semana a semana, proposta sem desenho
+  de aparelho, filtro "Só atrasados" no quadro (D27 a D30).
+- O alerta de orçamento parado há sete dias já existe (a seção de 03/10 abaixo
+  ainda diz que não). A pergunta sobre as cobranças de Minha empresa também já
+  foi resolvida: elas saíram.
+
+## Falta o Pedro fazer
+- Segredo `SUPABASE_DB_URL` no GitHub, para o backup diário funcionar.
+- Servidor de e-mail (SMTP) no Supabase, para o "Esqueci a senha" mandar e-mail.
+- Decidir o plano pago do Supabase (US$ 25/mês): acaba com a pausa e libera a
+  proteção de senha vazada.
+
+## Depois
+- Nome novo (o Marco está pensando), cadastro aberto por página de entrada,
+  painel de uso, divulgação para a base da Febrava.
+- Vídeo promocional V1 pronto em `video_promo/`; o Pedro vai mandar ajustes de
+  espaçamento.
 
 ## Fase
 **Sistema real, não mais protótipo.** Banco, login e regras de acesso prontos e

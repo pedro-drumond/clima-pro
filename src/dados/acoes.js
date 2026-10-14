@@ -67,7 +67,7 @@ if (typeof window !== 'undefined') {
 
 /* ----- orçamentos ----- */
 
-export async function novoOrcamento(conta, pessoaId = '', modelo = 'margem') {
+export async function novoOrcamento(conta, pessoaId = '', modelo = 'venda') {
   const { data, error } = await supabase
     .from('orcamentos')
     .insert({
@@ -93,6 +93,12 @@ export async function novoOrcamento(conta, pessoaId = '', modelo = 'margem') {
 }
 
 export async function salvarOrcamento(orcamento, jaAgora = false) {
+  // orçamento antigo, feito por margem: grava os itens com o preço de venda
+  // junto, senão o link do cliente leria preço velho
+  if (orcamento.legadoMargem) {
+    const { legadoMargem, ...convertido } = orcamento
+    return salvarItensDoOrcamento(convertido, convertido.itens)
+  }
   const custo = custoDoOrcamento(orcamento)
   const total = totalDoOrcamento(orcamento)
   const atualizado = { ...orcamento, custoTotal: custo, total }
@@ -113,7 +119,8 @@ export async function salvarOrcamento(orcamento, jaAgora = false) {
 
 // os itens são regravados inteiros: é pouca linha e evita conta errada
 export async function salvarItensDoOrcamento(orcamento, itens) {
-  const atualizado = { ...orcamento, itens }
+  const { legadoMargem, ...semMarca } = orcamento
+  const atualizado = { ...semMarca, itens }
   // a gravação do cabeçalho vai junto no fim, então a que estava esperando não serve mais
   cancelar('orcamento:' + orcamento.id)
   alterarLocal((b) => {

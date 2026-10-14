@@ -190,7 +190,31 @@ export const paraContato = (c) => ({
   proximo_em: c.proximoEm || null,
 })
 
-const doOrcamento = (r) => ({
+// Desde 13/10 só existe orçamento por preço de venda. O que foi feito por
+// margem é convertido aqui, na leitura: cada item ganha o preço que a margem
+// dava, e o total não muda. Na primeira gravação ele vai para o banco já como
+// preço de venda (ver salvarOrcamento).
+function semMargem(o) {
+  if (o.modelo !== 'margem') return o
+  return {
+    ...o,
+    modelo: 'venda',
+    legadoMargem: true,
+    itens: o.itens.map((i) => ({
+      ...i,
+      precoUnit: Math.round(precoDoCusto(Number(i.custoUnit) || 0, o.margemPct, o.impostoPct) * 100) / 100,
+    })),
+  }
+}
+
+// O mesmo para a biblioteca: item que foi cadastrado como custo aparece com o
+// preço que a margem padrão da empresa dava.
+function itemSemCusto(i, conta) {
+  if (i.tipoPreco === 'venda' || !conta) return i
+  return { ...i, tipoPreco: 'venda', custo: Math.round(precoDoCusto(i.custo, conta.margemPct, conta.impostoPct) * 100) / 100 }
+}
+
+const doOrcamento = (r) => semMargem({
   id: r.id,
   contaId: r.conta_id,
   pessoaId: r.pessoa_id,
@@ -271,7 +295,9 @@ export async function entrar(email, senha) {
 }
 
 export async function recuperarSenha(email) {
-  const destino = window.location.origin + window.location.pathname + '#/nova-senha'
+  // sem # no fim: o Supabase devolve a sessão depois de um #, e dois # no mesmo
+  // endereço quebram a leitura (ver main.jsx)
+  const destino = window.location.origin + window.location.pathname
   const { error } = await supabase.auth.resetPasswordForEmail(String(email).trim(), {
     redirectTo: destino,
   })
@@ -375,7 +401,7 @@ export async function carregarTudo() {
     if (conta.data) novo.contas = [daConta(conta.data)]
     novo.pessoas = (pessoas.data || []).map(daPessoa)
     novo.equipamentos = (equipamentos.data || []).map(doEquipamento)
-    novo.itens = (itens.data || []).map(doItem)
+    novo.itens = (itens.data || []).map(doItem).map((i) => itemSemCusto(i, novo.contas[0]))
     novo.orcamentos = (orcamentos.data || []).map(doOrcamento)
     novo.contatos = (contatos.data || []).map(doContato)
     novo.usuarios = perfil ? [perfil] : []

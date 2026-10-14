@@ -30,6 +30,9 @@ const ORDENS = [
   ['nome', 'Alfabética'],
 ]
 
+// só faz sentido em Enviados, que é onde existe prazo para chamar de novo
+const SO_ATRASADOS = ['atrasados', 'Só atrasados']
+
 export default function Orcamentos() {
   const { b, conta } = useDados()
   const navegar = useNavigate()
@@ -96,10 +99,11 @@ export default function Orcamentos() {
 
   function ordenar(lista, chave) {
     const ordem = ordens[chave] || 'recente'
-    const copia = lista.slice()
+    // atrasado para chamar (laranja) ou com a validade vencida (vermelho)
+    const copia = ordem === 'atrasados' ? lista.filter((o) => estadoDoCartao(o, contatos).tarja) : lista.slice()
     const data = (o) => new Date(o.enviadoEm || o.criadoEm).getTime()
     const nome = (o) => (pessoaDe(o)?.nome || '').toLowerCase()
-    if (ordem === 'recente') copia.sort((a, c) => data(c) - data(a))
+    if (ordem === 'recente' || ordem === 'atrasados') copia.sort((a, c) => data(c) - data(a))
     if (ordem === 'antigo') copia.sort((a, c) => data(a) - data(c))
     if (ordem === 'maior') copia.sort((a, c) => totalDoOrcamento(c) - totalDoOrcamento(a))
     if (ordem === 'menor') copia.sort((a, c) => totalDoOrcamento(a) - totalDoOrcamento(c))
@@ -231,12 +235,14 @@ export default function Orcamentos() {
                     title="Ordenar esta coluna"
                   >
                     <span className="coluna-titulo">{titulo}</span>
-                    <span className="coluna-contagem">{lista.length}</span>
+                    <span className={'coluna-contagem' + (ordens[chave] === 'atrasados' ? ' filtrada' : '')}>
+                      {lista.length}
+                    </span>
                     <span className="coluna-seta">⌄</span>
                   </button>
                   {menuAberto === chave ? (
                     <div className="menu-ordem">
-                      {ORDENS.map(([valor, texto]) => (
+                      {(chave === 'enviado' ? ORDENS.concat([SO_ATRASADOS]) : ORDENS).map(([valor, texto]) => (
                         <button
                           key={valor}
                           className={(ordens[chave] || 'recente') === valor ? 'escolhido' : ''}

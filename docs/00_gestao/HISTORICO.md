@@ -133,3 +133,20 @@ Diário cronológico. Só se acrescenta; nada se apaga. A entrada mais recente f
 - Erro da IA nesse passo: junto com os arquivos velhos, apagou também o
   `Frizo-resumo-para-socios.pdf`, que o Pedro não pediu para apagar. Restaurado no
   mesmo minuto. Regra reforçada: apagar só o que foi combinado, nunca "de quebra".
+
+## 13/10/2026 — reunião com Mauro e Marco, e as mudanças que saíram dela
+- Na reunião o sistema não entrava: o Supabase tinha pausado o projeto depois de
+  uma semana sem uso. O Pedro restaurou pelo painel e voltou em poucos minutos.
+- Descoberto um concorrente com o mesmo nome, ClimaPro (climaproapp.com.br),
+  app de ordem de serviço a R$ 39,90 por mês. O Marco ficou de pensar num nome
+  novo.
+- Combinado: o Marco usa o sistema com os orçamentos dele e manda o que achar;
+  a divulgação para os 2.100 contatos da Febrava fica para depois.
+- Feito no mesmo dia (D27 a D30): orçamento só por preço de venda, biblioteca
+  só com preço, financeiro com perdidos e semana a semana, proposta sem desenho
+  de aparelho, filtro "Só atrasados" na coluna Enviados. A Ajuda foi atualizada
+  junto, e o assunto "Como a margem é calculada" saiu.
+- "Esqueci a senha": o link do e-mail voltava com dois # no endereço e não abria
+  a tela de nova senha. Corrigido em `main.jsx`. Falta o servidor de e-mail.
+- Segurança: criados os workflows de backup diário e de manter o banco acordado.
+

@@ -8,7 +8,7 @@ const ASSUNTOS = [
   {
     id: 'orcamentos',
     titulo: 'Orçamentos',
-    resumo: 'O quadro de etapas e os três modelos',
+    resumo: 'O quadro de etapas e como montar um orçamento',
     icone: Icone.quadro,
     texto: (
       <>
@@ -23,28 +23,11 @@ const ASSUNTOS = [
           arraste o cartão para a coluna que quiser, ou use as duas setinhas que aparecem no canto de cima dele. Cada
           passagem guarda a data em que aconteceu.
         </p>
-        <p>Ao criar um orçamento você escolhe entre três modelos, e essa escolha muda como o preço é calculado:</p>
-        <ul>
-          <li>
-            <strong>Por margem</strong> — você entra com o custo de cada item e o sistema calcula o preço de venda, já
-            embutindo o imposto e a margem que você quer ganhar.
-          </li>
-          <li>
-            <strong>Por preço de venda</strong> — você entra com o preço de venda de cada item e o sistema só soma.
-          </li>
-          <li>
-            <strong>Itens avulsos</strong> — você escreve o serviço na hora, com o preço fechado. É o orçamento de uma
-            linha só, para responder rápido.
-          </li>
-        </ul>
         <p>
-          Em qualquer modelo você pode puxar itens da biblioteca ou escrever um item novo na hora. O item escrito na hora
-          já vem marcado para ser salvo na biblioteca, e você desmarca se for algo que não vai repetir.
-        </p>
-        <p>
-          No orçamento por margem, o bloco <strong>Preço</strong> traz a formação de preço: o imposto e a margem líquida.
-          Mudando ali, vale só para aquele orçamento. O botão <strong>Salvar como padrão da empresa</strong> faz os
-          próximos orçamentos já nascerem com esses números.
+          O botão <strong>Novo orçamento</strong> já abre o orçamento pronto para preencher. Cada item entra com o preço
+          que o cliente paga, e o sistema soma. Você pode puxar itens da biblioteca ou escrever um item novo na hora. O
+          item escrito na hora já vem marcado para ser salvo na biblioteca, e você desmarca se for algo que não vai
+          repetir.
         </p>
       </>
     ),
@@ -81,6 +64,11 @@ const ASSUNTOS = [
           Orçamento que saiu e nunca recebeu nenhuma ação acende sozinho depois de <strong>sete dias</strong>. Esse
           prazo é fixo e não depende do que está em Minha empresa — é a rede de segurança para o orçamento que você
           mandou e esqueceu.
+        </p>
+        <p>
+          Clicando no nome da coluna <strong>Enviados</strong>, a opção <strong>Só atrasados</strong> deixa na coluna
+          apenas os cartões com tarja, laranja ou vermelha. O número ao lado do nome fica laranja enquanto o filtro está
+          ligado.
         </p>
       </>
     ),
@@ -156,7 +144,7 @@ const ASSUNTOS = [
           orçamento.
         </p>
         <p>
-          A aparência da proposta — o modelo, a cor e o desenho de aparelho do cabeçalho — fica em Orçamentos, no botão{' '}
+          A aparência da proposta — o modelo e a cor — fica em Orçamentos, no botão{' '}
           <strong>Modelos</strong>.
         </p>
       </>
@@ -171,8 +159,7 @@ const ASSUNTOS = [
       <>
         <p>
           Fica em Orçamentos, no botão <strong>Modelos</strong>. São quatro jeitos de a proposta sair, e o que você
-          escolhe vale para todas: tanto para o link que o cliente abre quanto para o PDF. No alto da tela fica também o
-          desenho de aparelho que sai no cabeçalho.
+          escolhe vale para todas: tanto para o link que o cliente abre quanto para o PDF.
         </p>
         <ul>
           <li>
@@ -211,8 +198,7 @@ const ASSUNTOS = [
         <p>
           Dentro do orçamento existe a opção de incluir o seguro do aparelho. Você marca a opção, informa quanto vale o
           equipamento, e o sistema calcula o valor de um ano de cobertura. Ele entra como uma linha do orçamento e o
-          cliente vê o preço já com o seguro dentro. O imposto e a margem continuam incidindo só sobre serviço e
-          material.
+          cliente vê o preço já com o seguro dentro.
         </p>
       </>
     ),
@@ -255,23 +241,12 @@ const ASSUNTOS = [
       <>
         <p>
           Os serviços, materiais e equipamentos que você usa sempre. Cadastrar uma vez evita digitar tudo de novo a cada
-          orçamento. Em cada item você diz se o valor guardado é o <strong>custo</strong> ou o{' '}
-          <strong>preço de venda</strong>, e é isso que define onde ele aparece:
-        </p>
-        <ul>
-          <li>item de custo aparece no orçamento por margem;</li>
-          <li>item de preço de venda aparece no orçamento por preço de venda;</li>
-          <li>no orçamento de itens avulsos aparecem os dois.</li>
-        </ul>
-        <p>
-          A lista tem duas colunas de valor, <strong>Custo</strong> e <strong>Preço de venda</strong>, e cada item preenche
-          só a sua; na outra fica um traço. O sistema não sugere por quanto um item de custo sairia, porque isso depende
-          da margem que você usar em cada orçamento.
+          orçamento. O valor de cada item é o preço que o cliente paga.
         </p>
         <p>
-          Em cima tem busca pelo nome, ordenação por nome ou por valor, e um seletor para ver só os de custo ou só os de
-          preço de venda. O botão <strong>Novo item</strong> abre uma janela para cadastrar, e o lápis de cada linha abre a
-          mesma janela para corrigir — inclusive o valor, que não se digita direto na lista.
+          Em cima tem busca pelo nome, ordenação por nome ou por valor, e os botões para ver só serviços, materiais,
+          equipamentos ou outros. O botão <strong>Novo item</strong> abre uma janela para cadastrar, e o lápis de cada
+          linha abre a mesma janela para corrigir — inclusive o valor, que não se digita direto na lista.
         </p>
       </>
     ),
@@ -285,18 +260,18 @@ const ASSUNTOS = [
       <>
         <p>
           No alto você escolhe o período — este mês, últimos três, este ano ou tudo — e a tela inteira responde a ele.
-          Os quatro números são: <strong>orçado</strong>, que é tudo que saiu de Em elaboração no período;{' '}
-          <strong>fechado</strong>, o que o cliente aprovou; a <strong>taxa de aprovação</strong>; e o{' '}
-          <strong>ticket médio</strong> por serviço fechado.
+          Os cinco números são: <strong>orçado</strong>, que é tudo que saiu de Em elaboração no período;{' '}
+          <strong>fechado</strong>, o que o cliente aprovou; <strong>perdido</strong>, o que não deu certo; a{' '}
+          <strong>taxa de aprovação</strong>; e o <strong>ticket médio</strong> por serviço fechado.
         </p>
         <p>
           A taxa de aprovação divide os fechados pelos fechados mais os perdidos. Quem recebeu o orçamento e ainda não
           respondeu fica de fora da conta, para não derrubar o número à toa.
         </p>
         <p>
-          O gráfico mostra, mês a mês, quanto você orçou e quanto fechou. Passando o mouse em cima de um mês, aparecem
-          os dois valores daquele mês. Embaixo ficam os motivos de perda, juntados e ordenados do mais comum para o
-          menos.
+          O gráfico mostra quanto você orçou, fechou e perdeu, mês a mês ou semana a semana — os dois botões em cima
+          dele trocam. Passando o mouse em cima de uma barra, aparecem os três valores daquele mês ou daquela semana.
+          Embaixo ficam os motivos de perda, juntados e ordenados do mais comum para o menos.
         </p>
       </>
     ),
@@ -304,14 +279,13 @@ const ASSUNTOS = [
   {
     id: 'empresa',
     titulo: 'Minha empresa',
-    resumo: 'Seus dados, preço, prazos e mensagens',
+    resumo: 'Seus dados e o lembrete de limpeza',
     icone: Icone.empresa,
     texto: (
       <>
         <p>
-          Sobraram duas caixas. O imposto e a margem são definidos dentro do próprio orçamento por margem; a validade e
-          as condições de pagamento também, com o botão <strong>Salvar como padrão da empresa</strong> para os
-          próximos já nascerem com elas.
+          Sobraram duas caixas. A validade e as condições de pagamento são definidas dentro do próprio orçamento, com o
+          botão <strong>Salvar como padrão da empresa</strong> para os próximos já nascerem com elas.
         </p>
         <ul>
           <li>
@@ -323,26 +297,7 @@ const ASSUNTOS = [
           </li>
         </ul>
         <p>
-          O modelo, a cor e o desenho de aparelho da proposta ficam em Orçamentos, no botão <strong>Modelos</strong>.
-        </p>
-      </>
-    ),
-  },
-  {
-    id: 'margem',
-    titulo: 'Como a margem é calculada',
-    resumo: 'Por que o preço não é custo mais margem',
-    icone: Icone.calculo,
-    texto: (
-      <>
-        <p>
-          A margem do Clima Pro é líquida sobre a venda, e não um acréscimo sobre o custo. A diferença muda o preço.
-          Somando 30% a um custo de mil reais dá R$ 1.300, mas nesse preço a margem real é de 23%, porque os 30% foram
-          calculados sobre o custo. Para sobrarem 30% de verdade, com 6% de imposto, o preço precisa ser R$ 1.562,50.
-        </p>
-        <p>
-          É essa segunda conta que o sistema faz. Você diz quanto quer ganhar e quanto paga de imposto, e o preço sai de
-          forma que sobre exatamente o que você pediu.
+          O modelo e a cor da proposta ficam em Orçamentos, no botão <strong>Modelos</strong>.
         </p>
       </>
     ),

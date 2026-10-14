@@ -5,13 +5,10 @@ import {
   moeda,
   dataCurta,
   parametros,
-  precoDoCusto,
-  custoDoOrcamento,
   totalDosItens,
   totalDoOrcamento,
   premioDoSeguro,
   precoDoItem,
-  ehPorMargem,
   linkWhatsapp,
 } from '../dados/armazenamento.js'
 import { aplicarTexto, TEXTO_ENVIO } from '../dados/parametros.js'
@@ -31,7 +28,6 @@ import {
   salvarItem,
   salvarConta,
 } from '../dados/acoes.js'
-import { MODELOS } from './NovoOrcamento.jsx'
 
 export default function Orcamento() {
   const { id } = useParams()
@@ -43,7 +39,6 @@ export default function Orcamento() {
   const [novoEmail, setNovoEmail] = useState('')
   const [cadastrando, setCadastrando] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
-  const [padraoSalvo, setPadraoSalvo] = useState(false)
   const [condicoesSalvas, setCondicoesSalvas] = useState(false)
   const [avulso, setAvulso] = useState({ nome: '', qtd: 1, preco: '', unidade: 'unidade', salvar: true })
   // os itens ficam numa cópia enquanto ele digita; só vão para o banco quando
@@ -61,23 +56,12 @@ export default function Orcamento() {
   const params = parametros(conta)
   const pessoas = b.pessoas.filter((p) => p.contaId === conta.id)
   const pessoa = pessoas.find((p) => p.id === orcamento.pessoaId)
-  // por margem só aparece item de custo; por preço de venda só item de venda;
-  // em itens avulsos aparecem os dois
-  const itens = b.itens
-    .filter((i) => i.contaId === conta.id)
-    .filter((i) => {
-      if (orcamento.modelo === 'margem') return i.tipoPreco !== 'venda'
-      if (orcamento.modelo === 'venda') return i.tipoPreco === 'venda'
-      return true
-    })
-  const porMargem = ehPorMargem(orcamento)
+  const itens = b.itens.filter((i) => i.contaId === conta.id)
   const comItens = { ...orcamento, itens: itensNaTela }
-  const custo = custoDoOrcamento(comItens)
   const totalItens = totalDosItens(comItens)
   const premio = orcamento.seguro ? premioDoSeguro(orcamento.seguroValorEquip, params) : 0
   const total = totalItens + premio
   const editavel = orcamento.situacao === 'contato' || orcamento.situacao === 'enviado'
-  const modelo = MODELOS.find((m) => m.valor === (orcamento.modelo || 'margem'))
 
   const mudar = (campos) => salvarOrcamento({ ...orcamento, itens: itensNaTela, ...campos })
 
@@ -90,7 +74,6 @@ export default function Orcamento() {
   function adicionarDaBiblioteca(itemId) {
     const it = itens.find((i) => i.id === itemId)
     if (!it) return
-    const ehVenda = it.tipoPreco === 'venda'
     gravarItens([
       ...itensNaTela,
       {
@@ -98,14 +81,13 @@ export default function Orcamento() {
         nome: it.nome,
         unidade: it.unidade,
         qtd: 1,
-        custoUnit: ehVenda ? 0 : it.custo,
-        precoUnit: ehVenda ? it.custo : precoDoCusto(it.custo, conta.margemPct, conta.impostoPct),
+        custoUnit: 0,
+        precoUnit: it.custo,
       },
     ])
   }
 
-  // item escrito na hora, em qualquer modelo. No orçamento por margem o valor
-  // digitado é custo e o sistema calcula o preço; nos outros é o preço de venda.
+  // item escrito na hora, com o preço que o cliente paga
   function adicionarAvulso() {
     if (!avulso.nome.trim()) return
     const valor = Number(avulso.preco) || 0
@@ -119,14 +101,14 @@ export default function Orcamento() {
         nome,
         unidade,
         qtd: Number(avulso.qtd) || 1,
-        custoUnit: porMargem ? valor : 0,
-        precoUnit: porMargem ? precoDoCusto(valor, orcamento.margemPct, orcamento.impostoPct) : valor,
+        custoUnit: 0,
+        precoUnit: valor,
       },
     ])
 
     if (avulso.salvar) {
       salvarItem(
-        { tipo: 'servico', nome, unidade, custo: valor, tipoPreco: porMargem ? 'custo' : 'venda' },
+        { tipo: 'servico', nome, unidade, custo: valor, tipoPreco: 'venda' },
         conta.id
       )
     }
@@ -174,10 +156,7 @@ export default function Orcamento() {
           <Link to="/orcamentos" className="botao texto voltar">
             Voltar
           </Link>
-          <h1>
-            Orçamento nº {orcamento.numero}
-            <span className="etiqueta-modelo">{modelo?.titulo}</span>
-          </h1>
+          <h1>Orçamento nº {orcamento.numero}</h1>
         </div>
         <Marcador situacao={orcamento.situacao} />
       </div>
@@ -228,60 +207,6 @@ export default function Orcamento() {
 
       <div className="bloco bloco-preco">
         <h2>Preço</h2>
-        {porMargem ? (
-          <>
-            <div className="formacao-preco">
-              <h3>Formação de preço</h3>
-              <Linha>
-                <Numero
-                  rotulo="Imposto (%)"
-                  valor={orcamento.impostoPct}
-                  aoMudar={(v) => mudar({ impostoPct: v })}
-                  disabled={!editavel}
-                />
-                <Numero
-                  rotulo="Margem líquida (%)"
-                  valor={orcamento.margemPct}
-                  aoMudar={(v) => mudar({ margemPct: v })}
-                  disabled={!editavel}
-                />
-              </Linha>
-              <p className="fraco">Vale só para este orçamento, a não ser que você salve como padrão.</p>
-              {editavel ? (
-                <button
-                  className="botao largo"
-                  onClick={() => {
-                    salvarConta({
-                      ...conta,
-                      impostoPct: Number(orcamento.impostoPct) || 0,
-                      margemPct: Number(orcamento.margemPct) || 0,
-                    })
-                    setPadraoSalvo(true)
-                    setTimeout(() => setPadraoSalvo(false), 2500)
-                  }}
-                >
-                  {padraoSalvo ? 'Salvo como padrão' : 'Salvar como padrão da empresa'}
-                </button>
-              ) : null}
-            </div>
-            <table>
-              <tbody>
-                <tr>
-                  <td>Custo</td>
-                  <td className="n">{moeda(custo)}</td>
-                </tr>
-                <tr>
-                  <td>Imposto sobre a venda ({orcamento.impostoPct}%)</td>
-                  <td className="n">{moeda(totalItens * (orcamento.impostoPct / 100))}</td>
-                </tr>
-                <tr>
-                  <td>Margem ({orcamento.margemPct}%)</td>
-                  <td className="n">{moeda(totalItens * (orcamento.margemPct / 100))}</td>
-                </tr>
-              </tbody>
-            </table>
-          </>
-        ) : null}
         <div className="seguro">
           <label className="marcacao">
             <input
@@ -462,8 +387,7 @@ export default function Orcamento() {
               <tr>
                 <th>Item</th>
                 <th className="n">Qtd.</th>
-                {porMargem ? <th className="n">Custo un.</th> : null}
-                <th className="n">{porMargem ? 'Preço un.' : 'Preço un. de venda'}</th>
+                <th className="n">Preço un.</th>
                 <th className="n">Total</th>
                 <th className="n"></th>
               </tr>
@@ -487,35 +411,17 @@ export default function Orcamento() {
                       onBlur={gravarRascunho}
                     />
                   </td>
-                  {porMargem ? (
-                    <td className="n">
-                      <input
-                        className="celula larga"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={i.custoUnit}
-                        disabled={!editavel}
-                        onChange={(e) => mudarItem(n, { custoUnit: Number(e.target.value) })}
-                        onBlur={gravarRascunho}
-                      />
-                    </td>
-                  ) : null}
                   <td className="n">
-                    {porMargem ? (
-                      moeda(precoDoItem(orcamento, i))
-                    ) : (
-                      <input
-                        className="celula larga"
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={i.precoUnit}
-                        disabled={!editavel}
-                        onChange={(e) => mudarItem(n, { precoUnit: Number(e.target.value) })}
-                        onBlur={gravarRascunho}
-                      />
-                    )}
+                    <input
+                      className="celula larga"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={i.precoUnit}
+                      disabled={!editavel}
+                      onChange={(e) => mudarItem(n, { precoUnit: Number(e.target.value) })}
+                      onBlur={gravarRascunho}
+                    />
                   </td>
                   <td className="n">{moeda(i.qtd * precoDoItem(orcamento, i))}</td>
                   <td className="n">
@@ -575,7 +481,7 @@ export default function Orcamento() {
               />
               <Numero rotulo="Qtd." valor={avulso.qtd} aoMudar={(v) => setAvulso({ ...avulso, qtd: v })} />
               <Texto
-                rotulo={porMargem ? 'Custo (R$)' : 'Preço (R$)'}
+                rotulo="Preço (R$)"
                 tamanho="curto"
                 type="number"
                 valor={avulso.preco}

@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import { useDados } from '../componentes/base.jsx'
 import { FolhaProposta, MODELOS_PROPOSTA, CORES_PROPOSTA, COR_PADRAO } from '../componentes/proposta.jsx'
 import { parametros } from '../dados/armazenamento.js'
-import { APARELHOS, Aparelho } from '../componentes/aparelhos.jsx'
-import { Escolha, Campo } from '../componentes/base.jsx'
 import { salvarConta, salvarParametrosDaConta } from '../dados/acoes.js'
 
 // um orçamento de mentira, só para o instalador ver como a proposta dele vai
@@ -108,21 +106,6 @@ export default function Modelos({ aoVoltar }) {
       <p className="fraco aviso-exemplo">
         O modelo e a cor escolhidos valem para todas as propostas da empresa — no link que o cliente abre e no PDF.
       </p>
-
-      <div className="barra-aparelho">
-        <Escolha
-          rotulo="Desenho do aparelho no cabeçalho"
-          tamanho="medio"
-          valor={conta.icone || ''}
-          aoMudar={(v) => salvarConta({ ...conta, icone: v })}
-          opcoes={APARELHOS.map((a) => ({ valor: a.valor, texto: a.texto }))}
-        />
-        <Campo rotulo="Como fica">
-          <span className="amostra-aparelho">
-            <Aparelho tipo={conta.icone} tamanho={42} />
-          </span>
-        </Campo>
-      </div>
 
       <div className="grade-modelos">
         {MODELOS_PROPOSTA.map((m) => (

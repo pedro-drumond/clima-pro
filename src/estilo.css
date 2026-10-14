@@ -637,6 +637,12 @@ td.n {
   padding: 1px 8px;
 }
 
+/* a coluna está mostrando só os atrasados */
+.coluna-contagem.filtrada {
+  color: var(--branco);
+  background: var(--laranja);
+}
+
 .coluna-lista {
   overflow-y: auto;
   max-height: 58vh;
@@ -828,16 +834,6 @@ td.n {
   white-space: nowrap;
 }
 
-.desenho-aparelho {
-  color: var(--cor-proposta);
-}
-
-.desenho-aparelho {
-  display: inline-block;
-  color: var(--marca);
-  flex: none;
-}
-
 /* simples: identidade à esquerda, números à direita */
 .cabecalho-proposta.simples {
   display: flex;
@@ -872,10 +868,6 @@ td.n {
   display: flex;
   align-items: center;
   gap: 14px;
-}
-
-.faixa-marca .desenho-aparelho {
-  color: rgba(255, 255, 255, 0.85);
 }
 
 .faixa-marca .logo {
@@ -973,13 +965,6 @@ td.n {
   border-top: 1px solid var(--linha-suave);
   padding-top: var(--esp-2);
   margin-bottom: var(--esp-2);
-}
-
-.amostra-aparelho {
-  display: inline-flex;
-  align-items: center;
-  min-height: 38px;
-  color: var(--marca);
 }
 
 .barra-pdf {
@@ -1135,40 +1120,6 @@ td.n {
     border-radius: 0;
     padding: 18px;
   }
-}
-
-/* escolha do modelo de orçamento */
-
-.escolha-modelo {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--esp-3);
-}
-
-.cartao-modelo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-1);
-  text-align: left;
-  background: var(--branco);
-  border: 1px solid var(--linha);
-  border-radius: var(--raio);
-  padding: var(--esp-3);
-}
-
-.cartao-modelo:hover {
-  border-color: var(--marca);
-}
-
-.cartao-modelo-titulo {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.cartao-modelo-linha {
-  font-size: 13px;
-  color: var(--texto-fraco);
-  line-height: 1.7;
 }
 
 .modelo-atual {
@@ -1637,22 +1588,6 @@ td.n {
   padding: 6px 0;
 }
 
-/* o modelo do orçamento vira etiqueta ao lado do número */
-.etiqueta-modelo {
-  display: inline-block;
-  margin-left: 12px;
-  vertical-align: middle;
-  font-size: 11.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--marca);
-  background: var(--fundo);
-  border: 1px solid var(--linha-suave);
-  border-radius: 999px;
-  padding: 3px 11px;
-}
-
 /* os botões de envio pediam respiro */
 .bloco .acoes {
   gap: 14px;
@@ -2013,7 +1948,7 @@ td.n {
    ver o nome inteiro abre a edição */
 .linha-biblioteca {
   display: grid;
-  grid-template-columns: 50% 1fr 1fr 78px;
+  grid-template-columns: 1fr 140px 78px;
   gap: var(--esp-2);
   align-items: center;
   padding: 10px 0;
@@ -2265,26 +2200,6 @@ td.n {
   width: 100%;
 }
 
-/* formação de preço dentro do orçamento: muda só este, ou vira o padrão */
-.formacao-preco {
-  padding-bottom: var(--esp-2);
-  margin-bottom: var(--esp-2);
-  border-bottom: 1px solid var(--linha-suave);
-}
-
-.formacao-preco h3 {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--texto-fraco);
-  margin: 0 0 var(--esp-2);
-}
-
-.formacao-preco .fraco {
-  margin-bottom: 10px;
-}
-
 /* o botão Modelos pede mais respiro que os vizinhos */
 .cabeca .acoes .botao.modelos {
   padding-left: 20px;
@@ -2487,20 +2402,6 @@ td.n {
   line-height: 1.5;
 }
 
-/* o desenho do aparelho mora junto com os modelos da proposta */
-.barra-aparelho {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--esp-3);
-  margin-bottom: var(--esp-3);
-  padding-bottom: var(--esp-3);
-  border-bottom: 1px solid var(--linha-suave);
-}
-
-.barra-aparelho .campo {
-  margin-bottom: 0;
-}
-
 /* a explicação no título cabe dentro de um h2 */
 h2 .com-dica {
   font-weight: inherit;
@@ -2516,7 +2417,7 @@ h2 .dica {
 
 .numeros-topo {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: var(--esp-2);
   margin-bottom: var(--esp-3);
 }
@@ -2549,6 +2450,7 @@ h2 .dica {
 
 .cabeca-grafico {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--esp-2);
@@ -2646,7 +2548,13 @@ h2 .dica {
 
 @media (max-width: 860px) {
   .numeros-topo {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cartao-valor {
+    font-size: 19px;
+  }
+  .numeros-topo > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
   .linha-motivo {
     grid-template-columns: 1fr 60px;
@@ -3194,8 +3102,7 @@ h2 .dica {
     align-self: start;
   }
 
-  /* o valor desce para a linha de baixo e ganha o nome da coluna, que no
-     computador vem do cabeçalho */
+  /* o valor desce para a linha de baixo */
   .linha-biblioteca .valor-item {
     grid-column: 1 / -1;
     display: flex;
@@ -3204,25 +3111,6 @@ h2 .dica {
     text-align: left;
   }
 
-  .linha-biblioteca .valor-item::before {
-    font-size: 12px;
-    font-weight: 400;
-    color: var(--texto-fraco);
-  }
-
-  .linha-biblioteca .valor-item:nth-child(2)::before {
-    content: 'Custo';
-  }
-
-  .linha-biblioteca .valor-item:nth-child(3)::before {
-    content: 'Preço de venda';
-  }
-
-  /* o item preenche só uma das duas colunas: a outra sai de cena em vez de
-     mostrar um traço sozinho */
-  .linha-biblioteca .valor-item:has(.sem-valor) {
-    display: none;
-  }
 
   .nome-do-item {
     -webkit-line-clamp: 3;

@@ -1,6 +1,5 @@
 import React from 'react'
 import { moeda, dataCurta } from '../dados/armazenamento.js'
-import { Aparelho } from './aparelhos.jsx'
 
 // os quatro jeitos de a proposta sair. O instalador escolhe um em Orçamentos,
 // no botão Modelos, e vale para todas as propostas da empresa.
@@ -52,7 +51,6 @@ function Cabecalho({ empresa, orcamento, validade, modelo }) {
       <div className="cabecalho-proposta faixa">
         <div className="faixa-marca">
           <div className="faixa-esquerda">
-            {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={52} /> : null}
             <div>
               <div className="nome-empresa">{empresa.nomeFantasia}</div>
               <div className="faixa-contato">
@@ -77,7 +75,6 @@ function Cabecalho({ empresa, orcamento, validade, modelo }) {
         <div className="vertical-topo">
           <div className="vertical-marca">
             {empresa.logo ? <img className="logo" src={empresa.logo} alt="" /> : null}
-            {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={44} /> : null}
           </div>
           <div className="vertical-empresa">
             <div className="nome-empresa">{empresa.nomeFantasia}</div>
@@ -97,7 +94,6 @@ function Cabecalho({ empresa, orcamento, validade, modelo }) {
   return (
     <div className="cabecalho-proposta simples">
       <div className="cabecalho-esquerda">
-        {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={48} /> : null}
         <div>
           <Identidade empresa={empresa} />
         </div>
@@ -200,8 +196,7 @@ export function FolhaProposta({
       <div className="proposta dividida" style={{ '--cor-proposta': tinta }}>
         <aside className="proposta-lado">
           {empresa.logo ? <img className="logo" src={empresa.logo} alt="" /> : null}
-          {empresa.icone ? <Aparelho tipo={empresa.icone} tamanho={48} /> : null}
-          <div className="nome-empresa">{empresa.nomeFantasia}</div>
+            <div className="nome-empresa">{empresa.nomeFantasia}</div>
           <div className="lado-contato">{empresa.cnpj}</div>
           <div className="lado-contato">{empresa.telefone}</div>
           <div className="lado-contato">{empresa.endereco}</div>
