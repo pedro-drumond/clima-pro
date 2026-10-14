@@ -133,7 +133,6 @@ export default function Orcamento() {
   }
 
   const todosVisiveis = itensNaTela.every((i) => !i.oculto)
-  const nenhumVisivel = itensNaTela.every((i) => i.oculto)
 
   function mostrarTodos(mostrar) {
     gravarItens(itensNaTela.map((i) => ({ ...i, oculto: !mostrar })))
@@ -450,20 +449,7 @@ export default function Orcamento() {
                 <th className="c">Qtd.</th>
                 <th className="c">Preço un.</th>
                 <th className="n">Total</th>
-                <th className="c coluna-na-proposta">
-                  <label className="marcar-todos" title={todosVisiveis ? 'Tirar todos da proposta' : 'Mostrar todos na proposta'}>
-                    <input
-                      type="checkbox"
-                      checked={todosVisiveis}
-                      ref={(el) => {
-                        if (el) el.indeterminate = !todosVisiveis && !nenhumVisivel
-                      }}
-                      disabled={!editavel}
-                      onChange={() => mostrarTodos(!todosVisiveis)}
-                    />
-                    Na proposta
-                  </label>
-                </th>
+                <th className="c coluna-na-proposta">Na proposta</th>
                 <th></th>
               </tr>
             </thead>
@@ -519,6 +505,19 @@ export default function Orcamento() {
                 </tr>
               ))}
             </tbody>
+            {editavel && itensNaTela.length > 1 ? (
+              <tfoot>
+                <tr>
+                  <td colSpan={4}></td>
+                  <td className="c coluna-na-proposta">
+                    <button className="botao-detalhes marcar-todos" onClick={() => mostrarTodos(!todosVisiveis)}>
+                      {todosVisiveis ? 'Desmarcar todos' : 'Marcar todos'}
+                    </button>
+                  </td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            ) : null}
           </table>
         )}
 

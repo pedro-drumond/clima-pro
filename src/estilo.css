@@ -2061,23 +2061,27 @@ td.n {
 }
 
 .tabela-itens .col-qtd {
-  width: 76px;
+  width: 64px;
 }
 
 .tabela-itens .col-preco {
-  width: 112px;
+  width: 108px;
 }
 
 .tabela-itens .col-total {
-  width: 112px;
+  width: 104px;
 }
 
 .tabela-itens .col-na-proposta {
-  width: 108px;
+  width: 92px;
 }
 
 .tabela-itens .col-lixeira {
   width: 30px;
+}
+
+.tabela-itens th.coluna-na-proposta {
+  font-size: 10.5px;
 }
 
 .tabela-itens th {
@@ -2105,6 +2109,8 @@ td.n {
 .tabela-itens .celula {
   width: 100%;
   text-align: center;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .na-proposta {
@@ -2115,19 +2121,16 @@ td.n {
   cursor: pointer;
 }
 
-.marcar-todos {
-  display: inline-block;
-  font-size: 10.5px;
-  cursor: pointer;
+/* marcar ou desmarcar todos fica embaixo da coluna, para o cabeçalho ser só
+   o nome dela, centrado em cima das caixas */
+.tabela-itens tfoot td {
+  border-bottom: none;
+  padding-top: 8px;
 }
 
-/* a caixa desce até a linha do texto, para o cabeçalho ficar na mesma altura
-   dos outros */
-.marcar-todos input {
-  width: 12px;
-  height: 12px;
-  margin: 0 5px 0 0;
-  vertical-align: -2px;
+.botao-detalhes.marcar-todos {
+  padding: 0;
+  white-space: nowrap;
 }
 
 .acoes-item {
