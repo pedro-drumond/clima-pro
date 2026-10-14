@@ -436,6 +436,14 @@ export default function Orcamento() {
           <p className="fraco">Nenhum item ainda.</p>
         ) : (
           <table className="tabela-itens">
+            <colgroup>
+              <col />
+              <col className="col-qtd" />
+              <col className="col-preco" />
+              <col className="col-total" />
+              <col className="col-na-proposta" />
+              <col className="col-lixeira" />
+            </colgroup>
             <thead>
               <tr>
                 <th>Item</th>

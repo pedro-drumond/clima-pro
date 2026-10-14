@@ -2054,61 +2054,86 @@ td.n {
   height: 17px;
 }
 
-/* tabela de itens do orçamento: cabeçalho centrado em cima da caixa que ele
-   nomeia, caixas estreitas para sobrar espaço para o nome do item */
-.tabela-itens th.c,
-.tabela-itens td.c {
-  text-align: center;
-  padding-left: 10px;
-  padding-right: 10px;
+/* tabela de itens do orçamento: colunas de largura fixa, cabeçalho numa linha
+   só e centrado em cima da caixa que ele nomeia */
+.tabela-itens {
+  table-layout: fixed;
+}
+
+.tabela-itens .col-qtd {
+  width: 76px;
+}
+
+.tabela-itens .col-preco {
+  width: 112px;
+}
+
+.tabela-itens .col-total {
+  width: 112px;
+}
+
+.tabela-itens .col-na-proposta {
+  width: 108px;
+}
+
+.tabela-itens .col-lixeira {
+  width: 30px;
+}
+
+.tabela-itens th {
+  vertical-align: bottom;
   white-space: nowrap;
 }
 
-.tabela-itens .celula {
-  width: 64px;
+.tabela-itens th.c,
+.tabela-itens td.c {
   text-align: center;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
-.tabela-itens .celula.larga {
-  width: 96px;
+.tabela-itens th.n,
+.tabela-itens td.n {
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .tabela-itens td:first-child {
+  overflow-wrap: anywhere;
+}
+
+.tabela-itens .celula {
   width: 100%;
+  text-align: center;
 }
 
 .na-proposta {
   width: 16px;
   height: 16px;
+  margin: 0;
+  vertical-align: middle;
   cursor: pointer;
 }
 
 .marcar-todos {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  white-space: normal;
-  line-height: 1.2;
+  display: inline-block;
+  font-size: 10.5px;
   cursor: pointer;
 }
 
-.tabela-itens th.coluna-na-proposta,
-.tabela-itens td.coluna-na-proposta {
-  width: 72px;
-  padding-left: 6px;
-  padding-right: 6px;
-}
-
+/* a caixa desce até a linha do texto, para o cabeçalho ficar na mesma altura
+   dos outros */
 .marcar-todos input {
-  width: 14px;
-  height: 14px;
-  margin: 0;
+  width: 12px;
+  height: 12px;
+  margin: 0 5px 0 0;
+  vertical-align: -2px;
 }
 
 .acoes-item {
-  width: 34px;
+  padding-left: 0;
   padding-right: 0;
+  text-align: right;
 }
 
 .acoes-item .botao-icone {
