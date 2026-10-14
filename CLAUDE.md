@@ -8,17 +8,11 @@ Marco Souto.
 
 ## Como trabalhar com o Pedro
 
-**Ele não é programador.** Nunca escreva "rode o build", "faça o commit" ou "dê um
-push" como instrução. Escreva o bloco de Terminal pronto para copiar e colar, e
-**na primeira linha da resposta**, nunca no fim:
-
-```
-cd ~/Documents/Claude/Projects/Clima\ Pro
-git push origin main
-```
-
-Você mesmo edita os arquivos, roda o build e faz o commit na máquina dele. Só o
-`push` é ele que roda.
+**Ele não é programador.** Desde 06/10 o trabalho é no Claude Code, que faz tudo
+sozinho na máquina dele: edita, roda o build, faz o commit **e o push**. Não deixe
+comando para ele rodar. Se alguma coisa só ele pode fazer (senha, clique num
+painel, pagamento), diga **na primeira linha da resposta** o que é, passo a passo:
+onde abrir, o que digitar, onde clicar.
 
 **Resposta curta.** Mensagem longa custa dez minutos de leitura e mata a troca.
 Resuma e deixe ele perguntar.
@@ -77,9 +71,14 @@ Supabase: projeto `wmkalrkerjmqzkjiowto`, região São Paulo.
 
 ## Decisões que não dá para deduzir do código
 
-**Margem é líquida sobre a venda**, não markup sobre o custo:
-`preço = custo ÷ (1 − margem − imposto)`. Somar 30% a um custo de mil dá margem
-real de 23%; a conta certa dá R$ 1.562,50 com 6% de imposto.
+**Orçamento só por preço de venda** (reunião de 13/10). Saiu o orçamento por
+margem e imposto e a escolha entre três modelos: "Novo orçamento" já abre a
+ficha, e cada item entra com o preço que o cliente paga. Na biblioteca também
+só existe preço (o campo no banco ainda se chama `custo`, mas guarda o preço).
+Orçamento antigo feito por margem e item antigo cadastrado como custo são
+convertidos na leitura (`semMargem` e `itemSemCusto` em `armazenamento.js`), e
+o orçamento vai para o banco já convertido na primeira gravação. As colunas
+`imposto_pct`, `margem_pct` e `custo_unit` continuam no banco sem uso.
 
 **O cartão do quadro tem três coisas na esquerda e uma na direita.** Nome; as
 duas últimas ações com uma seta apontando da anterior para a mais recente; o
@@ -145,11 +144,17 @@ caminho novo.
 
 ## Pendente
 
-- **Backup do banco não existe.** É a única coisa que, se der errado, não tem
-  como desfazer. O arquivo `backup-do-banco.yml.guardado` está na pasta; falta
-  criar o workflow pelo site do GitHub e o segredo `SUPABASE_DB_URL`.
-- **Proteção de senha vazada** desligada no Supabase (Authentication → Passwords).
-  Um clique.
+- **Backup do banco**: o workflow está em `.github/workflows/backup-do-banco.yml`
+  e roda todo dia, mas só funciona depois que o Pedro criar o segredo
+  `SUPABASE_DB_URL` no GitHub. Até lá ele falha de propósito, para ninguém
+  achar que tem backup.
+- **E-mail do "Esqueci a senha"**: o código está pronto (ver `main.jsx`). Falta
+  o Supabase ter um servidor de e-mail próprio (SMTP); o padrão dele não manda
+  e-mail para fora da equipe.
+- **Banco pausando**: o plano grátis pausa depois de uma semana sem uso
+  (aconteceu em 13/10). O workflow `manter-banco-acordado.yml` consulta o banco
+  a cada dois dias. A saída definitiva é o plano pago.
+- **Proteção de senha vazada**: no Supabase ela só existe no plano pago.
 - **Domínio climapro.com.br**: o Pedro precisa apontar os nameservers no
   Registro.br. Depois: `app.climapro.com.br` para o Worker do app, o site na
   raiz, e o Email Routing para `contato@`.
