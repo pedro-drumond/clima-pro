@@ -132,6 +132,13 @@ export default function Orcamento() {
     gravarItens(itensNaTela.filter((_, n) => n !== indice))
   }
 
+  const todosVisiveis = itensNaTela.every((i) => !i.oculto)
+  const nenhumVisivel = itensNaTela.every((i) => i.oculto)
+
+  function mostrarTodos(mostrar) {
+    gravarItens(itensNaTela.map((i) => ({ ...i, oculto: !mostrar })))
+  }
+
   function alternarOculto(indice) {
     gravarItens(itensNaTela.map((i, n) => (n === indice ? { ...i, oculto: !i.oculto } : i)))
   }
@@ -428,14 +435,28 @@ export default function Orcamento() {
         {itensNaTela.length === 0 ? (
           <p className="fraco">Nenhum item ainda.</p>
         ) : (
-          <table>
+          <table className="tabela-itens">
             <thead>
               <tr>
                 <th>Item</th>
-                <th className="n">Qtd.</th>
-                <th className="n">Preço un.</th>
+                <th className="c">Qtd.</th>
+                <th className="c">Preço un.</th>
                 <th className="n">Total</th>
-                <th className="n"></th>
+                <th className="c coluna-na-proposta">
+                  <label className="marcar-todos" title={todosVisiveis ? 'Tirar todos da proposta' : 'Mostrar todos na proposta'}>
+                    <input
+                      type="checkbox"
+                      checked={todosVisiveis}
+                      ref={(el) => {
+                        if (el) el.indeterminate = !todosVisiveis && !nenhumVisivel
+                      }}
+                      disabled={!editavel}
+                      onChange={() => mostrarTodos(!todosVisiveis)}
+                    />
+                    Na proposta
+                  </label>
+                </th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -445,7 +466,7 @@ export default function Orcamento() {
                     {i.nome}
                     <div className="fraco">{i.unidade}</div>
                   </td>
-                  <td className="n">
+                  <td className="c">
                     <input
                       className="celula"
                       type="number"
@@ -457,7 +478,7 @@ export default function Orcamento() {
                       onBlur={gravarRascunho}
                     />
                   </td>
-                  <td className="n">
+                  <td className="c">
                     <input
                       className="celula larga"
                       type="number"
@@ -470,20 +491,21 @@ export default function Orcamento() {
                     />
                   </td>
                   <td className="n">{moeda(i.qtd * precoDoItem(orcamento, i))}</td>
-                  <td className="n acoes-item">
+                  <td className="c coluna-na-proposta">
+                    <input
+                      type="checkbox"
+                      className="na-proposta"
+                      checked={!i.oculto}
+                      disabled={!editavel}
+                      title={i.oculto ? 'Não aparece na proposta' : 'Aparece na proposta'}
+                      onChange={() => alternarOculto(n)}
+                    />
+                  </td>
+                  <td className="acoes-item">
                     {editavel ? (
-                      <>
-                        <button
-                          className={'botao-icone' + (i.oculto ? ' desligado' : '')}
-                          title={i.oculto ? 'Não aparece na proposta' : 'Aparece na proposta'}
-                          onClick={() => alternarOculto(n)}
-                        >
-                          {i.oculto ? <Icone.olhoFechado /> : <Icone.olho />}
-                        </button>
-                        <button className="botao-icone perigo" title="Remover" onClick={() => removerItem(n)}>
-                          <Icone.lixeira />
-                        </button>
-                      </>
+                      <button className="botao-icone perigo" title="Remover" onClick={() => removerItem(n)}>
+                        <Icone.lixeira />
+                      </button>
                     ) : null}
                   </td>
                 </tr>

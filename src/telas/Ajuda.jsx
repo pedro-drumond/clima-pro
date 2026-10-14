@@ -30,8 +30,9 @@ const ASSUNTOS = [
           repetir.
         </p>
         <p>
-          O <strong>olho</strong> ao lado de cada item tira o item da proposta que o cliente vê, mas o valor dele continua
-          no total. A <strong>lixeira</strong> tira o item do orçamento.
+          Todo item nasce com a caixa <strong>Na proposta</strong> marcada. Desmarcando, o item some da proposta que o
+          cliente vê, mas o valor dele continua no total. A caixa do alto da coluna marca ou desmarca todos de uma vez.
+          A <strong>lixeira</strong> tira o item do orçamento.
         </p>
         <p>
           O preço ao cliente é a soma de tudo. Se quiser cobrar outro valor, maior ou menor, clique no{' '}

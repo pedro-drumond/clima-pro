@@ -2054,21 +2054,69 @@ td.n {
   height: 17px;
 }
 
-/* olho e lixeira de cada item do orçamento */
-.acoes-item {
+/* tabela de itens do orçamento: cabeçalho centrado em cima da caixa que ele
+   nomeia, caixas estreitas para sobrar espaço para o nome do item */
+.tabela-itens th.c,
+.tabela-itens td.c {
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
   white-space: nowrap;
+}
+
+.tabela-itens .celula {
+  width: 64px;
+  text-align: center;
+}
+
+.tabela-itens .celula.larga {
+  width: 96px;
+}
+
+.tabela-itens td:first-child {
+  width: 100%;
+}
+
+.na-proposta {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.marcar-todos {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  white-space: normal;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.tabela-itens th.coluna-na-proposta,
+.tabela-itens td.coluna-na-proposta {
+  width: 72px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.marcar-todos input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+}
+
+.acoes-item {
+  width: 34px;
+  padding-right: 0;
 }
 
 .acoes-item .botao-icone {
   display: inline-flex;
 }
 
-.botao-icone.desligado {
-  color: var(--laranja);
-}
-
 /* item que entra no total mas não aparece na proposta */
-.item-oculto td:not(.acoes-item) {
+.item-oculto td:not(.acoes-item):not(.coluna-na-proposta) {
   opacity: 0.45;
 }
 
