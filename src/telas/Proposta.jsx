@@ -81,13 +81,13 @@ export default function Proposta() {
       premio={premio}
     >
       {orcamento.aceite ? (
-        <div className="assinatura-caixa">
-          <div className={'assinado ' + orcamento.aceite.estilo}>{orcamento.aceite.nome}</div>
-          <div className="fraco">
+        <div className="assinatura-caixa aprovada">
+          <div className="aprovado-registro">
             Aprovado em {dataCurta(orcamento.aceite.em)}
-            {orcamento.aceite.ip ? ' · ' + orcamento.aceite.ip : ''}
             {orcamento.aceite.aparelho ? ' · ' + orcamento.aceite.aparelho : ''}
+            {orcamento.aceite.ip ? ' · IP ' + orcamento.aceite.ip : ''}
           </div>
+          <div className={'assinado ' + orcamento.aceite.estilo}>{orcamento.aceite.nome}</div>
         </div>
       ) : orcamento.situacao === 'perdido' ? (
         <div className="assinatura-caixa">

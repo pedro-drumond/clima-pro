@@ -29,6 +29,15 @@ const ASSUNTOS = [
           item escrito na hora já vem marcado para ser salvo na biblioteca, e você desmarca se for algo que não vai
           repetir.
         </p>
+        <p>
+          O <strong>olho</strong> ao lado de cada item tira o item da proposta que o cliente vê, mas o valor dele continua
+          no total. A <strong>lixeira</strong> tira o item do orçamento.
+        </p>
+        <p>
+          O preço ao cliente é a soma de tudo. Se quiser cobrar outro valor, maior ou menor, clique no{' '}
+          <strong>lápis</strong> ao lado dele e digite. Esse passa a ser o total da proposta, e{' '}
+          <strong>Voltar para a soma</strong> desfaz.
+        </p>
       </>
     ),
   },

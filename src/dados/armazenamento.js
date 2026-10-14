@@ -242,6 +242,8 @@ const doOrcamento = (r) => semMargem({
   decididoEm: r.decidido_em,
   instaladoEm: r.instalado_em,
   validadeAte: r.validade_ate,
+  // preço ao cliente digitado à mão por cima da soma; null = vale a soma
+  precoFinal: r.preco_final === null || r.preco_final === undefined ? null : Number(r.preco_final),
   itens: (r.orcamento_itens || [])
     .slice()
     .sort((a, b) => a.ordem - b.ordem)
@@ -253,6 +255,8 @@ const doOrcamento = (r) => semMargem({
       qtd: Number(i.qtd),
       custoUnit: Number(i.custo_unit),
       precoUnit: Number(i.preco_unit),
+      // item que entra no total mas não aparece na proposta
+      oculto: !!i.oculto,
     })),
 })
 
@@ -280,6 +284,7 @@ export const paraOrcamento = (o) => ({
   decidido_em: o.decididoEm || null,
   instalado_em: o.instaladoEm || null,
   validade_ate: o.validadeAte || null,
+  preco_final: o.precoFinal ?? null,
 })
 
 /* ----- sessão ----- */
@@ -480,7 +485,15 @@ export function premioDoSeguro(valorEquipamento, params) {
   return valor <= limite ? fixo : (valor * pct) / 100
 }
 
+// a soma de tudo, antes de qualquer preço digitado à mão
+export function somaDoOrcamento(orcamento) {
+  const itens = totalDosItens(orcamento)
+  if (!orcamento.seguro) return itens
+  return itens + (Number(orcamento.seguroPremio) || 0)
+}
+
 export function totalDoOrcamento(orcamento) {
+  if (orcamento.precoFinal !== null && orcamento.precoFinal !== undefined) return Number(orcamento.precoFinal)
   const itens = totalDosItens(orcamento)
   if (!orcamento.seguro) return itens
   return itens + (Number(orcamento.seguroPremio) || 0)

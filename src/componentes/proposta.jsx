@@ -120,7 +120,13 @@ export function FolhaProposta({
 }) {
   const qual = modelo || empresa.modeloCabecalho || 'simples'
   const tinta = cor || empresa.corProposta || COR_PADRAO
-  const somaItens = itens.reduce((s, i) => s + i.qtd * preco(i), 0)
+  // Item oculto entra no total sem aparecer. Se o instalador digitou o preço
+  // à mão, é ele que vale como total, sem linha de desconto (decisão de 14/10).
+  const visiveis = itens.filter((i) => !i.oculto)
+  const somaTudo = itens.reduce((s, i) => s + i.qtd * preco(i), 0) + premio
+  const precoDigitado = orcamento.precoFinal !== null && orcamento.precoFinal !== undefined
+  const total = precoDigitado ? Number(orcamento.precoFinal) : somaTudo
+  const mostrarUnitario = orcamento.mostrarUnitario
 
   const corpo = (
     <>
@@ -138,19 +144,19 @@ export function FolhaProposta({
           <tr>
             <th>Descrição</th>
             <th className="n">Qtd.</th>
-            {orcamento.mostrarUnitario ? <th className="n">Valor un.</th> : null}
+            {mostrarUnitario ? <th className="n">Valor un.</th> : null}
             <th className="n">Valor</th>
           </tr>
         </thead>
         <tbody>
-          {itens.map((i, n) => (
+          {visiveis.map((i, n) => (
             <tr key={n}>
               <td>
                 {i.nome}
                 <div className="fraco">{i.unidade}</div>
               </td>
               <td className="n">{i.qtd}</td>
-              {orcamento.mostrarUnitario ? <td className="n">{moeda(preco(i))}</td> : null}
+              {mostrarUnitario ? <td className="n">{moeda(preco(i))}</td> : null}
               <td className="n">{moeda(i.qtd * preco(i))}</td>
             </tr>
           ))}
@@ -161,7 +167,7 @@ export function FolhaProposta({
                 <div className="fraco">cobertura de 1 ano</div>
               </td>
               <td className="n">1</td>
-              {orcamento.mostrarUnitario ? <td className="n">{moeda(premio)}</td> : null}
+              {mostrarUnitario ? <td className="n">{moeda(premio)}</td> : null}
               <td className="n">{moeda(premio)}</td>
             </tr>
           ) : null}
@@ -170,7 +176,7 @@ export function FolhaProposta({
 
       <div className="total-linha">
         <span>Total</span>
-        <span className="numero-grande">{moeda(somaItens + premio)}</span>
+        <span className="numero-grande">{moeda(total)}</span>
       </div>
 
       {orcamento.condicoes || orcamento.observacoes ? (

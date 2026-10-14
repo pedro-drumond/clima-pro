@@ -146,6 +146,7 @@ export async function salvarItensDoOrcamento(orcamento, itens) {
       qtd: Number(i.qtd) || 0,
       custo_unit: Number(i.custoUnit) || 0,
       preco_unit: Number(i.precoUnit) || 0,
+      oculto: !!i.oculto,
       ordem: n,
     }))
     const { error } = await supabase.from('orcamento_itens').insert(linhas)

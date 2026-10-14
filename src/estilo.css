@@ -989,6 +989,25 @@ td.n {
   padding: 8px 0;
 }
 
+/* aprovada: o registro discreto à esquerda, o nome de quem aprovou à direita */
+.assinatura-caixa.aprovada {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.aprovado-registro {
+  font-size: 11px;
+  color: var(--texto-fraco);
+  line-height: 1.5;
+}
+
+.assinatura-caixa.aprovada .assinado {
+  text-align: right;
+  padding: 4px 6px 4px 0;
+}
+
 .assinado.cursivo {
   font-family: 'Snell Roundhand', 'Brush Script MT', cursive;
 }
@@ -2033,6 +2052,43 @@ td.n {
 .botao-icone svg {
   width: 17px;
   height: 17px;
+}
+
+/* olho e lixeira de cada item do orçamento */
+.acoes-item {
+  white-space: nowrap;
+}
+
+.acoes-item .botao-icone {
+  display: inline-flex;
+}
+
+.botao-icone.desligado {
+  color: var(--laranja);
+}
+
+/* item que entra no total mas não aparece na proposta */
+.item-oculto td:not(.acoes-item) {
+  opacity: 0.45;
+}
+
+/* o preço ao cliente com o lápis do lado */
+.preco-final {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.preco-final-campo {
+  width: 140px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.voltar-soma {
+  display: block;
+  margin-left: auto;
+  margin-top: 6px;
 }
 
 /* busca e filtros na mesma faixa, acima da lista */

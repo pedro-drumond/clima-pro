@@ -7,6 +7,7 @@ import {
   parametros,
   totalDosItens,
   totalDoOrcamento,
+  somaDoOrcamento,
   premioDoSeguro,
   precoDoItem,
   linkWhatsapp,
@@ -14,7 +15,7 @@ import {
 import { aplicarTexto, TEXTO_ENVIO } from '../dados/parametros.js'
 import { linkDaProposta, primeiroNome } from '../dados/agenda.js'
 import { resumoDaAcao } from '../dados/vocabulario.js'
-import { Temperatura } from '../componentes/icones.jsx'
+import { Temperatura, Icone } from '../componentes/icones.jsx'
 import {
   salvarOrcamento,
   salvarItensDoOrcamento,
@@ -40,6 +41,7 @@ export default function Orcamento() {
   const [cadastrando, setCadastrando] = useState(false)
   const [linkCopiado, setLinkCopiado] = useState(false)
   const [condicoesSalvas, setCondicoesSalvas] = useState(false)
+  const [editandoPreco, setEditandoPreco] = useState(false)
   const [avulso, setAvulso] = useState({ nome: '', qtd: 1, preco: '', unidade: 'unidade', salvar: true })
   // os itens ficam numa cópia enquanto ele digita; só vão para o banco quando
   // ele sai do campo, para não regravar a lista inteira a cada tecla
@@ -60,7 +62,9 @@ export default function Orcamento() {
   const comItens = { ...orcamento, itens: itensNaTela }
   const totalItens = totalDosItens(comItens)
   const premio = orcamento.seguro ? premioDoSeguro(orcamento.seguroValorEquip, params) : 0
-  const total = totalItens + premio
+  const soma = totalItens + premio
+  const precoDigitado = orcamento.precoFinal !== null && orcamento.precoFinal !== undefined
+  const total = precoDigitado ? Number(orcamento.precoFinal) : soma
   const editavel = orcamento.situacao === 'contato' || orcamento.situacao === 'enviado'
 
   const mudar = (campos) => salvarOrcamento({ ...orcamento, itens: itensNaTela, ...campos })
@@ -126,6 +130,20 @@ export default function Orcamento() {
 
   function removerItem(indice) {
     gravarItens(itensNaTela.filter((_, n) => n !== indice))
+  }
+
+  function alternarOculto(indice) {
+    gravarItens(itensNaTela.map((i, n) => (n === indice ? { ...i, oculto: !i.oculto } : i)))
+  }
+
+  function gravarPreco(texto) {
+    setEditandoPreco(false)
+    const valor = String(texto).replace(',', '.').trim()
+    if (valor === '') return
+    const numero = Math.round(Number(valor) * 100) / 100
+    if (!(numero >= 0)) return
+    // digitar a própria soma é o mesmo que não ter mexido
+    mudar({ precoFinal: Math.abs(numero - soma) < 0.005 ? null : numero })
   }
 
   async function criarPessoaRapida() {
@@ -258,8 +276,36 @@ export default function Orcamento() {
 
         <div className="total-linha">
           <span>Preço ao cliente</span>
-          <span className="numero-grande">{moeda(total)}</span>
+          <span className="preco-final">
+            {editandoPreco ? (
+              <input
+                className="celula larga preco-final-campo"
+                type="number"
+                min="0"
+                step="0.01"
+                autoFocus
+                defaultValue={total.toFixed(2)}
+                onBlur={(e) => gravarPreco(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') gravarPreco(e.target.value)
+                  if (e.key === 'Escape') setEditandoPreco(false)
+                }}
+              />
+            ) : (
+              <span className="numero-grande">{moeda(total)}</span>
+            )}
+            {editavel && !editandoPreco ? (
+              <button className="botao-icone" title="Editar o preço" onClick={() => setEditandoPreco(true)}>
+                <Icone.lapis />
+              </button>
+            ) : null}
+          </span>
         </div>
+        {precoDigitado && editavel ? (
+          <button className="botao-detalhes voltar-soma" onClick={() => mudar({ precoFinal: null })}>
+            Voltar para a soma ({moeda(soma)})
+          </button>
+        ) : null}
       </div>
 
       <div className="bloco bloco-envio">
@@ -394,7 +440,7 @@ export default function Orcamento() {
             </thead>
             <tbody>
               {itensNaTela.map((i, n) => (
-                <tr key={n}>
+                <tr key={n} className={i.oculto ? 'item-oculto' : ''}>
                   <td>
                     {i.nome}
                     <div className="fraco">{i.unidade}</div>
@@ -424,11 +470,20 @@ export default function Orcamento() {
                     />
                   </td>
                   <td className="n">{moeda(i.qtd * precoDoItem(orcamento, i))}</td>
-                  <td className="n">
+                  <td className="n acoes-item">
                     {editavel ? (
-                      <button className="botao perigo" onClick={() => removerItem(n)}>
-                        Remover
-                      </button>
+                      <>
+                        <button
+                          className={'botao-icone' + (i.oculto ? ' desligado' : '')}
+                          title={i.oculto ? 'Não aparece na proposta' : 'Aparece na proposta'}
+                          onClick={() => alternarOculto(n)}
+                        >
+                          {i.oculto ? <Icone.olhoFechado /> : <Icone.olho />}
+                        </button>
+                        <button className="botao-icone perigo" title="Remover" onClick={() => removerItem(n)}>
+                          <Icone.lixeira />
+                        </button>
+                      </>
                     ) : null}
                   </td>
                 </tr>
