@@ -14,3 +14,6 @@ dist
 
 # configuração pessoal do Claude Code
 .claude/settings.local.json
+
+# cópia completa das conversas: fica na pasta, não no GitHub
+docs/claude/*.zip
