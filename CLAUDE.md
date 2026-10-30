@@ -67,6 +67,12 @@ quando o `main` recebe push.
 
 Supabase: projeto `wmkalrkerjmqzkjiowto`, região São Paulo.
 
+**Neste projeto só se acessa o Supabase do Clima Pro** (pedido do Pedro em
+30/10). O conector geral do Supabase, que enxerga RH Tracker, FounderFit e CRM
+RH, está bloqueado em `.claude/settings.local.json`. O acesso ao banco é pelo
+servidor `supabase-climapro` do `.mcp.json`, preso ao projeto
+`wmkalrkerjmqzkjiowto` e conectado com a conta do Supabase do Clima Pro.
+
 ---
 
 ## Decisões que não dá para deduzir do código

@@ -11,3 +11,6 @@ dist
 
 # vídeos ficam só na pasta, não no código
 *.mp4
+
+# configuração pessoal do Claude Code
+.claude/settings.local.json
